@@ -82,6 +82,9 @@ export default function CreateTest(props){
                     case 'mysql_name_exists_error':
                         setResult('A vizsga felvétele nem sikerült, mivel ilyen névvel már létezik vizsga')
                         break
+                    case 'mysql_invalid_itemcode':
+                        setResult('A vizsga felvétele nem sikerült, mivel ilyen termékkód nem létezik!')
+                        break
                     default:
                         setResult(null)
                         return

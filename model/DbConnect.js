@@ -102,6 +102,13 @@ module.exports = class Connection {
     insertExam = async (arr) =>{
         //A lekérdezések a redundancia elhárítását szolgálják
 
+        let itemCodeExists = await this.con('items').count('Itemcode AS count')
+        .where(this.con.raw('Itemcode = ?', [arr[0]])).first().catch(err => console.log(err))
+
+        if(itemCodeExists == null || itemCodeExists.count == 0){
+            return 'mysql_invalid_itemcode'
+        }
+
         //Exam_itemcode létezésének meghatározása
         let itemCount = await this.con('exams').count('exam_itemcode AS count')
         .where(this.con.raw('exam_itemcode = ?', [arr[0]])).first().catch(err => console.log(err))
