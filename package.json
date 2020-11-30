@@ -1,0 +1,33 @@
+{
+  "name": "jpskills",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"nodemon index.js\" \"cd client && npm start\"",
+    "tsc": "tsc"
+  },
+  "proxy": "http://localhost:3000/",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "concurrently": "^5.3.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.0",
+    "express-mysql-session": "^2.1.4",
+    "express-session": "^1.17.1",
+    "file-type": "^16.0.1",
+    "knex": "^0.21.12",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.8",
+    "@types/express": "^4.17.9",
+    "@types/express-fileupload": "^1.1.5",
+    "@types/express-session": "^1.17.3"
+  }
+}

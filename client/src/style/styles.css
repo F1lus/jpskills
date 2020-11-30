@@ -1,0 +1,71 @@
+/*navbar*/
+.nav{
+    background-color: white;
+    border-bottom: 3px solid red;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.nav-link{
+    color: red;
+}
+
+.nav-link:hover{
+    color: brown;
+}
+
+a.current{
+    font-weight: bold;
+}
+
+/*tananyagok*/
+p::first-letter{
+    color: red;
+}
+
+p{
+    font-weight: bold;
+}
+
+.webviewer{
+    height: 600px;
+}
+
+#pdf{
+    z-index: 2;
+    position: absolute;
+    height: max-content;
+    margin: auto;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+#content{
+    z-index: 1;
+}
+
+/*home*/
+#ido{
+    letter-spacing: 5px;
+    font-size: 50px;
+    color: red;
+    font-weight: bold;
+}
+
+#ido .container{
+    width: 50px;
+    border: 3px solid red;
+    border-radius: 10px;
+}
+
+/*profil*/
+span{
+    font-weight: bold;
+    font-size: 40px;
+}
+
+/*vizsgak*/
+input[type="file"]{
+    display: none;
+}
+

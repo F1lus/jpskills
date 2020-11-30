@@ -1,0 +1,41 @@
+{
+    "name": "@types/express-fileupload",
+    "version": "1.1.5",
+    "description": "TypeScript definitions for express-fileupload",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Gintautas Miselis",
+            "url": "https://github.com/Naktibalda",
+            "githubUsername": "Naktibalda"
+        },
+        {
+            "name": "Sefa Ilkimen",
+            "url": "https://github.com/silkimen",
+            "githubUsername": "silkimen"
+        },
+        {
+            "name": "Tomas Vosicky",
+            "url": "https://github.com/vosatom",
+            "githubUsername": "vosatom"
+        },
+        {
+            "name": "Piotr Błażejewicz",
+            "url": "https://github.com/peterblazejewicz",
+            "githubUsername": "peterblazejewicz"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/express-fileupload"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/express": "*"
+    },
+    "typesPublisherContentHash": "5ff3ad8c555bdaa4d8d669c9ded8a486a9a955be44891dea69ed722b4b9f355a",
+    "typeScriptVersion": "3.1"
+}
