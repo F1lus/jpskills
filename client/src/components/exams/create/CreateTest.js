@@ -94,7 +94,7 @@ export default function CreateTest(props){
     }
 
     return (
-        <div className="container shadow rounded p-3 text-center">
+        <div className="container shadow rounded p-3 text-center bg-light">
             <h1><p>Új vizsga feltöltése:</p></h1>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -111,7 +111,7 @@ export default function CreateTest(props){
                 </div>
                 <div className="form-group">
                     <input type="file" onChange={handleChange} id="pdfFel" name="examDoc"/>
-                    <label htmlFor="pdfFel" className="btn btn-outline-danger rounded">
+                    <label htmlFor="pdfFel" className="btn btn-outline-primary rounded">
                         <i>
                             <UploadIcon size={24} />
                             &nbsp;
@@ -119,7 +119,7 @@ export default function CreateTest(props){
                         Válassza ki a feltöltendő fájlt!
                     </label>
                 </div>
-                <button type="submit" className="btn btn-danger" value="Létrehozás">Feltöltés!</button>
+                <button type="submit" className="btn btn-warning" value="Létrehozás">Feltöltés!</button>
             </form>
             <h3 className="alert alert-secondary mt-3" role="alert">{result}</h3>
         </div>

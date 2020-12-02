@@ -6,11 +6,11 @@ export default function Home(props){
     
     const nev = props.user
     
-    const [vanVizsga, setVanVizsga] = useState(true)
+    const [vanVizsga, setVanVizsga] = useState(false)
     
     return(
         <div className="d-flex align-items-center vh-100">
-            <div className="container shadow rounded p-3 text-center">
+            <div className="container shadow rounded p-3 bg-light">
                 <div className="container d-flex justify-content-center">
                     <div className="row" id="ido">
                         <div className="container m-2 px-2" id="h1"/>
@@ -24,7 +24,11 @@ export default function Home(props){
                     </div>
                 </div>
                 <div className="container text-center">
-                    <b>Kedves {nev}!</b>
+                    <div className="container text-center">
+                        <span>
+                            Kedves {nev}!
+                        </span>
+                    </div>
                     <br/>
                     {vanVizsga ? 
                         <NavLink to="/exams">
@@ -32,7 +36,7 @@ export default function Home(props){
                                 Van teljesítetlen vizsgája!
                             </button>
                         </NavLink>
-                        :"Nincs teljesítetlen vizsgája!"}
+                        :<div className="text-center rounded" id="nincs"><b>Gratulálunk, nincs teljesítetlen vizsgája!</b></div>}
                 </div>
             </div>
         </div>

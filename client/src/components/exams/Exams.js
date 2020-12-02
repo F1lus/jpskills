@@ -41,13 +41,13 @@ export default function Exams(props){
     })
 
     return(
-        <div className="container shadow rounded text-center p-3 mt-5">
+        <div className="container shadow rounded text-center p-3 mt-5 bg-light">
             <h1><p>Elérhető vizsgák:</p></h1>
             {exams.length === 0 ? <h1>Jelenleg nem találhatóak elérhető vizsgák</h1> : exams.map((exam, index)=>{
                 if(props.permission === 'admin'){
                     return(
                         <NavLink key={index} to={`/exams/modify/${exam[1]}`}>
-                            <button className="btn btn-danger m-2">
+                            <button className="btn btn-outline-primary m-2">
                                 {exam[0]}
                             </button>
                         </NavLink>
@@ -56,7 +56,7 @@ export default function Exams(props){
                 }else{
                     return(
                         <NavLink key={index} to={`/exams/${exam[1]}`}>
-                            <button className="btn btn-danger m-2">
+                            <button className="btn btn-outline-primary m-2">
                                 {exam[0]}
                             </button>
                         </NavLink>
