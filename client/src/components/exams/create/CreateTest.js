@@ -11,7 +11,7 @@ export default function CreateTest(props){
     const [examName, setExamName] = useState(null)
     const [comment, setComment] = useState(null)
     const [examDoc, setExamDoc] = useState(null)
-    const [result, setResult] = useState(null)
+    const [result, setResult] = useState("Feltöltött fájlnév + siker/hibaüzenet")
     
 
     function handleChange(event){
@@ -121,7 +121,7 @@ export default function CreateTest(props){
                 </div>
                 <button type="submit" className="btn btn-danger" value="Létrehozás">Feltöltés!</button>
             </form>
-            <h3 className="alert alert-secondary" role="alert">{result}</h3>
+            <h3 className="alert alert-secondary mt-3" role="alert">{result}</h3>
         </div>
     )
     
