@@ -5,7 +5,7 @@ export default function Login(){
 
     const [cardNum, setCardNum] = useState('')
     const [password, setPassword] = useState('')
-    const [alert, setAlert] = useState('')
+    const [alert, setAlert] = useState('Csak hiba esetén!')
 
     function handleSubmit(event){
         event.preventDefault()
@@ -49,7 +49,7 @@ export default function Login(){
         <div className="d-flex align-items-center vh-100">
                 <div className="container shadow rounded text-center p-3">
                     <h1><p>Jelentkezzen be!</p></h1>
-                    <h3 className="alert alert-danger" role="alert">{alert}</h3>
+                    <h3 className="alert alert-danger mb-3" role="alert">{alert}</h3>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <input type="text" name="cardNum" className="form-control" placeholder="Kártyaszám" value={cardNum || ''} onChange={handleChange}/>
