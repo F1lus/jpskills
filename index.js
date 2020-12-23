@@ -125,5 +125,5 @@ app.get('/login', async (req, res) =>{
 })
 
 app.listen(PORT, () => {
-    console.log(`Server up on http://localhost:${PORT}`)
+    console.log(`Online: http://localhost:${PORT}`)
 })
