@@ -38,10 +38,6 @@ app.use(session({
 }))
 app.use(express.json())
 
-app.get('/', (req, res) => {
-    res.status(200).json('Online')
-})
-
 app.get('/exams', (req, res) => {
     dbconnect.selectExams()
     .then(results => {
@@ -61,7 +57,7 @@ app.get('/exams/learn/:examCode', async (req, res) => {
     if(doc){
         //let contentType = await FileType.fromBuffer(doc.exam_docs)
         //res.type(contentType.mime)
-        res.json({document: doc.exam_docs})
+        res.send('a')
     }
 })
 
