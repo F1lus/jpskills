@@ -47,7 +47,7 @@ export default function Login(){
 
     return (
         <div className="d-flex align-items-center vh-100">
-                <div className="container shadow rounded text-center p-3">
+                <div className="container shadow rounded text-center bg-light p-3">
                     <h1><p>Jelentkezzen be!</p></h1>
                     <h3 className="alert alert-danger mb-3" role="alert">{alert}</h3>
                     <form onSubmit={handleSubmit}>
@@ -58,7 +58,7 @@ export default function Login(){
                             <input type="password" name="password" className="form-control" placeholder="Jelszó" value={password || ''} onChange={handleChange}/>
                         </div>
                         <div className="form-group">
-                            <button className="btn btn-danger">Bejelentkezés</button>
+                            <button className="btn btn-warning">Bejelentkezés</button>
                         </div>
                     </form>
                 </div>

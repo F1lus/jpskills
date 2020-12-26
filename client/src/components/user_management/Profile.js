@@ -7,7 +7,7 @@ export default function Profile(props) {
     const [vizsgaszam, setVizsgaszam] = useState(5)
     
     return (
-        <div className="d-flex align-items-center vh-100">
+        <div className="d-flex align-items-center text-center vh-100">
             <div className="container shadow rounded text-center bg-light">
                 <span><p>{nev}</p></span>
             </div>

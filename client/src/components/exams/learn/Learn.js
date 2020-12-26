@@ -42,7 +42,7 @@ export default function Learn(props) {
                                 <div className="card-body">
                                     <p className="card-text">{exam[0]}</p>
                                     <NavLink to={`/exams/learn/${exam[1]}`}>
-                                        <button type="button" className="btn btn-danger">
+                                        <button type="button" className="btn btn-outline-primary">
                                             Megtanulom!
                                         </button>
                                     </NavLink>

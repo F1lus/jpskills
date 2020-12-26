@@ -23,7 +23,7 @@ export default function Home(props){
                         <div className="container m-2 px-2" id="s2"/>
                     </div>
                 </div>
-                <div className="container text-center">
+                <div className="d-flex align-items-center container">
                     <div className="container text-center">
                         <span>
                             Kedves {nev}!
@@ -32,7 +32,7 @@ export default function Home(props){
                     <br/>
                     {vanVizsga ? 
                         <NavLink to="/exams">
-                            <button type="button" className="btn btn-danger m-2" >
+                            <button type="button" className="btn btn-warning m-2" >
                                 Van teljesítetlen vizsgája!
                             </button>
                         </NavLink>

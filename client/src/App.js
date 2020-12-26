@@ -10,7 +10,7 @@ import ExamWrapper from './components/exams/ExamWrapper'
 import ExamModify from './components/exams/modify/ExamModify'
 import CustomNavbar from './components/nav/CustomNavbar';
 import Home from './components/home/Home';
-import Learn from './components/exams/learn/Learn'
+import Learn from './components/exams/learn/Learn';
 import Profile from './components/user_management/Profile';
 import PDF from './components/exams/learn/PDF';
 
