@@ -12,7 +12,6 @@ import CustomNavbar from './components/nav/CustomNavbar';
 import Home from './components/home/Home';
 import Learn from './components/exams/learn/Learn';
 import Profile from './components/user_management/Profile';
-import PDF from './components/exams/learn/PDF';
 
 export default function App(){
 
@@ -103,7 +102,6 @@ export default function App(){
             return (
               <div>
                 <CustomNavbar/>
-                <PDF/>
               </div>
             )
           }else{
