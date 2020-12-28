@@ -1,12 +1,15 @@
 const express = require('express')
+//const http = require('http')
+//const socketIo = require('socket.io')
 const session = require('express-session')
 const mysqlStore = require ('express-mysql-session')(session)
 const Connection = require('./model/DbConnect')
 const cors = require('cors')
 const fileUpload = require('express-fileupload')
-const FileType = require('file-type')
+//const FileType = require('file-type')
 
 const app = express()
+
 const dbconnect = new Connection()
 
 const PORT = process.env.PORT || 5000;
@@ -21,6 +24,13 @@ const sessionStore = new mysqlStore({
     checkExpirationInterval: 900000
 })
 
+const sessionSetup = session({
+    secret: 'jp5k1ll-$eCRet-#749',
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+})
+
 app.use(cors({
     origin: 'http://localhost:3000',
     methods: 'PUT, GET, POST, DELETE, OPTIONS',
@@ -30,12 +40,8 @@ app.use(cors({
 
 app.use(fileUpload())
 
-app.use(session({
-    secret: 'jp5k1ll-$eCRet-#749',
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-}))
+app.use(sessionSetup)
+
 app.use(express.json())
 
 app.get('/exams', (req, res) => {
@@ -103,11 +109,13 @@ app.post('/login', async (req, res) => {
         if(await dbconnect.userExists(req.body.cardNum, req.body.password)){
             req.session.cardNum = req.body.cardNum
             res.json({access: true})
+        }else{
+            res.json({access: false})
         }
     }
 })
 
-app.get('/login', async (req, res) =>{
+app.get('/login', async (req, res) =>{    
     if(req.session.cardNum){
         let userData = await dbconnect.findUser(req.session.cardNum)
         req.session.user = userData[0]

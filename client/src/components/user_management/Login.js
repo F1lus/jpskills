@@ -20,7 +20,6 @@ export default function Login(){
 
         API.post('/login', data, {headers: {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}})
             .then(result => {
-                console.log(result.data.access)
                 if(result.data.access){
                     window.location.reload()
                 }else{
