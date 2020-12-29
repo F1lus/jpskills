@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import API from '../BackendAPI'
 
 export default function Login(){
@@ -24,7 +24,6 @@ export default function Login(){
                     window.location.reload()
                 }else{
                     setAlert('A megadott adatok egyike hibás!')
-                    document.getElementById('hiba').style.display = "inline"
                 }
             }).catch(err =>{
                 setAlert('Hiba történt! Próbálja újra!')
@@ -49,8 +48,7 @@ export default function Login(){
         <div className="d-flex align-items-center vh-100">
                 <div className="container shadow rounded text-center bg-light p-3">
                     <h1><p>Jelentkezzen be!</p></h1>
-                    <h3>Hiba: {alert}</h3>
-                    <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3>
+                    {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : <></>}
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <input type="text" name="cardNum" className="form-control" placeholder="Kártyaszám" value={cardNum || ''} onChange={handleChange}/>
