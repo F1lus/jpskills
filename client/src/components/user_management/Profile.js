@@ -9,7 +9,7 @@ export default function Profile(props) {
     return (
         <div className="d-flex align-items-center text-center vh-100">
             <div className="container shadow rounded text-center bg-light">
-                <span><p>{nev}</p></span>
+                <span id="nev"><p>{nev}</p></span>
             </div>
         </div>
     )

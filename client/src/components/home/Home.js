@@ -6,7 +6,7 @@ export default function Home(props){
     
     const nev = props.user
     
-    const [vanVizsga, setVanVizsga] = useState(true)
+    const [vanVizsga, setVanVizsga] = useState(false)
     
     return(
         <div className="container d-flex align-items-center vh-100">
@@ -25,7 +25,7 @@ export default function Home(props){
                 </div>
                 <div className="container text-center">
                     <div className="container text-center m-3">
-                        <span>Kedves {nev}!</span>
+                        <span id="nev">Kedves {nev}!</span>
                     </div>
 
                     {vanVizsga ? 

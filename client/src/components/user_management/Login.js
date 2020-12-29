@@ -47,18 +47,28 @@ export default function Login(){
 
     return (
         <div className="d-flex align-items-center vh-100">
-                <div className="container shadow rounded text-center bg-light p-3">
-                    <h1><p>Jelentkezzen be!</p></h1>
+                <div className="container shadow rounded bg-light p-3">
+                    <h1 className="text-center"><p>Jelentkezzen be!</p></h1>
                     {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : <></>}
                     <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <input type="text" name="cardNum" className="form-control" placeholder="Kártyaszám" value={cardNum || ''} onChange={handleChange}/>
+                        <div className="form-group m-auto">
+                            <input type="text" name="cardNum" autoComplete="off" value={cardNum || ''} onChange={handleChange} required/>
+                            <label htmlFor="cardNum" className="label-name">
+                                <span className="content-name">
+                                    Kártyaszám:
+                                </span>
+                            </label>
                         </div>
-                        <div className="form-group">
-                            <input type="password" name="password" className="form-control" placeholder="Jelszó" value={password || ''} onChange={handleChange}/>
+                        <div className="form-group m-auto">
+                            <input type="password" name="password" value={password || ''} onChange={handleChange} required/>
+                            <label htmlFor="password" className="label-name">
+                                <span className="content-name">
+                                    Jelszó:
+                                </span>
+                            </label>
                         </div>
-                        <div className="form-group">
-                            <button className="btn btn-warning" onClick={handleChange}>Bejelentkezés</button>
+                        <div className="text-center">
+                            <button className="btn btn-warning mt-3" onClick={handleChange}>Bejelentkezés</button>
                         </div>
                     </form>
                 </div>
