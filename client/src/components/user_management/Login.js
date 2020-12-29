@@ -1,16 +1,16 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import API from '../BackendAPI'
 
 export default function Login(){
 
     const [cardNum, setCardNum] = useState('')
     const [password, setPassword] = useState('')
-    const [alert, setAlert] = useState('Csak hiba esetén!')
+    const [alert, setAlert] = useState('')
 
     function handleSubmit(event){
         event.preventDefault()
         if(cardNum == null || password == null){
-            setAlert('A kártyaszám, vagy a jelszó mező hiányos!')
+            setAlert('A kártyaszám, vagy jelszó mező hiányos!')
             return
         }
 
@@ -25,6 +25,7 @@ export default function Login(){
                     window.location.reload()
                 }else{
                     setAlert('A megadott adatok egyike hibás!')
+                    document.getElementById('hiba').style.display = "inline"
                 }
             }).catch(err =>{
                 setAlert('Hiba történt! Próbálja újra!')
@@ -49,7 +50,8 @@ export default function Login(){
         <div className="d-flex align-items-center vh-100">
                 <div className="container shadow rounded text-center bg-light p-3">
                     <h1><p>Jelentkezzen be!</p></h1>
-                    <h3 className="alert alert-danger mb-3" role="alert">{alert}</h3>
+                    <h3>Hiba: {alert}</h3>
+                    <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <input type="text" name="cardNum" className="form-control" placeholder="Kártyaszám" value={cardNum || ''} onChange={handleChange}/>
@@ -58,7 +60,7 @@ export default function Login(){
                             <input type="password" name="password" className="form-control" placeholder="Jelszó" value={password || ''} onChange={handleChange}/>
                         </div>
                         <div className="form-group">
-                            <button className="btn btn-warning">Bejelentkezés</button>
+                            <button className="btn btn-warning" onClick={handleChange}>Bejelentkezés</button>
                         </div>
                     </form>
                 </div>
