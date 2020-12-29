@@ -6,12 +6,12 @@ export default function Home(props){
     
     const nev = props.user
     
-    const [vanVizsga, setVanVizsga] = useState(false)
+    const [vanVizsga, setVanVizsga] = useState(true)
     
     return(
-        <div className="d-flex align-items-center vh-100">
+        <div className="container d-flex align-items-center vh-100">
             <div className="container shadow rounded p-3 bg-light">
-                <div className="container d-flex justify-content-center">
+                <div className="d-flex justify-content-center">
                     <div className="row" id="ido">
                         <div className="container m-2 px-2" id="h1"/>
                         <div className="container m-2 px-2" id="h2"/>
@@ -23,20 +23,23 @@ export default function Home(props){
                         <div className="container m-2 px-2" id="s2"/>
                     </div>
                 </div>
-                <div className="d-flex align-items-center container">
-                    <div className="container text-center">
-                        <span>
-                            Kedves {nev}!
-                        </span>
+                <div className="container text-center">
+                    <div className="container text-center m-3">
+                        <span>Kedves {nev}!</span>
                     </div>
-                    <br/>
+
                     {vanVizsga ? 
                         <NavLink to="/exams">
                             <button type="button" className="btn btn-warning m-2" >
                                 Van teljesítetlen vizsgája!
                             </button>
                         </NavLink>
-                        :<div className="text-center rounded" id="nincs"><b>Gratulálunk, nincs teljesítetlen vizsgája!</b></div>}
+                        :   <div className="container w-50 text-center rounded m-auto p-2 border border-warning" id="nincs">
+                                <b>
+                                    Gratulálunk, nincs teljesítetlen vizsgája!
+                                </b>
+                            </div>
+                    }
                 </div>
             </div>
         </div>
