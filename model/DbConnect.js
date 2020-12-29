@@ -32,14 +32,56 @@ module.exports = class Connection {
         return exams
     }
 
+    selectTest = (questions) => {
+        return new Promise(resolve => {
+            let questionList = new Array()
+            questions.forEach(async (question, index) => {
+                await this.con('exam_prepare')
+                .where(this.con.raw('question_id = ?', [question.question_id])).then(answersIdList =>{
+                    this.selectResults(answersIdList).then(result => {
+                        questionList.push({
+                            id: question.question_id,
+                            exam_id: question.exam_id,
+                            name: question.question_name,
+                            points: question.points,
+                            pic: question.picture,
+                            answers: result
+                        })
+                        if(index === questions.length-1){
+                            resolve(questionList)
+                        }
+                    })
+                })
+            })
+        })
+    }
+
+    selectResults = (answersIdList) =>{
+        return new Promise((resolve) =>{
+            let result = new Array()
+            answersIdList.forEach(async (answerId, index) =>{
+                await this.con('results').where(this.con.raw('results_id = ?', [answerId.results_id])).first()
+                .then(answer => {
+                    result.push({
+                        id: answer.results_id,
+                        text: answer.result_text,
+                        correct: answer.correct == 1 ? true : false
+                    })
+                    if(index === answersIdList.length-1){
+                        resolve(result)
+                    }
+                })
+            })
+        })
+    }
+
     selectWholeExam = async (exam_itemcode) =>{
         let exam = await this.con('exams').select(['exam_id', 'exam_name'])
             .where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
-        console.log(exam)
-        let questionList = []
 
         let questions = await this.con('questions').where(this.con.raw('exam_id = ?', [exam.exam_id]))
-        console.log(questions[0])
+
+        let questionList = await this.selectTest(questions)
         
         return [exam.exam_name, questionList]
     }

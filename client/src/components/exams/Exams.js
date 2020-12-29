@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect} from 'react'
 
 import {NavLink} from 'react-router-dom'
 
@@ -8,7 +8,6 @@ import API from '../BackendAPI'
 export default function Exams(props){
 
     const [exams, setExams] = useState([])
-    const examCheckInterval = useRef()
 
     function examCheck(axiosCancel){
         API.get('/exams', {cancelToken: axiosCancel.token})
@@ -22,7 +21,7 @@ export default function Exams(props){
                         exam.push(res.data.names[i], res.data.codes[i])
                         examList.push(exam)
                     }
-                    setExams(examList) 
+                    setExams(examList)
                 }
             })
             .catch(err => console.log(err))
@@ -30,15 +29,11 @@ export default function Exams(props){
 
     useEffect(() => {
         const axiosCancel = Axios.CancelToken.source()
-        const id = setInterval(examCheck(axiosCancel), 10000)
-
-        examCheckInterval.current = id
-
+        examCheck(axiosCancel)
         return () => {
             axiosCancel.cancel('ComponentMount')
-            clearInterval(examCheckInterval.current)
         }
-    })
+    },[])
 
     return(
         <div className="container shadow rounded text-center p-3 mt-5 bg-light">

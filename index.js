@@ -99,7 +99,7 @@ app.get('/exams/:examcode', async (req, res) =>{
     let code = req.params.examcode
     await dbconnect.selectWholeExam(code)
         .then(results => {
-            res.json({examName: results[0], questions: results[1]})
+            res.json({name: results[0], questions: results[1]})
         })
     
 })
@@ -112,6 +112,8 @@ app.post('/login', async (req, res) => {
         }else{
             res.json({access: false})
         }
+    }else{
+        res.json({access: false})
     }
 })
 
