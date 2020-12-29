@@ -13,7 +13,7 @@ export default function ExamModify(){
     const [questions, setQuestions] = useState(null)
 
     useEffect(() => {
-        API.get(`/exams/${examCode}`)
+        API.get(`/exams/${examCode.examName}`)
             .then(result => {
                 if(!result){
                     setWarning('A vizsgához nem tartoznak még kérdések.')
@@ -43,6 +43,8 @@ export default function ExamModify(){
                     })
                     setQuestions(questionList)
                 }
+                console.log(examName)
+                console.log(questions)
             }).catch(err => console.log(err))
     })
 
@@ -50,20 +52,7 @@ export default function ExamModify(){
         <div>
             <h1>{examName}</h1>
 
-            {
-                questions.length === 0 ? 
-                    <h3>{warning}</h3> 
-                : 
-                    <ul>{
-                        questions.map((value, index) =>{
-                            return (
-                                <li><ul>
-                                    
-                                </ul></li>
-                            )
-                        })
-                    }</ul>
-            }
+            
         </div>
     )
 }

@@ -33,43 +33,15 @@ module.exports = class Connection {
     }
 
     selectWholeExam = async (exam_itemcode) =>{
-        let exam = await this.con('exams').select('exam_id, exam_name')
-            .where(this.con.raw('exam_itemcode = ?', exam_itemcode)).first()
-
+        let exam = await this.con('exams').select(['exam_id', 'exam_name'])
+            .where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+        console.log(exam)
         let questionList = []
 
-        await this.con('questions').where(this.con.raw('exam_id = ?', exam[0]))
-            .then((questions) => {
-                questions.forEach(async (question) => {
-                    let currentQuestion
-                    let answerList = []
-                    await this.con('results').select('results_id, result_text, correct')
-                        .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
-                        .where(this.con.raw('exam_prepare.question_id = ?', question.question_id))
-                        .then((answers) => {
-                            answers.forEach((answer) => {
-                                let currentAnswer = {
-                                    id: answer.results_id,
-                                    answer: answer.result_text,
-                                    correct: answer.correct
-                                }
-                                answerList.push(currentAnswer)
-                            });
-                    }).catch((err) => console.log(err))
-                    
-                    currentQuestion = {
-                        question_id: question.question_id,
-                        exam_itemcode: exam_itemcode,
-                        question: question.question_name,
-                        points: question.points,
-                        answers: answerList,
-                        picture: question.picture
-                    }
-                    questionList.push(currentQuestion)
-                })
-        }).catch((err) => console.log(err))
+        let questions = await this.con('questions').where(this.con.raw('exam_id = ?', [exam.exam_id]))
+        console.log(questions[0])
         
-        return [exam[1], questionList]
+        return [exam.exam_name, questionList]
     }
 
     findUser = async (cardNum) =>{
@@ -96,7 +68,6 @@ module.exports = class Connection {
                 }
             }).catch((err) => console.log(err))
         return exists
-        
     }
 
     insertExam = async (arr) =>{
