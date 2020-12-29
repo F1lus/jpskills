@@ -3,9 +3,9 @@ import API from '../BackendAPI'
 
 export default function Login(){
 
-    const [cardNum, setCardNum] = useState('')
-    const [password, setPassword] = useState('')
-    const [alert, setAlert] = useState('')
+    const [cardNum, setCardNum] = useState(null)
+    const [password, setPassword] = useState(null)
+    const [alert, setAlert] = useState(null)
 
     function handleSubmit(event){
         event.preventDefault()
@@ -20,6 +20,7 @@ export default function Login(){
 
         API.post('/login', data, {headers: {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}})
             .then(result => {
+                console.log(result.data.access)
                 if(result.data.access){
                     window.location.reload()
                 }else{
