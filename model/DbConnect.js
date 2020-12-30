@@ -1,4 +1,4 @@
-module.exports = class Connection {
+class Connection {
 
     constructor(){
         this.con = require('knex')({
@@ -159,3 +159,5 @@ module.exports = class Connection {
     }
     
 }
+
+module.exports = new Connection()

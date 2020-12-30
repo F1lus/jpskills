@@ -11,7 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pdftron/webviewer": "^7.2.0",
     "@primer/octicons-react": "^11.1.0",
     "axios-react": "^2.0.2",
     "body-parser": "^1.19.0",
@@ -22,7 +21,6 @@
     "express-fileupload": "^1.2.0",
     "express-mysql-session": "^2.1.4",
     "express-session": "^1.17.1",
-    "file-type": "^16.0.1",
     "jest-dom": "^4.0.0",
     "knex": "^0.21.12",
     "mysql": "^2.18.1",
@@ -32,8 +30,7 @@
     "react-bootstrap": "^1.4.0",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.1",
-    "socket.io": "^3.0.4"
+    "react-scripts": "^4.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.8",
