@@ -94,22 +94,42 @@ export default function CreateTest(props){
     }
 
     return (
-        <div className="container shadow rounded p-3 text-center bg-light">
-            <h1><p>Új vizsga feltöltése:</p></h1>
+        <div className="container shadow rounded p-3 bg-light">
+            <h1 className="text-center m-3"><p>Új vizsga feltöltése:</p></h1>
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <input type="text" name="item" onChange={handleChange} value={item || ''} className="form-control" placeholder="A vizsga terméke"/>
+                <div className="form-group m-auto">
+                    <input type="text" name="item" onChange={handleChange} value={item || ''} required autoComplete="off"/>
+                    <label htmlFor="item" className="label-name">
+                        <span className="content-name">
+                            A vizsga terméke:
+                        </span>
+                    </label>
                 </div>
-                <div className="form-group">
-                    <input type="text" name="formNum" onChange={handleChange} value={formNum || ''} className="form-control" placeholder="A termék formlapszáma"/>
+                <div className="form-group m-auto">
+                    <input type="text" name="formNum" onChange={handleChange} value={formNum || ''} required autoComplete="off"/>
+                    <label htmlFor="formNum" className="label-name">
+                        <span className="content-name">
+                            A termék formlapszáma:
+                        </span>
+                    </label>
                 </div>
-                <div className="form-group">
-                    <input type="text" name="examName" onChange={handleChange} value={examName || ''} className="form-control" placeholder="A vizsga megnevezése"/>
+                <div className="form-group m-auto">
+                    <input type="text" name="examName" onChange={handleChange} value={examName || ''} required autoComplete="off"/>
+                    <label htmlFor="examName" className="label-name">
+                        <span className="content-name">
+                            A vizsga megnevezése:
+                        </span>
+                    </label>
                 </div>
-                <div className="form-group">
-                    <input type="text" name="comment" onChange={handleChange} value={comment || ''} className="form-control" placeholder="Megjegyzés (nem kötelező)"/>
+                <div className="form-group m-auto">
+                    <input type="text" name="comment" onChange={handleChange} value={comment || ''} autoComplete="off"/>
+                    <label htmlFor="comment" className="label-name">
+                        <span className="content-name">
+                            Megjegyzés:
+                        </span>
+                    </label>
                 </div>
-                <div className="form-group">
+                <div className="container mx-auto mb-2 text-center">
                     <input type="file" onChange={handleChange} id="pdfFel" name="examDoc"/>
                     <label htmlFor="pdfFel" className="btn btn-outline-primary rounded">
                         <i>
@@ -119,9 +139,11 @@ export default function CreateTest(props){
                         Válassza ki a feltöltendő fájlt!
                     </label>
                 </div>
-                <button type="submit" className="btn btn-warning" value="Létrehozás">Feltöltés!</button>
+                <div className="container text-center">
+                    <button type="submit" className="btn btn-warning" value="Létrehozás">Feltöltés!</button>
+                </div>
             </form>
-            {result ? <h3 className="alert alert-secondary mt-3" role="alert">{result}</h3> : <></>}
+            {result ? <h3 className="alert alert-secondary mt-3 text-center" role="alert">{result}</h3> : <></>}
         </div>
     )
     
