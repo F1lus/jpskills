@@ -14,5 +14,9 @@ export const Elemek = [
     {
         title: 'Vizsgák',
         url: '/exams'
+    },
+    {
+        title: 'Kijelentkezés',
+        url: '/logout'
     }
 ]

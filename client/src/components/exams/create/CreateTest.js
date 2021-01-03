@@ -129,7 +129,7 @@ export default function CreateTest(props){
                         </span>
                     </label>
                 </div>
-                <div className="container mx-auto mb-2 text-center">
+                <div className="container mx-auto mb-2 mt-3 text-center">
                     <input type="file" onChange={handleChange} id="pdfFel" name="examDoc"/>
                     <label htmlFor="pdfFel" className="btn btn-outline-primary rounded">
                         <i>
