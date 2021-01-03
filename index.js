@@ -1,9 +1,9 @@
-//Szükséges külső modulok
+//Külső modulok
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 
-//Szükséges saját modulok (route-ok)
+//Saját modulok (route-ok)
 const getExams = require('./routes/GetExams')
 const learnExams = require('./routes/LearnExam')
 const uploadExam = require('./routes/UploadExam')
@@ -26,7 +26,7 @@ app.use(cors({
 app.use(bodyParser.json())
 
 
-//Route kezelés
+//Routing
 app.use(getExams)
 
 app.use(learnExams)
