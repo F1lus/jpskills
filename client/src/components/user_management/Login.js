@@ -14,11 +14,12 @@ export default function Login(){
             return
         }
 
-        const data = new FormData()
-        data.append('cardNum', cardNum)
-        data.append('password', password)
+        const data = {
+            cardNum: cardNum,
+            password: password
+        }
 
-        API.post('/login', data, {headers: {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}})
+        API.post('/login', data)
             .then(result => {
                 console.log(result.data.access)
                 if(result.data.access){
@@ -52,7 +53,7 @@ export default function Login(){
                     {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : <></>}
                     <form onSubmit={handleSubmit}>
                         <div className="form-group m-auto">
-                            <input type="text" name="cardNum" autoComplete="off" value={cardNum || ''} onChange={handleChange} required/>
+                            <input type="text" name="cardNum" value={cardNum || ''} onChange={handleChange} required/>
                             <label htmlFor="cardNum" className="label-name">
                                 <span className="content-name">
                                     Kártyaszám:
@@ -68,7 +69,7 @@ export default function Login(){
                             </label>
                         </div>
                         <div className="text-center">
-                            <button className="btn btn-warning mt-3" onClick={handleChange}>Bejelentkezés</button>
+                            <input type='submit' className="btn btn-warning mt-3" value='Bejelentkezés'/>
                         </div>
                     </form>
                 </div>

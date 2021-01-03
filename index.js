@@ -1,6 +1,7 @@
 //Szükséges külső modulok
 const express = require('express')
 const cors = require('cors')
+const bodyParser = require('body-parser')
 
 //Szükséges saját modulok (route-ok)
 const getExams = require('./routes/GetExams')
@@ -8,7 +9,6 @@ const learnExams = require('./routes/LearnExam')
 const uploadExam = require('./routes/UploadExam')
 const getExamContent = require('./routes/GetExamContent')
 const login = require('./routes/Login')
-const checker = require('./routes/LoginChecker')
 
 //Előkészítés
 const app = express()
@@ -23,20 +23,19 @@ app.use(cors({
     credentials: true
 }))
 
-app.use(express.json())
+app.use(bodyParser.json())
+
 
 //Route kezelés
-app.get('/exams', getExams)
+app.use(getExams)
 
-app.get('/exams/learn/:examCode', learnExams)
+app.use(learnExams)
 
-app.post('/exams/upload', uploadExam)
+app.use(uploadExam)
 
-app.get('/exams/:examcode', getExamContent)
+app.use(getExamContent)
 
-app.post('/login', login)
-
-app.get('/login', checker)
+app.use(login)
 
 //Szerver setup
 app.listen(PORT, () => {

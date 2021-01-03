@@ -2,12 +2,18 @@ const exam = require('express').Router()
 
 const dbconnect = require('../model/DbConnect')
 
-exam.get('/exams/:examcode', async (req, res) =>{
+exam.get('/exams/:examcode', (req, res) =>{
     let code = req.params.examcode
-    await dbconnect.selectWholeExam(code)
-        .then(results => {
-            res.json({name: results[0], questions: results[1]})
-        })
+    dbconnect.selectWholeExam(code)
+    .then(results => {
+        if(results){
+            if(results[1]){
+                res.json({name: results[0], questions: results[1]})
+            }else{
+                res.json({name: results[0]})
+            }
+        }
+    })
 })
 
 module.exports = exam

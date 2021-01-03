@@ -35,8 +35,8 @@ class Connection {
     selectTest = (questions) => {
         return new Promise(resolve => {
             let questionList = new Array()
-            questions.forEach(async (question, index) => {
-                await this.con('exam_prepare')
+            questions.forEach( (question, index) => {
+                this.con('exam_prepare')
                 .where(this.con.raw('question_id = ?', [question.question_id])).then(answersIdList =>{
                     this.selectResults(answersIdList).then(result => {
                         questionList.push({
@@ -59,8 +59,8 @@ class Connection {
     selectResults = (answersIdList) =>{
         return new Promise((resolve) =>{
             let result = new Array()
-            answersIdList.forEach(async (answerId, index) =>{
-                await this.con('results').where(this.con.raw('results_id = ?', [answerId.results_id])).first()
+            answersIdList.forEach((answerId, index) =>{
+                this.con('results').where(this.con.raw('results_id = ?', [answerId.results_id])).first()
                 .then(answer => {
                     result.push({
                         id: answer.results_id,
@@ -75,15 +75,23 @@ class Connection {
         })
     }
 
-    selectWholeExam = async (exam_itemcode) =>{
-        let exam = await this.con('exams').select(['exam_id', 'exam_name'])
+    selectWholeExam = (exam_itemcode) =>{
+        return new Promise((resolve) => {
+            this.con('exams').select(['exam_id', 'exam_name'])
             .where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
-
-        let questions = await this.con('questions').where(this.con.raw('exam_id = ?', [exam.exam_id]))
-
-        let questionList = await this.selectTest(questions)
-        
-        return [exam.exam_name, questionList]
+            .then(exam => {
+                this.con('questions').where(this.con.raw('exam_id = ?', [exam.exam_id]))
+                .then(questions => {
+                    if(questions.length !== 0){
+                        this.selectTest(questions).then(questionList => {
+                            resolve([exam.exam_name, questionList])
+                        })
+                    }else{
+                        resolve([exam.exam_name])
+                    }
+                }).catch(err => console.log(err))
+            }).catch(err => console.log(err))
+        })
     }
 
     findUser = async (cardNum) =>{
