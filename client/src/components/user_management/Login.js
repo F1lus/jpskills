@@ -52,7 +52,7 @@ export default function Login(){
                     {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : <></>}
                     <form onSubmit={handleSubmit}>
                         <div className="form-group m-auto">
-                            <input type="text" name="cardNum" value={cardNum || ''} onChange={handleChange} required/>
+                            <input type="text" name="cardNum" autoComplete="off" value={cardNum || ''} onChange={handleChange} required/>
                             <label htmlFor="cardNum" className="label-name">
                                 <span className="content-name">
                                     Kártyaszám:
@@ -68,7 +68,7 @@ export default function Login(){
                             </label>
                         </div>
                         <div className="text-center">
-                            <input type='submit' className="btn btn-warning mt-3" value='Bejelentkezés'/>
+                            <button className="btn btn-warning mt-3">Bejelentkezés</button>
                         </div>
                     </form>
                 </div>
