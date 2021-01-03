@@ -6,7 +6,6 @@ const session = require('../model/SessionSetup')
 login.use(session)
 
 login.post('/login', async (req, res) => {
-    console.log(req.body)
     if(req.body.cardNum && req.body.password){
         if(await dbconnect.userExists(req.body.cardNum, req.body.password)){
             req.session.cardNum = req.body.cardNum
@@ -27,8 +26,6 @@ login.get('/login', async (req, res) =>{
                 req.session.perm = userData[1]
             }
             res.status(200).json({user: req.session.user, permission: req.session.perm})
-        }else{
-            console.log('hello')
         }
 })
 

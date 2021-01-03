@@ -9,6 +9,7 @@ const learnExams = require('./routes/LearnExam')
 const uploadExam = require('./routes/UploadExam')
 const getExamContent = require('./routes/GetExamContent')
 const login = require('./routes/Login')
+const logout = require('./routes/Logout')
 
 //Előkészítés
 const app = express()
@@ -36,6 +37,8 @@ app.use(uploadExam)
 app.use(getExamContent)
 
 app.use(login)
+
+app.use(logout)
 
 //Szerver setup
 app.listen(PORT, () => {

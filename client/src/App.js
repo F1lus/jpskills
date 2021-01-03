@@ -122,6 +122,20 @@ export default function App(){
             return <Redirect to='/' from='/exams/modify/:examName' />
           }
         }} />
+
+        <Route exact path='/logout' component={() =>{
+          if(loggedIn){
+            API.post('/logout', {logoutCommand: 'jp-logout'})
+            .then(result => {
+              if(result.data.completed){
+                window.location.reload()
+              }
+            })
+            .catch(err => console.log(err))
+          }else{
+            return <Redirect to='/' from='/logout' />
+          }
+        }} />
       </Switch>
     </div>
   )
