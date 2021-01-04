@@ -6,7 +6,6 @@ import API from '../../BackendAPI'
 
 export default function Learn(props) {
     
-    const user = props.user
     const [exams, setExams] = useState([])
 
     useEffect(() => {
@@ -37,19 +36,19 @@ export default function Learn(props) {
             <div className="container" id="content">
                 <div className="row">
                 {exams.map((exam,index)=>{
-                        return(
-                            <div className="card m-2 shadow text-center" key={index}>
-                                <div className="card-body">
-                                    <p className="card-text">{exam[0]}</p>
-                                    <NavLink to={`/exams/learn/${exam[1]}`}>
-                                        <button type="button" className="btn btn-outline-primary">
-                                            Megtanulom!
-                                        </button>
-                                    </NavLink>
-                                </div>
+                    return(
+                        <div className="card m-2 shadow text-center" key={index}>
+                            <div className="card-body">
+                                <p className="card-text">{exam[0]}</p>
+                                <NavLink to={`/exams/learn/${exam[1]}`}>
+                                    <button type="button" className="btn btn-outline-primary">
+                                        Megtanulom!
+                                    </button>
+                                </NavLink>
                             </div>
-                        )
-                    })}
+                        </div>
+                    )
+                })}
                 </div>
             </div>
         </div>

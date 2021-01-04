@@ -1,18 +1,40 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 export default function ListManager(props){
 
-    const [list, setList] = useState(props.list)
+    const [list, setList] = useState([])
+
+    useEffect(() =>{
+        setList(props.list)
+    }, [props.list])
 
     return (
         <ul>
-            <li>{list[0]}</li>
             {
+                list.length === 0 ? <li>Nincs megjeleníthető tartalom</li> :
                 list.map((el, index) => {
-                    if(typeof el === []){
-                        return <li><ListManager key={index} list={el} /></li>
+                    if(Array.isArray(el)){
+                        if(index === 3){
+                            return (
+                            <div key={index}>
+                                <div>A kérdéshez tartozó válaszok:</div>
+                                <ListManager list={el} />
+                            </div>)
+                        }else{
+                            return <ListManager key={index} list={el} />
+                        }
                     }else{
-                        return <li key={index}>{el}</li>
+                        if(index === 0){
+                            return <li key={index}>Azonosító: {el}</li>
+                        }else if(index === 2){
+                            if(typeof el == 'boolean'){
+                                return <li key={index}>Érték: {el ? "Helyes" : "Helytelen"}</li>
+                            }else{
+                                return <li key={index}>Pontszám: {el}</li>
+                            }
+                        }else{
+                            return <li key={index}>Szöveg: {el}</li>
+                        }
                     }
                 })
             }

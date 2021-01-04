@@ -12,6 +12,7 @@ import ExamModify from './components/exams/modify/ExamModify'
 import CustomNavbar from './components/nav/CustomNavbar';
 import Home from './components/home/Home';
 import Learn from './components/exams/learn/Learn';
+import ExamDocument from './components/exams/learn/ExamDocument'
 import Profile from './components/user_management/Profile';
 
 export default function App(){
@@ -90,7 +91,7 @@ export default function App(){
             return (
               <div>
                 <CustomNavbar/>
-                <Learn user={user}/>
+                <Learn/>
               </div>
             )
           }else{
@@ -103,6 +104,7 @@ export default function App(){
             return (
               <div>
                 <CustomNavbar/>
+                <ExamDocument />
               </div>
             )
           }else{

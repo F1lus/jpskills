@@ -13,8 +13,15 @@ class Connection {
         })
     }
 
-    selectExamDoc = async (exam_itemcode) => {
-        return await this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+    selectExamDoc = (exam_itemcode) => {
+        return new Promise((resolve, reject) => {
+            this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+            .then(result => {
+                resolve(result.exam_docs)
+            }).catch(err => {
+                reject(err)
+            })
+        })
     }
 
     selectExams = async () =>{

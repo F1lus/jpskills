@@ -7,8 +7,7 @@ import API from '../../BackendAPI'
 
 export default function ExamModify(){
 
-    // eslint-disable-next-line
-    const [examCode, setExamCode] = useState(useParams())
+    const [examCode,] = useState(useParams())
 
     const [warning, setWarning] = useState(null)
     const [examName, setExamName] = useState(null)
@@ -23,14 +22,12 @@ export default function ExamModify(){
                         result.data.questions.forEach((question, index) => {
                             let answers = []
                             question.answers.forEach(answer => {
-                                answers.push(answer.id, answer.text, answer.correct)
+                                answers.push([answer.id, answer.text, answer.correct])
                             })
-                            list.push([question.id, question.name, question.points, 
-                                'A kérdéshez tartozó válaszok', ...answers])
+                            list.push([question.id, question.name, question.points, answers])
                         })
                         setExamName(result.data.name)
-                        setQuestions(state => [...state, ...list])
-                        console.log(questions)
+                        setQuestions(list)
                     }else{
                         setExamName(result.data.name)
                         setQuestions([])
@@ -38,7 +35,7 @@ export default function ExamModify(){
                     }
                 }
             }).catch(err => console.log(err))
-    },[])
+    },[examCode.examName])
 
     return (
         <div>
