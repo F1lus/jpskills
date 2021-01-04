@@ -41,7 +41,7 @@ export default function ExamModify(){
         <div>
             <h1>{examName}</h1>
 
-            <ListManager list={questions} />
+            {questions.length === 0 ? warning: <ListManager list={questions} />}
 
             <button>Kérdés hozzáadása</button>
         </div>

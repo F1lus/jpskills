@@ -52,7 +52,7 @@ export default function ExamDocument(){
         }).catch(err => {
             console.log(err)
         })
-    },[pageNum])
+    },[exam.examCode])
 
     return (
         <div>

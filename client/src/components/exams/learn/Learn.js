@@ -29,7 +29,7 @@ export default function Learn(props) {
         return () =>{
             axiosCancel.cancel('Unmount')
         }
-    })
+    },[])
 
     return (
         <div className="d-flex align-items-center justify-content-center vh-100">
