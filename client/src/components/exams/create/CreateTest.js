@@ -12,6 +12,7 @@ export default function CreateTest(props){
     const [comment, setComment] = useState(null)
     const [examDoc, setExamDoc] = useState(null)
     const [result, setResult] = useState(null)
+    const [items, setItems] = useState(['távirányító', 'szekrény', 'telefontok'])
     
 
     function handleChange(event){
@@ -97,22 +98,26 @@ export default function CreateTest(props){
         <div className="container shadow rounded p-3 bg-light">
             <h1 className="text-center m-3"><p>Új vizsga feltöltése:</p></h1>
             <form onSubmit={handleSubmit}>
-                <div className="form-group m-auto">
+                {/*<div className="form-group m-auto">
                     <input type="text" name="item" onChange={handleChange} value={item || ''} required autoComplete="off"/>
                     <label htmlFor="item" className="label-name">
                         <span className="content-name">
                             A vizsga terméke:
                         </span>
                     </label>
+                </div>*/}
+                
+                <div className="container text-center mb-2">
+                    <select className="rounded pl-2 w-25">
+                        <option selected>A vizsga terméke</option>
+                        {items.map((elem, index) =>{
+                            return(
+                                <option value={index}>{elem}</option>
+                            )
+                        })}
+                    </select>
                 </div>
-                <div className="form-group m-auto">
-                    <input type="text" name="formNum" onChange={handleChange} value={formNum || ''} required autoComplete="off"/>
-                    <label htmlFor="formNum" className="label-name">
-                        <span className="content-name">
-                            A termék formlapszáma:
-                        </span>
-                    </label>
-                </div>
+                
                 <div className="form-group m-auto">
                     <input type="text" name="examName" onChange={handleChange} value={examName || ''} required autoComplete="off"/>
                     <label htmlFor="examName" className="label-name">
@@ -131,13 +136,13 @@ export default function CreateTest(props){
                 </div>
                 <div className="container mx-auto mb-2 mt-3 text-center">
                     <input type="file" onChange={handleChange} id="pdfFel" name="examDoc"/>
-                    <label htmlFor="pdfFel" className="btn btn-outline-primary rounded">
+                    {/*<label htmlFor="pdfFel" className="btn btn-outline-primary rounded">
                         <i>
                             <UploadIcon size={24} />
                             &nbsp;
                         </i>
                         Válassza ki a feltöltendő fájlt!
-                    </label>
+                    </label>*/}
                 </div>
                 <div className="container text-center">
                     <button type="submit" className="btn btn-warning" value="Létrehozás">Feltöltés!</button>

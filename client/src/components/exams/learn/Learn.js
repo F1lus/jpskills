@@ -32,7 +32,7 @@ export default function Learn(props) {
     },[])
 
     return (
-        <div className="d-flex align-items-center justify-content-center vh-100">
+        <div className="container text-center p-3">
             <div className="container" id="content">
                 <div className="row">
                 {exams.map((exam,index)=>{

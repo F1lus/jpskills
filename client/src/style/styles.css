@@ -30,23 +30,6 @@ p{
     font-weight: bold;
 }
 
-.webviewer{
-    height: 600px;
-}
-
-#pdf{
-    z-index: 2;
-    position: absolute;
-    height: max-content;
-    margin: auto;
-    display: none;
-    background-color: rgba(0, 0, 0, 0.25);
-}
-
-#content{
-    z-index: 1;
-}
-
 /*home*/
 #ido{
     letter-spacing: 5px;
@@ -68,8 +51,55 @@ p{
 }
 
 /*vizsgak*/
-input[type="file"]{
-    display: none;
+select{
+    height: 40px;
+    text-align: center;
+    vertical-align: center;
+    border-color: rgb(8,8,124);
+    color: rgb(8,8,124);
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+select:hover{
+    background-color: rgb(8,8,124);
+    color: white;
+    font-size: 17px;
+    transition: all 0.4s ease;
+}
+
+select option{
+    background-color: #f8f9fa;
+    color: rgb(8,8,124);
+}
+
+#pdfFel{
+    color: rgb(8,8,124);
+}
+
+::-webkit-file-upload-button{
+    text-align: center;
+    vertical-align: center;
+    color: rgb(8,8,124);
+    border: 1px solid rgb(8,8,124);
+    background-color: #f8f9fa;
+    height: 40px;
+    border-radius: 7px;
+    outline: none;
+    cursor: pointer;
+}
+
+::-webkit-file-upload-button:hover{
+    text-align: center;
+    vertical-align: center;
+    color: #f8f9fa;
+    border: 1px solid rgb(8,8,124);
+    background-color: rgb(8,8,124);
+    transition: all 0.4s ease;
+    height: 40px;
+    border-radius: 7px;
+    font-size: 17px;
+    outline: none;
 }
 
 /*form animation*/

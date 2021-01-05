@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Learn from '../exams/learn/Learn';
 
 export default function Profile(props) {
 
@@ -7,9 +8,13 @@ export default function Profile(props) {
     const [vizsgaszam, setVizsgaszam] = useState(5)
     
     return (
-        <div className="d-flex align-items-center text-center vh-100">
-            <div className="container shadow rounded text-center bg-light">
+        <div className="container text-center">
+            <div className="container shadow rounded text-center bg-light mb-5">
                 <span id="nev"><p>{nev}</p></span>
+            </div>
+
+            <div className="container shadow rounded text-center bg-light">
+                <Learn/>
             </div>
         </div>
     )

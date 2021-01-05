@@ -8,10 +8,6 @@ export const Elemek = [
         url: '/profile'
     },
     {
-        title: 'Tananyagok',
-        url: '/exams/learn'
-    },
-    {
         title: 'Vizsgák',
         url: '/exams'
     },
