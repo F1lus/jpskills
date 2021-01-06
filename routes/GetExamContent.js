@@ -13,7 +13,7 @@ exam.get('/exams/:examcode', (req, res) =>{
                 res.json({name: results[0]})
             }
         }
-    })
+    }).catch(err => console.log(err))
 })
 
 module.exports = exam

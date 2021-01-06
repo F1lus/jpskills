@@ -1,28 +1,36 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import API from '../../BackendAPI'
-import { UploadIcon } from '@primer/octicons-react';
+//import { UploadIcon } from '@primer/octicons-react';
 
 export default function CreateTest(props){
 
     const permission = props.permission
 
     const [item, setItem] = useState(null)
-    const [formNum, setFormNum] = useState(null)
     const [examName, setExamName] = useState(null)
     const [comment, setComment] = useState(null)
     const [examDoc, setExamDoc] = useState(null)
     const [result, setResult] = useState(null)
-    const [items, setItems] = useState(['távirányító', 'szekrény', 'telefontok'])
+    const [items, setItems] = useState([])
     
+    useEffect(() =>{
+        API.get('/products')
+        .then(result => {
+            if(result.data.products){
+                setItems(result.data.products)
+            }
+        }) 
+    }, [items])
 
     function handleChange(event){
         switch(event.target.name){
             case 'item':
-                setItem(event.target.value)
-                break
-            case 'formNum':
-                setFormNum(event.target.value)
-                break
+                if(event.target.value === 'A vizsga terméke'){
+                    break
+                }else{
+                    setItem(event.target.value)
+                    break
+                }
             case 'examName':
                 setExamName(event.target.value)
                 break
@@ -49,14 +57,13 @@ export default function CreateTest(props){
             setResult('A fájl feltöltése kötelező!')
             return
         }
-        if(item == null || formNum == null || examName == null){
+        if(item == null || examName == null){
             setResult('Legalább egy kötelező mező üresen maradt!')
             return
         }
 
         const data = new FormData()
         data.append('item', item)
-        data.append('formNum', formNum)
         data.append('examName', examName)
         data.append('comment', comment)
         data.append('examDoc', examDoc)
@@ -71,8 +78,8 @@ export default function CreateTest(props){
                     case 200:
                         setResult('A vizsga felvétele sikeres volt!')
                         break
-                    case 500:
-                        setResult('A vizsga felvétele nem sikerült! Próbálja újra később!')
+                    case 'invalid_file_size':
+                        setResult('A fájl mérete meghaladta a maximális méretet! (2 Mb)')
                         break
                     case 'mysql_form_exists_error':
                         setResult('A vizsga felvétele nem sikerült, mivel a megadott formalapszámhoz már hozzárendeltek egy vizsgát!')
@@ -108,11 +115,11 @@ export default function CreateTest(props){
                 </div>*/}
                 
                 <div className="container text-center mb-2">
-                    <select className="rounded pl-2 w-25">
-                        <option selected>A vizsga terméke</option>
-                        {items.map((elem, index) =>{
+                    <select name="item" className="rounded pl-2 w-25" onChange={handleChange}>
+                        <option defaultValue={-1}>A vizsga terméke</option>
+                        {items.length === 0 ? <></> : items.map((elem, index) =>{
                             return(
-                                <option value={index}>{elem}</option>
+                                <option key={index} value={elem[1]}>{elem[0]}</option>
                             )
                         })}
                     </select>

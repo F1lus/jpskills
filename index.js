@@ -10,6 +10,7 @@ const uploadExam = require('./routes/UploadExam')
 const getExamContent = require('./routes/GetExamContent')
 const login = require('./routes/Login')
 const logout = require('./routes/Logout')
+const products = require('./routes/GetProducts')
 
 //Előkészítés
 const app = express()
@@ -35,6 +36,8 @@ app.use(learnExams)
 app.use(uploadExam)
 
 app.use(getExamContent)
+
+app.use(products)
 
 app.use(login)
 

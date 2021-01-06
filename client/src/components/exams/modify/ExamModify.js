@@ -38,7 +38,7 @@ export default function ExamModify(){
     },[examCode.examName])
 
     return (
-        <div>
+        <div className="container bg-light">
             <h1>{examName}</h1>
 
             {questions.length === 0 ? warning: <ListManager list={questions} />}

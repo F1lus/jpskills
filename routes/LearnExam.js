@@ -1,6 +1,5 @@
 const exams = require('express').Router()
 const dbconnect = require('../model/DbConnect')
-const buffer = require('buffer').Buffer
 
 exams.get('/exams/learn/:examCode', async (req, res) => {
     dbconnect.selectExamDoc(req.params.examCode).then(result => {
