@@ -12,15 +12,13 @@ export default function Exams(props){
     function examCheck(axiosCancel){
         API.get('/exams', {cancelToken: axiosCancel.token})
             .then(res => {
-                if(!res.data.names || !res.data.codes){
+                if(!res.data.examInfo){
                     setExams([])
                 }else{
                     let examList = []
-                    for(let i = 0; i<res.data.names.length; i++){
-                        let exam = []
-                        exam.push(res.data.names[i], res.data.codes[i])
-                        examList.push(exam)
-                    }
+                    res.data.examInfo.forEach((exam) => {
+                        examList.push([exam[0], exam[1], exam[2], exam[3], exam[4]])
+                    })
                     setExams(examList)
                 }
             })
@@ -41,20 +39,32 @@ export default function Exams(props){
             {exams.length === 0 ? <h1>Jelenleg nem találhatóak elérhető vizsgák</h1> : exams.map((exam, index)=>{
                 if(props.permission === 'admin'){
                     return(
-                        <NavLink key={index} to={`/exams/modify/${exam[1]}`}>
-                            <button className="btn btn-outline-primary m-2">
-                                {exam[0]}
-                            </button>
-                        </NavLink>
-                        
+                        <div key={index}>
+                            <NavLink to={`/exams/modify/${exam[1]}`}>
+                                <button className="btn btn-outline-primary m-2">
+                                    {exam[0]}
+                                </button>
+                            </NavLink>
+                            {exam[2] !== 'null' ? (
+                            <div>
+                                Megjegyzés: {exam[2]}
+                            </div>) : null}
+                            <p>Készült: {exam[4]}</p>
+                        </div>
                     )
                 }else{
                     return(
-                        <NavLink key={index} to={`/exams/${exam[1]}`}>
-                            <button className="btn btn-outline-primary m-2">
-                                {exam[0]}
-                            </button>
-                        </NavLink>
+                        <div>
+                            <NavLink key={index} to={`/exams/${exam[1]}`}>
+                                <button className="btn btn-outline-primary m-2">
+                                    {exam[0]}
+                                </button>
+                            </NavLink>
+                            {exam[2] !== 'null' ? (
+                            <div>
+                                Megjegyzés: {exam[2]}
+                            </div>) : null}
+                        </div>
                     )
                 }
             })}

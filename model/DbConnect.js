@@ -48,7 +48,10 @@ class Connection {
                 results.forEach((result) => {
                     const examData = {
                         examName: result.exam_name,
-                        itemCode: result.exam_itemcode
+                        itemCode: result.exam_itemcode,
+                        comment: result.exam_notes,
+                        creator: result.exam_creator,
+                        created: result.exam_creation_time
                     }
                     exams.push(examData)
                 })

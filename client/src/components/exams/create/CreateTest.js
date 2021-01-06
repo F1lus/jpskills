@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from 'react'
+import Axios from 'axios'
+
 import API from '../../BackendAPI'
 //import { UploadIcon } from '@primer/octicons-react';
 
@@ -14,12 +16,15 @@ export default function CreateTest(props){
     const [items, setItems] = useState([])
     
     useEffect(() =>{
-        API.get('/products')
+        const axiosCancel = Axios.CancelToken.source()
+        API.get('/products', {cancelToken: axiosCancel.token})
         .then(result => {
             if(result.data.products){
                 setItems(result.data.products)
             }
-        }) 
+        }).catch(err => console.log(err))
+
+        return () => axiosCancel.cancel('Unmount')
     }, [items])
 
     function handleChange(event){

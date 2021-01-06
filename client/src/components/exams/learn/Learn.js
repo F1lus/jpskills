@@ -12,15 +12,13 @@ export default function Learn(props) {
         const axiosCancel = Axios.CancelToken.source()
         API.get('/exams', {cancelToken: axiosCancel.token})
             .then(res => {
-                if(!res.data.names || !res.data.codes){
+                if(!res.data.examInfo){
                     setExams([])
                 }else{
                     let examList = []
-                    for(let i = 0; i<res.data.names.length; i++){
-                        let exam = []
-                        exam.push(res.data.names[i], res.data.codes[i])
-                        examList.push(exam)
-                    }
+                    res.data.examInfo.forEach((exam) => {
+                        examList.push([exam[0], exam[1], exam[2], exam[3], exam[4]])
+                    })
                     setExams(examList) 
                 }
             })
@@ -40,6 +38,8 @@ export default function Learn(props) {
                         <div className="card m-2 shadow text-center" key={index}>
                             <div className="card-body">
                                 <p className="card-text">{exam[0]}</p>
+                                {exam[2] !== 'null' ? <p className="card-text">Megjegyzés: {exam[2]}</p> : null}
+                                <p className="card-text">Készült: {exam[4]}</p>
                                 <NavLink to={`/exams/learn/${exam[1]}`}>
                                     <button type="button" className="btn btn-outline-primary">
                                         Megtanulom!
