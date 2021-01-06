@@ -49,7 +49,7 @@ export default function Login(){
         <div className="d-flex align-items-center vh-100">
                 <div className="container shadow rounded bg-light p-3">
                     <h1 className="text-center"><p>Jelentkezzen be!</p></h1>
-                    {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : <></>}
+                    {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : null}
                     <form onSubmit={handleSubmit}>
                         <div className="form-group m-auto">
                             <input type="text" name="cardNum" autoComplete="off" value={cardNum || ''} onChange={handleChange} required/>
