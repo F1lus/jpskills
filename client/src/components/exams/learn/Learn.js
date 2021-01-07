@@ -37,8 +37,8 @@ export default function Learn(props) {
                 <div className="row">
                 {exams.map((exam,index)=>{
                     return(
-                        <Bounce left>
-                        <div className="card m-2 shadow text-center" key={index}>
+                        <Bounce left key={index}>
+                        <div className="card m-2 shadow text-center">
                             <div className="card-body">
                                 <p className="card-text">{exam[0]}</p>
                                 <p className="card-text">Megjegyzés: {exam[2] !== 'null' ? exam[2] : ' - '}</p>

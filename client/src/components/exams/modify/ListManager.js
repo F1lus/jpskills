@@ -8,43 +8,39 @@ export default function ListManager(props){
 
     useEffect(() =>{
         setList(props.list)
-        console.log(props.isAnswer)
-    }, [])
+    }, [props.list])
 
     return (
         <ul>
             {
                 list.length === 0 ? <li>Nincs megjeleníthető tartalom</li> :
-                list.map((el, index) => {
-                    if(Array.isArray(el)){
+                list.map((el) => {
+                    return el.map((inner, index) => {
                         if(index === 3){
                             return (
                             <div key={index}>
                                 <div>A kérdéshez tartozó válaszok:</div>
-                                <ListManager list={el} isAnswer={true}/>
+                                <ListManager list={inner} isAnswer={true}/>
                             </div>)
-                        }else{
-                            return <ListManager key={index} list={el} />
-                        }
-                    }else{
-                        if(index === 0){
-                            return <li key={index}>Azonosító: {el}</li>
+                        }else if(index === 0){
+                            return <li key={index}>Azonosító: {inner}</li>
                         }else if(index === 2){
-                            if(typeof el === 'boolean'){
-                                return <li key={index}>Érték: <Modifier value={el} isAnswer={true}/></li>
+                            if(typeof inner === 'boolean'){
+                                return <li key={index}>Érték: <Modifier index={el[0]} value={inner} isAnswer={true}/></li>
                             }else{
-                                return <li key={index}>Pontszám: <Modifier value={el}/></li>
+                                return <li key={index}>Pontszám: <Modifier index={el[0]} value={inner}/></li>
                             }
                         }else{
                             if(props.isAnswer){
-                                return <li key={index}>Szöveg: {el}</li>
+                                return <li key={index}>Válasz: <Modifier index={el[0]} value={inner} isAnswer={true}/></li>
                             }else{
-                                return <li key={index}>KÉRDÉS: {el}</li>
+                                return <li key={index}>Kérdés: <Modifier index={el[0]} value={inner} /></li>
                             }
                         }
-                    }
+                    })
+                    
                 })
-            }
+}
         </ul>
     )
 }
