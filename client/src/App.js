@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import {Switch, Route, Redirect} from 'react-router-dom'
-//import socketIOClient from 'socket.io-client'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style/styles.css';
@@ -11,7 +10,6 @@ import ExamWrapper from './components/exams/ExamWrapper'
 import ExamModify from './components/exams/modify/ExamModify'
 import CustomNavbar from './components/nav/CustomNavbar';
 import Home from './components/home/Home';
-import Learn from './components/exams/learn/Learn';
 import ExamDocument from './components/exams/learn/ExamDocument'
 import Profile from './components/user_management/Profile';
 
@@ -86,19 +84,6 @@ export default function App(){
           }
         }}/>
 
-        <Route exact path='/exams/learn' component={() =>{
-          if(loggedIn){
-            return (
-              <div>
-                <CustomNavbar/>
-                <Learn/>
-              </div>
-            )
-          }else{
-            return <Redirect to='/' from='/exams/modify/:examName' />
-          }
-        }} />
-
         <Route exact path='/exams/learn/:examCode' component={() =>{
           if(loggedIn){
             return (
@@ -108,7 +93,7 @@ export default function App(){
               </div>
             )
           }else{
-            return <Redirect to='/' from='/exams/modify/:examName' />
+            return <Redirect to='/' from='/exams/learn/:examCode' />
           }
         }} />
 
@@ -121,7 +106,7 @@ export default function App(){
               </div>
             )
           }else{
-            return <Redirect to='/' from='/exams/modify/:examName' />
+            return <Redirect to='/' from='/profile' />
           }
         }} />
 
