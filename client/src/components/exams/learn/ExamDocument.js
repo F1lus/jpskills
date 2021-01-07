@@ -7,6 +7,9 @@ import API from '../../BackendAPI'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
+import { ArrowLeftIcon, ArrowRightIcon } from '@primer/octicons-react';
+import { NavLink } from 'react-router-dom';
+
 export default function ExamDocument(){
 
     const [examDoc, setExamDoc] = useState('/')
@@ -55,16 +58,30 @@ export default function ExamDocument(){
     },[exam.examCode])
 
     return (
-        <div>
-          <Document
-            file={{data: examDoc}}
-            onLoadSuccess={page => onDocumentLoadSuccess(page.numPages)}
-          >
-            <Page pageNumber={currentPage} />
-          </Document>
-          <p>{currentPage} / {pageNum}</p>
-          <button onClick={prevPage}>Előző oldal</button>
-          <button onClick={nextPage}>Következő oldal</button>
+        <div className="container text-center bg-light rounded shadow mb-3 p-2">
+            <Document file={{data: examDoc}} onLoadSuccess={page => onDocumentLoadSuccess(page.numPages)}>
+                <Page pageNumber={currentPage} />
+            </Document>
+
+            <p>{currentPage} / {pageNum}</p>
+
+            <button className="btn btn-outline-primary m-2" onClick={prevPage}>
+                <i>
+                    <ArrowLeftIcon/>
+                </i>
+            </button>
+
+            <NavLink to="/profile">
+                <button className="btn btn-outline-primary m-2">
+                    Vissza!
+                </button>
+            </NavLink>
+
+            <button className="btn btn-outline-primary m-2" onClick={nextPage}>
+                <i>
+                    <ArrowRightIcon/>
+                </i>
+            </button>
         </div>
       );
 }

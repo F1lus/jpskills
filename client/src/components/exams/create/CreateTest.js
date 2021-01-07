@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react'
 import Axios from 'axios'
 
 import API from '../../BackendAPI'
-//import { UploadIcon } from '@primer/octicons-react';
 
 export default function CreateTest(props){
 
@@ -107,20 +106,11 @@ export default function CreateTest(props){
     }
 
     return (
-        <div className="container shadow rounded p-3 bg-light">
+        <div className="container shadow rounded p-3 bg-light mt-3">
             <h1 className="text-center m-3"><p>Új vizsga feltöltése:</p></h1>
             <form onSubmit={handleSubmit}>
-                {/*<div className="form-group m-auto">
-                    <input type="text" name="item" onChange={handleChange} value={item || ''} required autoComplete="off"/>
-                    <label htmlFor="item" className="label-name">
-                        <span className="content-name">
-                            A vizsga terméke:
-                        </span>
-                    </label>
-                </div>*/}
-                
                 <div className="container text-center mb-2">
-                    <select name="item" className="rounded pl-2 w-25" onChange={handleChange}>
+                    <select name="item" className="pl-2 w-50" onChange={handleChange}>
                         <option defaultValue={-1}>A vizsga terméke</option>
                         {items.length === 0 ? <></> : items.map((elem, index) =>{
                             return(
@@ -148,13 +138,6 @@ export default function CreateTest(props){
                 </div>
                 <div className="container mx-auto mb-2 mt-3 text-center">
                     <input type="file" onChange={handleChange} id="pdfFel" name="examDoc"/>
-                    {/*<label htmlFor="pdfFel" className="btn btn-outline-primary rounded">
-                        <i>
-                            <UploadIcon size={24} />
-                            &nbsp;
-                        </i>
-                        Válassza ki a feltöltendő fájlt!
-                    </label>*/}
                 </div>
                 <div className="container text-center">
                     <button type="submit" className="btn btn-warning" value="Létrehozás">Feltöltés!</button>
