@@ -1,12 +1,15 @@
 import React, {useEffect, useState} from 'react'
 
+import Modifier from './Modifier'
+
 export default function ListManager(props){
 
     const [list, setList] = useState([])
 
     useEffect(() =>{
         setList(props.list)
-    }, [props.list])
+        console.log(props.isAnswer)
+    }, [])
 
     return (
         <ul>
@@ -18,7 +21,7 @@ export default function ListManager(props){
                             return (
                             <div key={index}>
                                 <div>A kérdéshez tartozó válaszok:</div>
-                                <ListManager list={el} />
+                                <ListManager list={el} isAnswer={true}/>
                             </div>)
                         }else{
                             return <ListManager key={index} list={el} />
@@ -27,13 +30,17 @@ export default function ListManager(props){
                         if(index === 0){
                             return <li key={index}>Azonosító: {el}</li>
                         }else if(index === 2){
-                            if(typeof el == 'boolean'){
-                                return <li key={index}>Érték: {el ? "Helyes" : "Helytelen"}</li>
+                            if(typeof el === 'boolean'){
+                                return <li key={index}>Érték: <Modifier value={el} isAnswer={true}/></li>
                             }else{
-                                return <li key={index}>Pontszám: {el}</li>
+                                return <li key={index}>Pontszám: <Modifier value={el}/></li>
                             }
                         }else{
-                            return <li key={index}>Szöveg: {el}</li>
+                            if(props.isAnswer){
+                                return <li key={index}>Szöveg: {el}</li>
+                            }else{
+                                return <li key={index}>KÉRDÉS: {el}</li>
+                            }
                         }
                     }
                 })

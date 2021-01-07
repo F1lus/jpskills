@@ -36,37 +36,23 @@ export default function Exams(props){
     return(
         <div className="container shadow rounded text-center p-3 mt-5 mb-3 bg-light">
             <h1><p>Elérhető vizsgák:</p></h1>
-            {exams.length === 0 ? <h1>Jelenleg nem találhatóak elérhető vizsgák</h1> : exams.map((exam, index)=>{
-                if(props.permission === 'admin'){
-                    return(
-                        <div key={index}>
-                            <NavLink to={`/exams/modify/${exam[1]}`}>
-                                <button className="btn btn-outline-primary m-2">
-                                    {exam[0]}
-                                </button>
-                            </NavLink>
-                            {exam[2] !== 'null' ? (
-                            <div>
-                                Megjegyzés: {exam[2]}
-                            </div>) : null}
-                            <p>Készült: {exam[4]}</p>
-                        </div>
-                    )
-                }else{
-                    return(
+            {exams.length === 0 ? <h1>Jelenleg nem találhatóak elérhető vizsgák</h1> : exams.map((exam, index)=>{                
+                return(
+                    <div key={index}>
+                        <NavLink to={
+                            props.permission === 'admin' ? 
+                            `/exams/modify/${exam[1]}` : `/exams/${exam[1]}`
+                        }>
+                            <button className="btn btn-outline-primary m-2">
+                                {exam[0]}
+                            </button>
+                        </NavLink>
                         <div>
-                            <NavLink key={index} to={`/exams/${exam[1]}`}>
-                                <button className="btn btn-outline-primary m-2">
-                                    {exam[0]}
-                                </button>
-                            </NavLink>
-                            {exam[2] !== 'null' ? (
-                            <div>
-                                Megjegyzés: {exam[2]}
-                            </div>) : null}
+                            Megjegyzés: {exam[2] !== 'null' ? exam[2] : ' - '}
                         </div>
-                    )
-                }
+                        <p>Készült: {exam[4]}</p>
+                    </div>
+                )
             })}
         </div>
     )

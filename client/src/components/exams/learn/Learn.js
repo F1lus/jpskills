@@ -41,7 +41,7 @@ export default function Learn(props) {
                         <div className="card m-2 shadow text-center" key={index}>
                             <div className="card-body">
                                 <p className="card-text">{exam[0]}</p>
-                                {exam[2] !== 'null' ? <p className="card-text">Megjegyzés: {exam[2]}</p> : null}
+                                <p className="card-text">Megjegyzés: {exam[2] !== 'null' ? exam[2] : ' - '}</p>
                                 <p className="card-text">Készült: {exam[4]}</p>
                                 <NavLink to={`/exams/learn/${exam[1]}`}>
                                     <button type="button" className="btn btn-outline-primary">
