@@ -7,10 +7,10 @@ exam.get('/exams/:examcode', (req, res) =>{
     dbconnect.selectWholeExam(code)
     .then(results => {
         if(results){
-            if(results[1]){
-                res.json({name: results[0], questions: results[1]})
+            if(Array.isArray(results[1])){
+                res.json({name: results[0], questions: results[1], notes: results[2], active: results[3], points: results[4]})
             }else{
-                res.json({name: results[0]})
+                res.json({name: results[0], notes: results[1], active: results[2], points: results[3]})
             }
         }
     }).catch(err => console.log(err))

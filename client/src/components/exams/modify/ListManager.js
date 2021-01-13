@@ -1,14 +1,23 @@
 import React, {useEffect, useState} from 'react'
+import AddAnswer from './AddAnswer'
 
 import Modifier from './Modifier'
 
 export default function ListManager(props){
 
     const [list, setList] = useState([])
+    const [display, setDisplay] = useState(false)
+    const [questionId,] = useState(props.questionId)
+    var updated = false
+
+    function modifyDisplay(event){
+        event.preventDefault()
+        setDisplay(state => !state)
+    }
 
     useEffect(() =>{
         setList(props.list)
-    }, [props.list])
+    }, [props.list, updated])
 
     return (
         <ul>
@@ -20,10 +29,10 @@ export default function ListManager(props){
                             return (
                             <div key={index}>
                                 <div>A kérdéshez tartozó válaszok:</div>
-                                <ListManager list={inner} isAnswer={true}/>
+                                <ListManager questionId={el[0]} list={inner} isAnswer={true}/>
                             </div>)
                         }else if(index === 0){
-                            return <li key={index}>Azonosító: {inner}</li>
+                            return (<li key={index}>Azonosító: {inner} <button>Törlés</button></li>)
                         }else if(index === 2){
                             if(typeof inner === 'boolean'){
                                 return <li key={index}>Érték: <Modifier index={el[0]} value={inner} isAnswer={true}/></li>
@@ -38,9 +47,14 @@ export default function ListManager(props){
                             }
                         }
                     })
-                    
-                })
-}
+                })    
+            }
+            <AddAnswer questionId={questionId} display={display} updated={updated}/>
+            {
+                props.isAnswer ? <li><button onClick={modifyDisplay}>{
+                    !display ? 'Válasz hozzáadása' : 'Mégse'
+                }</button></li> : null
+            }       
         </ul>
     )
 }

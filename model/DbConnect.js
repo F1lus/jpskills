@@ -13,6 +13,194 @@ class Connection {
         })
     }
 
+    insertAnswer = (user, examCode, questionId, answerText, value) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(result => {
+                if(result){
+                    this.con('questions').select('question_id').where(this.con.raw('question_id = ?', [questionId]))
+                    .first().then(result => {
+                        if(result){
+                            let arr = [answerText, value]
+                            this.con.raw('INSERT INTO results (result_text, correct) VALUES(?)', [arr])
+                            .then(response => {
+                                if(response){
+                                    let arr2 = [questionId, response[0].insertId]
+                                    this.con.raw('INSERT INTO exam_prepare (question_id, results_id) VALUES(?)',[arr2])
+                                    .then(res => {
+                                        if(res){
+                                            this.updateExamModify(user, examCode)
+                                            .then(res => resolve(res != null))
+                                            .catch(err => reject(err))
+                                        }
+                                    }).catch(err => reject(err))
+                                }
+                            }).catch(err => reject(err))
+                        }else{
+                            resolve(false)
+                        }
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    updateAnswer = (user, examCode, answerId, value, isBoolean) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(result => {
+                if(result){
+                    this.con('results').select(['result_text', 'correct', 'results_id'])
+                    .where(this.con.raw('results_id = ?', [answerId]))
+                    .first().then(result => {
+                        if(result){
+                            if(!isBoolean){
+                                if(result.result_text === value){
+                                    resolve(false)
+                                }else{
+                                    this.con('results').update({
+                                        result_text: value
+                                    }).where(this.con.raw('results_id = ?', [answerId]))
+                                    .then(response => {
+                                        if(response){
+                                            this.updateExamModify(user, examCode)
+                                            .then(res => resolve(res != null))
+                                            .catch(err => reject(err))
+                                        }
+                                    }).catch(err => reject(err))
+                                }
+                            }else{
+                                if(result.correct === value){
+                                    resolve(false)
+                                }else{
+                                    this.con('results').update({
+                                        correct: value
+                                    }).where(this.con.raw('results_id = ?', [answerId]))
+                                    .then(response => {
+                                        if(response){
+                                            this.updateExamModify(user, examCode)
+                                            .then(res => resolve(res != null))
+                                            .catch(err => reject(err))
+                                        }
+                                    }).catch(err => reject(err))
+                                }
+                            }        
+                        }else{
+                            resolve(false)
+                        }
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err)) 
+        })
+    }
+
+    updateQuestion = (user, examCode, questionId, value, isNumber) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(result => {
+                if(result){
+                    this.con('questions').select(['question_name', 'points', 'question_id'])
+                        .where(this.con.raw('question_id = ?', [questionId]))
+                        .first().then(result => {
+                            if(result){
+                                if(!isNumber){
+                                    if(result.question_name === value){
+                                        resolve(false)
+                                    }else{
+                                        this.con('questions').update({
+                                            question_name: value
+                                        }).where(this.con.raw('question_id = ?', [questionId]))
+                                        .then(response => {
+                                            if(response){
+                                                this.updateExamModify(user, examCode)
+                                                .then(res => resolve(res != null))
+                                                .catch(err => reject(err))
+                                            }
+                                        }).catch(err => reject(err))
+                                    }
+                                }else{
+                                    if(result.points == value){
+                                        resolve(false)
+                                    }else{
+                                        this.con('questions').update({
+                                            points: value
+                                        }).where(this.con.raw('question_id = ?', [questionId]))
+                                        .then(response => {
+                                            if(response){
+                                                this.updateExamModify(user, examCode)
+                                                .then(res => resolve(res != null))
+                                                .catch(err => reject(err))
+                                            }
+                                        }).catch(err => reject(err))
+                                    }
+                                }
+                                
+                            }else{
+                                resolve(false)
+                            }
+                        }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err)) 
+        })
+    }
+
+    updateExam = (user, examName, examCode, notes, status, points) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode)
+            .then(result => {
+                if(result){
+                    this.con('exams').update({
+                        exam_name: examName,
+                        exam_notes: notes,
+                        exam_status: status,
+                        points_required: points,
+                        exam_modifier: user,
+                        exam_modified_time: this.con.fn.now()
+                    })
+                    .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
+                        if(response){
+                            resolve(true)
+                        }else{
+                            resolve(false)
+                        }
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    checkExamCreator = (user, examCode) => {
+        return new Promise((resolve, reject) => {
+            this.con('exams').select(['exam_name', 'exam_creator'])
+            .where(this.con.raw('exam_itemcode = ?', [examCode]))
+            .first().then(result => {
+                if(result){
+                    if(result.exam_creator !== user){
+                        reject('wrong_user')
+                    }else{
+                        resolve(true)
+                    }
+                }else{
+                    reject('no_exam')
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    updateExamModify = (user, examCode) => {
+        return new Promise((resolve, reject) => {
+            this.con('exams').update({
+                exam_modifier: user,
+                exam_modified_time: this.con.fn.now()
+            })
+            .where(this.con.raw('exam_itemcode = ?', [examCode]))
+            .then(response => {
+                if(response){
+                    resolve(true)
+                }else{
+                    reject('exams_no_update')
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
     selectProducts = () => {
         return new Promise((resolve, reject) => {
             this.con('items').select(['ProductName', 'Itemcode'])
@@ -63,7 +251,7 @@ class Connection {
     selectTest = (questions) => {
         return new Promise((resolve, reject) => {
             let questionList = new Array()
-            questions.forEach( (question, index) => {
+            questions.forEach( (question) => {
                 this.con('exam_prepare')
                 .where(this.con.raw('question_id = ?', [question.question_id])).then(answersIdList =>{
                     this.selectResults(answersIdList).then(result => {
@@ -105,14 +293,14 @@ class Connection {
 
     selectWholeExam = (exam_itemcode) =>{
         return new Promise((resolve, reject) => {
-            this.con('exams').select(['exam_id', 'exam_name'])
+            this.con('exams').select(['exam_id', 'exam_name', 'exam_notes', 'exam_status', 'points_required'])
             .where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
             .then(exam => {
                 this.con('questions').where(this.con.raw('exam_id = ?', [exam.exam_id]))
                 .then(questions => {
                     if(questions.length !== 0){
                         this.selectTest(questions).then(questionList => {
-                            resolve([exam.exam_name, questionList])
+                            resolve([exam.exam_name, questionList, exam.exam_notes, exam.exam_status, exam.points_required])
                         })
                     }else{
                         resolve([exam.exam_name])

@@ -1,8 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 
 export default function AddQuestion(props){
 
-    const [renderedQuestions, setRenderedQuestions] = useState([])
     const [question, setQuestion] = useState(null)
     const [points, setPoints] = useState(null)
 
@@ -19,27 +18,17 @@ export default function AddQuestion(props){
         }
     }
 
-    useEffect(() => {
-        let result = []
-        for(let i = 0; i < props.count; i++){
-            result.push(
-                <form key={i}>
+    return (
+        <div>
+           { props.display ? 
+                <form>
                     <input type='text' name='question' 
                         value={question || ''} placeholder='A kérdés szövege' onChange={handleChange}/>
                     <input type='number' name='points' 
                         value={points || ''} placeholder='Pontszám' onChange={handleChange}/>
                     <input type='submit' value='Feltöltés' />
                 </form>
-            )
-        }
-        setRenderedQuestions(result)
-    }, [props.count])
-
-    return (
-        <div>
-           { renderedQuestions.length === 0 ? null : renderedQuestions.map(value => {
-               return value
-           })} 
+            : null} 
         </div>
     )
 }
