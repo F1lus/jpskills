@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react'
 
 import {NavLink} from 'react-router-dom'
 
+import {io} from 'socket.io-client'
+
 import Axios from 'axios'
 import API from '../BackendAPI'
 
@@ -26,6 +28,11 @@ export default function Exams(props){
     }
 
     useEffect(() => {
+        const socket = io('http://localhost:5000', {
+            withCredentials: true
+        })
+        socket.on('hello', (arg) => console.log(arg))
+        
         const axiosCancel = Axios.CancelToken.source()
         examCheck(axiosCancel)
         return () => {
