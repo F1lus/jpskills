@@ -3,7 +3,7 @@ import {useParams} from 'react-router-dom'
 
 import {Document, Page, pdfjs} from 'react-pdf'
 
-import API from '../../BackendAPI'
+import {io} from 'socket.io-client'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
@@ -49,12 +49,17 @@ export default function ExamDocument(){
     }
 
     useEffect(() => {
-        API.get(`/exams/learn/${exam.examCode}`)
-        .then(result => {
-            setExamDoc(result.data.document.data)
-        }).catch(err => {
-            console.log(err)
+        const socket = io('http://localhost:5000', {withCredentials:true})
+
+        socket.emit('examDoc-signal', exam.examCode)
+
+        socket.on('examDoc-emitter', document => {
+            if(document){
+                setExamDoc(document)
+            }
         })
+
+        return () => socket.disconnect()
     },[exam.examCode])
 
     return (

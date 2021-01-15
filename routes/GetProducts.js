@@ -1,11 +1,9 @@
-const products = require('express').Router()
-
 const dbconnect = require('../model/DbConnect')
 
-products.get('/products', (req, res) => {
+function getProducts(socket){
     dbconnect.selectProducts().then(result => {
-        res.json({products: result})
+        socket.emit('products-emitter', result)
     }).catch(err => console.log(err))
-})
+}
 
-module.exports= products
+module.exports= getProducts

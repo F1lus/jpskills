@@ -7,20 +7,23 @@ const socketio = require('socket.io')
 
 //Saját modulok (route-ok)
 const getExams = require('./routes/GetExams')
-const learnExams = require('./routes/LearnExam')
+const getExamDoc = require('./routes/LearnExam')
 const uploadExam = require('./routes/UploadExam')
 const getExamContent = require('./routes/GetExamContent')
 const login = require('./routes/Login')
 const logout = require('./routes/Logout')
-const products = require('./routes/GetProducts')
+const getProducts = require('./routes/GetProducts')
 const updater = require('./routes/ExamUpdate')
+
+const session = require('./model/SessionSetup')
 
 //Előkészítés
 const app = express()
+const server = http.createServer(app)
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000
 
-const io = socketio(http.createServer(app), {
+const io = socketio(server, {
     cors:{
         origin: 'http://localhost:3000',
         methods: ['GET', 'POST'],
@@ -28,6 +31,9 @@ const io = socketio(http.createServer(app), {
         credentials: true
     }
 })
+
+//Express-session + Socket.io kompatibilitás
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next)
 
 //Middleware-ek
 app.use(cors({
@@ -40,22 +46,35 @@ app.use(cors({
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+io.use(wrap(session))
+
 
 //Routing
 
 io.on('connection', (socket) => {
-    socket.emit('hello', 'world')
+    let examInterval = null
+
+    socket.on('exams-get-signal', () => {
+        getExams(socket)
+        examInterval = setInterval(() => getExams(socket), 10000)
+    })
+
+    socket.on('get-products', () => {
+        getProducts(socket)
+    })
+
+    socket.on('examDoc-signal', examCode => {
+        getExamDoc(socket, examCode)
+    })
+
+    socket.on('disconnect', () => {
+        clearInterval(examInterval)
+    })
 })
-
-app.use(getExams)
-
-app.use(learnExams)
 
 app.use(uploadExam)
 
 app.use(getExamContent)
-
-app.use(products)
 
 app.use(updater)
 
@@ -64,6 +83,4 @@ app.use(login)
 app.use(logout)
 
 //Szerver setup
-app.listen(PORT, () => {
-    console.log(`Online: http://localhost:${PORT}`)
-})
+server.listen(PORT)

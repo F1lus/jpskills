@@ -4,41 +4,35 @@ import {NavLink} from 'react-router-dom'
 
 import {io} from 'socket.io-client'
 
-import Axios from 'axios'
-import API from '../BackendAPI'
-
 export default function Exams(props){
 
     const [exams, setExams] = useState([])
-
-    function examCheck(axiosCancel){
-        API.get('/exams', {cancelToken: axiosCancel.token})
-            .then(res => {
-                if(!res.data.examInfo){
-                    setExams([])
-                }else{
-                    let examList = []
-                    res.data.examInfo.forEach((exam) => {
-                        examList.push([exam[0], exam[1], exam[2], exam[3], exam[4]])
-                    })
-                    setExams(examList)
-                }
-            })
-            .catch(err => console.log(err))
-    }
 
     useEffect(() => {
         const socket = io('http://localhost:5000', {
             withCredentials: true
         })
-        socket.on('hello', (arg) => console.log(arg))
-        
-        const axiosCancel = Axios.CancelToken.source()
-        examCheck(axiosCancel)
+
+        socket.emit('exams-get-signal')
+
+        socket.on('exams-get-emitter', (dbExams) => {
+            if(dbExams){
+                let examList = []
+                
+                if(JSON.stringify(exams) !== JSON.stringify(dbExams)){
+                    dbExams.forEach((exam) => {
+                        examList.push([exam[0], exam[1], exam[2], exam[3], exam[4]])
+                    })
+                    setExams(examList)
+                }
+            }else{
+                setExams([])
+            }
+        })
         return () => {
-            axiosCancel.cancel('ComponentMount')
+            socket.disconnect()
         }
-    },[])
+    })
 
     return(
         <div className="container shadow rounded text-center p-3 mt-5 mb-3 bg-light">

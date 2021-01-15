@@ -3,33 +3,37 @@ import { NavLink } from 'react-router-dom';
 
 import { Bounce } from 'react-reveal';
 
-import Axios from 'axios'
-import API from '../../BackendAPI'
+import {io} from 'socket.io-client'
 
 export default function Learn(props) {
     
     const [exams, setExams] = useState([])
 
     useEffect(() => {
-        const axiosCancel = Axios.CancelToken.source()
-        API.get('/exams', {cancelToken: axiosCancel.token})
-            .then(res => {
-                if(!res.data.examInfo){
-                    setExams([])
-                }else{
-                    let examList = []
-                    res.data.examInfo.forEach((exam) => {
+        const socket = io('http://localhost:5000', {
+            withCredentials: true
+        })
+
+        socket.emit('exams-get-signal')
+
+        socket.on('exams-get-emitter', (dbExams) => {
+            if(dbExams){
+                let examList = []
+                
+                if(JSON.stringify(exams) !== JSON.stringify(dbExams)){
+                    dbExams.forEach((exam) => {
                         examList.push([exam[0], exam[1], exam[2], exam[3], exam[4]])
                     })
-                    setExams(examList) 
+                    setExams(examList)
                 }
-            })
-            .catch(err => console.log(err))
-
-        return () =>{
-            axiosCancel.cancel('Unmount')
+            }else{
+                setExams([])
+            }
+        })
+        return () => {
+            socket.disconnect()
         }
-    },[])
+    })
 
     return (
         <div className="container text-center p-3 mb-3">

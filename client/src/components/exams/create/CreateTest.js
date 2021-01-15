@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
-import Axios from 'axios'
+
+import {io} from 'socket.io-client'
 
 import API from '../../BackendAPI'
 
@@ -15,16 +16,20 @@ export default function CreateTest(props){
     const [items, setItems] = useState([])
     
     useEffect(() =>{
-        const axiosCancel = Axios.CancelToken.source()
-        API.get('/products', {cancelToken: axiosCancel.token})
-        .then(result => {
-            if(result.data.products){
-                setItems(result.data.products)
-            }
-        }).catch(err => console.log(err))
+        const socket = io('http://localhost:5000', {withCredentials: true})
 
-        return () => axiosCancel.cancel('Unmount')
-    }, [items])
+        socket.emit('get-products')
+
+        socket.on('products-emitter', products => {
+            if(products){
+                setItems(products)
+            }else{
+                setItems([])
+            }
+        })
+
+        return () => socket.disconnect()
+    }, [item, examName, comment, examDoc, result])
 
     function handleChange(event){
         switch(event.target.name){

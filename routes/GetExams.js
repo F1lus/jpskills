@@ -1,4 +1,3 @@
-const exams = require('express').Router()
 const dbconnect = require('../model/DbConnect')
 
 function dateFormat(rawDate){
@@ -17,21 +16,21 @@ function dateFormat(rawDate){
     return [year, month, day].join('.')
 }
 
-exams.get('/exams', (req, res) => {
+function getExams(socket){
     dbconnect.selectExams()
     .then(results => {
-        let exams = []
+        let examResult = []
         results.forEach(result => {
-            exams.push([result.examName, 
+            examResult.push([result.examName, 
                 result.itemCode, 
                 result.comment, 
                 result.creator, 
                 dateFormat((''+result.created))
             ])
         })
-        res.json({examInfo: exams})
+        socket.emit('exams-get-emitter', examResult)
     })
-    .catch(err => {console.log(err)})
-})
+    .catch(err => socket.emit('exams-get-emitter', examResult))
+}
 
-module.exports = exams
+module.exports = getExams
