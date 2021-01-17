@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import {useParams} from 'react-router-dom'
 
+import {io} from 'socket.io-client'
+
 import ListManager from './ListManager'
 
 import API from '../../BackendAPI'
@@ -12,33 +14,38 @@ export default function ExamModify(props){
 
     const [warning, setWarning] = useState(null)
     const [examProps, setExamProps] = useState([])
+    const [status, setStatus] = useState(null)
     const [questions, setQuestions] = useState([])
     const [maxPoints, setMaxPoints] = useState(0)
     const [displayQuestion, setDisplayQuestion] = useState(false)
     const [modifyResult, setModifyResult] = useState(null)
 
     useEffect(() => {
-        API.get(`/exams/${examCode.examName}`)
-            .then(result => {
-                if(result){
-                    if(result.data.questions){
-                        let list = []
-                        result.data.questions.forEach((question) => {
-                            let answers = []
-                            question.answers.forEach(answer => {
-                                answers.push([answer.id, answer.text, answer.correct])
-                            })
-                            setMaxPoints(points => points + question.points)
-                            list.push([question.id, question.name, question.points, answers])
-                        })
-                        setQuestions(list)
-                    }else{
-                        setQuestions([])
-                        setWarning('Nincsenek megjeleníthető kérdések.')
-                    }
-                    setExamProps([result.data.name, result.data.notes, result.data.active, result.data.points])
-                }
-            }).catch(err => console.log(err))
+        const socket = io('http://localhost:5000', {withCredentials:true})
+
+        socket.emit('request-exam-content', examCode.examName)
+
+        socket.on('exam-content', (examName, questionList, notes, status, points) => {
+            let list = []
+            questionList.forEach((question) => {
+                let answers = []
+                question.answers.forEach(answer => {
+                    answers.push([answer.id, answer.text, answer.correct])
+                })
+                setMaxPoints(points => points + question.points)
+                list.push([question.id, question.name, question.points, answers])
+            })
+            setQuestions(list)
+            setStatus(status)
+            setExamProps([examName, notes, status, points])
+        })
+
+        socket.on('exam-content-no-question', (examName, notes, status, points) => {
+            setQuestions([])
+            setWarning('Nincsenek megjeleníthető kérdések.')
+            setStatus(status)
+            setExamProps([examName, notes, status, points])
+        })
     }, [examCode.examName])
 
     function handleSubmit(event){
@@ -66,7 +73,10 @@ export default function ExamModify(props){
                 setExamProps(list)
                 break
             case 'examStatus':
-                list[2] = (event.target.value === 'Aktív')
+                if(event.target.value === 'Állapotváltás...'){
+                    break
+                }
+                list[2] = event.target.value
                 setExamProps(list)
                 break
             case 'examMinPoints':
@@ -99,9 +109,11 @@ export default function ExamModify(props){
                 <input type='text' name='examNotes' 
                     value={examProps[1] || ''} placeholder='A vizsga megjegyzése' onChange={handleChange}
                 />
+                <p>A vizsga jelenlegi állapota: {status ? 'Aktív' : 'Inaktív'}</p>
                 <select name='examStatus' className="rounded pl-2 w-25" onChange={handleChange}>
-                    <option defaultValue={examProps[2]}>{examProps[2] ? 'Aktív':'Inaktív'}</option>
-                    <option value={!examProps[2]}>{!examProps[2] ? 'Aktív':'Inaktív'}</option>
+                    <option value={null}>Állapotváltás...</option>
+                    <option value={true}>Aktív</option>
+                    <option value={false}>Inaktív</option>
                 </select>
                 <h5>Maximum: {maxPoints}</h5>
                 <input type='number' name='examMinPoints' 

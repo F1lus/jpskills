@@ -1,17 +1,10 @@
 const logout = require('express').Router()
 
-const session = require('../model/SessionSetup')
-
-logout.use(session)
-
 logout.post('/logout', (req, res) => {
-    if(req.session.user && req.session.cardNum && req.session.perm && req.body.logoutCommand){
-        if(req.body.logoutCommand === 'jp-logout'){
+    if(req.session.cardNum && req.session.user && req.session.perm && req.body.cmd){
+        if(req.body.cmd === 'jp-logout'){
             req.session.destroy(err => {
-                if(err){
-                    console.log(err)
-                }
-                res.json({completed: true})
+                err ? console.log(err) : res.json({success: true})
             })
         }
     }

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {Switch, Route, Redirect} from 'react-router-dom'
+import {io} from 'socket.io-client'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style/styles.css';
@@ -20,14 +21,20 @@ export default function App(){
   const [permission, setPermission] = useState(null)
 
   useEffect(() =>{
-    API.get('/login')
-      .then(result =>{
-        setLoggedIn(result.data.user && result.data.permission)
-        if(loggedIn){
-          setUser(result.data.user)
-          setPermission(result.data.permission)
-        }
-      }).catch(err => console.log(err))
+    const socket = io('http://localhost:5000', {withCredentials:true})
+
+    socket.emit('request-login-info')
+
+    socket.on('login-info', (username, perm) => {
+      console.log(username, perm)
+      setLoggedIn(username && perm)
+      if(loggedIn){
+        setUser(username)
+        setPermission(perm)
+      }
+    })
+
+    return () => socket.disconnect()
   })
 
   return (
@@ -112,13 +119,12 @@ export default function App(){
 
         <Route exact path='/logout' component={() =>{
           if(loggedIn){
-            API.post('/logout', {logoutCommand: 'jp-logout'})
-            .then(result => {
-              if(result.data.completed){
-                window.location.reload()
-              }
-            })
-            .catch(err => console.log(err))
+           API.post('/logout', {cmd: 'jp-logout'})
+           .then(response => {
+             if(response.data.success){
+              window.location.reload()
+             }
+           }).catch(err => console.log(err))
           }else{
             return <Redirect to='/' from='/logout' />
           }
