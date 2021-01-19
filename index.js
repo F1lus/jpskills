@@ -75,6 +75,10 @@ io.on('connection', (socket) => {
         getExamContent(socket, examCode)
     })
 
+    socket.on('exam-modified', () => {
+        socket.emit('server-accept')
+    })
+
     socket.on('disconnect', () => {
         clearInterval(examInterval)
     })

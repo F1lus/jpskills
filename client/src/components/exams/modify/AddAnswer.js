@@ -8,7 +8,6 @@ export default function AddAnswer(props){
     const [param,] = useState(useParams())
     const [answer, setAnswer] = useState(null)
     const [isCorrect, setCorrect] = useState(true)
-    const [updated, setUpdated] = useState(null)
 
     function handleChange(event){
         switch(event.target.name){
@@ -16,7 +15,7 @@ export default function AddAnswer(props){
                 setAnswer(event.target.value)
                 break
             case 'value':
-                setCorrect(event.target.value === 'Helyes')
+                setCorrect(event.target.value)
                 break
             default:
                 return
@@ -25,13 +24,14 @@ export default function AddAnswer(props){
 
     function handleSubmit(event){
         event.preventDefault()
-        if(props.questionId && answer && isCorrect != null){
-            console.log(isCorrect)
+        if(props.questionId && answer && isCorrect){
             API.post(`/exams/modify/${param.examName}`, 
                 {questionId: props.questionId, answerText: answer, value: isCorrect})
             .then(result => {
-                setUpdated(result)
-                setAnswer(null)
+                if(result){
+                    props.socket.emit('exam-modified')
+                    setAnswer(null)
+                }
             })
         }
     }
@@ -43,8 +43,8 @@ export default function AddAnswer(props){
                     <input type='text' name='answer' 
                         value={answer || ''} placeholder='A kérdés szövege' onChange={handleChange}/>
                     <select name='value' className="rounded pl-2 w-25" onChange={handleChange}>
-                        <option defaultValue={true}>Helyes</option>
-                        <option value={false}>Helytelen</option>
+                        <option value={1}>Helyes</option>
+                        <option value={0}>Helytelen</option>
                     </select>
                     <input type='submit' value='Feltöltés' />
                 </form> 

@@ -14,7 +14,7 @@ export default function Profile(props) {
             </div>
 
             <div className="container shadow rounded text-center bg-light">
-                <Learn/>
+                <Learn />
             </div>
         </div>
     )

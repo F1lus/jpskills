@@ -143,11 +143,9 @@ class Connection {
 
     updateExam = (user, examName, examCode, notes, status, points) => {
         return new Promise((resolve, reject) => {
-            console.log(status)
             this.checkExamCreator(user, examCode)
             .then(result => {
                 if(result){
-                    console.log(status)
                     this.con('exams').update({
                         exam_name: examName,
                         exam_notes: notes,

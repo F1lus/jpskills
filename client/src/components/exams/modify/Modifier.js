@@ -10,7 +10,6 @@ export default function Modifier(props){
     const [index,] = useState(props.index)
     const [value, setValue] = useState(props.value || false)
     const [isAnswer,] = useState(props.isAnswer || false)
-    const [modifyResult, setModifyResult] = useState(null)
 
     useEffect(() => {
         let valueType = typeof props.value
@@ -21,10 +20,12 @@ export default function Modifier(props){
         }else if(valueType === 'string'){
             setType('text')
         }
-    },[props.value, index, modifyResult])
+    },[props.value, index])
 
     function handleChange(event){
-        console.log(event.target.value)
+        if(event.target.value === 'Állapotváltás...'){
+            return
+        }
         setValue(event.target.value)
     }
 
@@ -36,7 +37,7 @@ export default function Modifier(props){
                     {questionId: index, value: value, isNumber: type === 'number'})
                 .then(response  => {
                     if(response){
-                        setModifyResult(response.data.updated)
+                        props.socket.emit('exam-modified')
                     }
                 }).catch(err => console.log(err))
             }else{
@@ -44,7 +45,7 @@ export default function Modifier(props){
                     {answerId: index, value: value, isBoolean: type === 'bool'})
                 .then(response  => {
                     if(response){
-                        setModifyResult(response.data.updated)
+                        props.socket.emit('exam-modified')
                     }
                 }).catch(err => console.log(err))
             }
@@ -62,17 +63,11 @@ export default function Modifier(props){
         }else if(type === 'bool'){
             return (
                 <form onSubmit={handleSubmit}>
-                    {value ?
-                        <select name='modify' className="rounded pl-2 w-25" onChange={handleChange}>
-                            <option defaultValue={true} value={true}>Helyes</option>
-                            <option value={false}>Helytelen</option>
-                        </select>
-                    :
-                        <select name='modify' className="rounded pl-2 w-25" onChange={handleChange}>
-                            <option defaultValue={false} value={true}>Helyes</option>
-                            <option defaultValue={true} value={false}>Helytelen</option>
-                        </select> 
-                    }
+                    <select name='modify' className="rounded pl-2 w-25" onChange={handleChange}>
+                        <option value={null}>Állapotváltás...</option>
+                        <option value={1}>Helyes</option>
+                        <option value={0}>Helytelen</option>
+                    </select>
                     
                     <input type='submit' value="Módosítás" />
                 </form>

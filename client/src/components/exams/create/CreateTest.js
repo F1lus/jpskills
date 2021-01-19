@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react'
 
-import {io} from 'socket.io-client'
+import manager from '../../GlobalSocket'
 
 import API from '../../BackendAPI'
 
 export default function CreateTest(props){
 
     const permission = props.permission
+    const socket = new manager().socket
 
     const [item, setItem] = useState(null)
     const [examName, setExamName] = useState(null)
@@ -16,7 +17,6 @@ export default function CreateTest(props){
     const [items, setItems] = useState([])
     
     useEffect(() =>{
-        const socket = io('http://localhost:5000', {withCredentials: true})
 
         socket.emit('get-products')
 
@@ -29,7 +29,7 @@ export default function CreateTest(props){
         })
 
         return () => socket.disconnect()
-    }, [item, examName, comment, examDoc, result])
+    }, [])
 
     function handleChange(event){
         switch(event.target.name){
@@ -86,6 +86,7 @@ export default function CreateTest(props){
                         break
                     case 200:
                         setResult('A vizsga felvétele sikeres volt!')
+                        socket.emit('get-products')
                         break
                     case 'invalid_file_size':
                         setResult('A fájl mérete meghaladta a maximális méretet! (2 Mb)')

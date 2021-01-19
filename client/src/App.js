@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './style/styles.css';
 
 import API from './components/BackendAPI'
+
 import Login from './components/user_management/Login'
 import ExamWrapper from './components/exams/ExamWrapper'
 import ExamModify from './components/exams/modify/ExamModify'
@@ -20,13 +21,12 @@ export default function App(){
   const [user, setUser] = useState(null)
   const [permission, setPermission] = useState(null)
 
-  useEffect(() =>{
+  useEffect(() => {
     const socket = io('http://localhost:5000', {withCredentials:true})
 
     socket.emit('request-login-info')
 
     socket.on('login-info', (username, perm) => {
-      console.log(username, perm)
       setLoggedIn(username && perm)
       if(loggedIn){
         setUser(username)
@@ -66,7 +66,7 @@ export default function App(){
             return (
               <div>
                 <CustomNavbar/>
-                <ExamWrapper permission={permission}/>
+                <ExamWrapper  permission={permission}/>
               </div>
             )
           }else{

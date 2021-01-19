@@ -11,8 +11,7 @@ update.post('/exams/modify/:examCode', (req,res) => {
 
             const user = req.session.user
             const examCode = req.params.examCode
-            if(req.body.examName && req.body.notes && req.body.status != null && req.body.points){
-                console.log('wtf')
+            if(req.body.examName && req.body.status && req.body.points){
                 dbconnect.updateExam(user, req.body.examName, 
                     examCode, req.body.notes, req.body.status, req.body.points)
                 .then(response => {

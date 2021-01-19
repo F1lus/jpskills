@@ -10,8 +10,8 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import { ArrowLeftIcon, ArrowRightIcon } from '@primer/octicons-react';
 import { NavLink } from 'react-router-dom';
 
-export default function ExamDocument(){
-
+export default function ExamDocument(props){
+    
     const [examDoc, setExamDoc] = useState('/')
     const [exam,] = useState(useParams())
     const [pageNum, setPageNum] = useState(null);

@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { Bounce } from 'react-reveal';
-
 import {io} from 'socket.io-client'
+
+import { Bounce } from 'react-reveal';
 
 export default function Learn(props) {
     
     const [exams, setExams] = useState([])
 
     useEffect(() => {
-        const socket = io('http://localhost:5000', {
-            withCredentials: true
-        })
-
+        const socket = io('http://localhost:5000', {withCredentials:true})
+        
         socket.emit('exams-get-signal')
 
         socket.on('exams-get-emitter', (dbExams) => {
@@ -30,9 +28,8 @@ export default function Learn(props) {
                 setExams([])
             }
         })
-        return () => {
-            socket.disconnect()
-        }
+
+        return () => socket.disconnect()
     })
 
     return (

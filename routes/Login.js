@@ -10,16 +10,18 @@ login.post('/login', (req, res) => {
         dbconnect.userExists(req.body.cardNum, req.body.password).then(exists => {
             if(exists){
                 req.session.cardNum = req.body.cardNum
+                dbconnect.findUser(req.session.cardNum).then(userData =>{
+                    req.session.user = userData[0]
+                    if(userData[1] === 'Adminisztrátor' || userData[1] === 'admin'){
+                        req.session.perm = 'admin'
+                    }else{
+                        req.session.perm = userData[1]
+                    }
+                    res.json({access: true})
+                }).catch(err => console.log(err))
+            }else{
+                res.json({access: false})
             }
-            dbconnect.findUser(req.session.cardNum).then(userData =>{
-                req.session.user = userData[0]
-                if(userData[1] === 'Adminisztrátor' || userData[1] === 'admin'){
-                    req.session.perm = 'admin'
-                }else{
-                    req.session.perm = userData[1]
-                }
-                res.json({access: exists})
-            }).catch(err => console.log(err))
         }).catch(err => console.log(err))
     }
 })
