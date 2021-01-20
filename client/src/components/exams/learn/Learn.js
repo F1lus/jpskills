@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { Bounce } from 'react-reveal';
-
 import {io} from 'socket.io-client'
 
 export default function Learn(props) {
@@ -37,24 +35,22 @@ export default function Learn(props) {
 
     return (
         <div className="container text-center p-3 mb-3">
-            <div className="container" id="content">
+            <div className="container">
                 <div className="row">
                 {exams.map((exam,index)=>{
                     return(
-                        <Bounce left key={index}>
-                        <div className="card m-2 shadow text-center">
-                            <div className="card-body">
-                                <p className="card-text">{exam[0]}</p>
-                                <p className="card-text">Megjegyzés: {exam[2] !== 'null' ? exam[2] : ' - '}</p>
-                                <p className="card-text">Készült: {exam[4]}</p>
+                        <div className="card shadow bg-light m-2 text-center" key={index}>
+                            <div className="card-body text-center">
+                                <p className="card-title">{exam[0]}</p>
                                 <NavLink to={`/exams/learn/${exam[1]}`}>
-                                    <button type="button" className="btn btn-outline-primary">
+                                    <button type="button" className="btn btn-outline-primary card-link">
                                         Megtanulom!
                                     </button>
                                 </NavLink>
+                                        <p>Megjegyzés: {exam[2] !== 'null' ? exam[2] : ' - '}</p>
+                                        <p className="card-text">Készült: {exam[4]}</p>
                             </div>
                         </div>
-                        </Bounce>
                     )
                 })}
                 </div>

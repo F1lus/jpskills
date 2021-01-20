@@ -54,7 +54,7 @@ p {
 
 #ido .container {
     width: 50px;
-    border: 3px solid rgb(8,8,124);
+    border: 3px solid rgb(33,12,185);
     border-radius: 10px;
 }
 
@@ -69,15 +69,15 @@ select {
     height: 40px;
     text-align: center;
     vertical-align: center;
-    border: 2px solid rgb(8,8,124);
-    color: rgb(8,8,124);
+    border: 2px solid rgb(33,12,185);
+    color: rgb(33,12,185);
     font-weight: 500;
     background-color: #f8f9fa;
     cursor: pointer;
 }
 
 select:hover {
-    background-color: rgb(8,8,124);
+    background-color: rgb(33,12,185);
     color: white;
     font-size: 17px;
     transition: all 0.4s ease;
@@ -85,18 +85,18 @@ select:hover {
 
 select option {
     background-color: #f8f9fa;
-    color: rgb(8,8,124);
+    color: rgb(33,12,185);
 }
 
 #pdfFel {
-    color: rgb(8,8,124);
+    color: rgb(33,12,185);
 }
 
 ::-webkit-file-upload-button {
     text-align: center;
     vertical-align: center;
-    color: rgb(8,8,124);
-    border: 2px solid rgb(8,8,124);
+    color: rgb(33,12,185);
+    border: 2px solid rgb(33,12,185);
     font-weight: 500;
     background-color: #f8f9fa;
     height: 40px;
@@ -108,8 +108,8 @@ select option {
     text-align: center;
     vertical-align: center;
     color: #f8f9fa;
-    border: 2px solid rgb(8,8,124);
-    background-color: rgb(8,8,124);
+    border: 2px solid rgb(33,12,185);
+    background-color: rgb(33,12,185);
     transition: all 0.4s ease;
     height: 40px;
     font-size: 17px;
@@ -120,8 +120,8 @@ select option {
     float: center;
     margin-left: auto;
     margin-right: auto;
+    padding-top: 30px;
     margin-top: 15px;
-    border: 2px solid rgb(8,8,124);
 }
 
 /*form animation*/
@@ -139,18 +139,18 @@ form input {
     padding-top: 20px;
     border: none;
     outline: none;
-    background: #f8f9fa;
+    background-color: #f8f9fa;
 }
 
 .form-group label {
-    color: rgb(8,8,124);
+    color: rgb(33,12,185);
     position: absolute;
     bottom: -4px;
     left: 0px;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid rgb(33,12,185);
 }
 
 .form-group label::after {
@@ -176,10 +176,19 @@ form input:focus + .label-name .content-name,
 form input:valid + .label-name .content-name {
     transform: translateY(-100%);
     font-size: 14px;
-    color: rgb(8,8,124);
+    color: rgb(33,12,185);
 }
 
 form input:focus + .label-name::after,
 form input:valid + .label-name {
     transform: translateX(0%);
+}
+
+/*examModify*/
+#properties {
+    border: 1.5px solid rgb(33,12,185);
+}
+
+#kerdesek {
+    border: 1.5px solid rgb(33,12,185);
 }

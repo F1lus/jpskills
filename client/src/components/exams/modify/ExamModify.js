@@ -90,35 +90,59 @@ export default function ExamModify(props){
     }
 
     return (
-        <div className="container bg-light">
-            <h3>A vizsga jellemzői:</h3>
-            <form onSubmit={handleSubmit}>
-                <input type='text' name='examName' 
-                    value={examProps[0] || ''} placeholder='A vizsga neve' onChange={handleChange}
-                />
-                <input type='text' name='examNotes' 
-                    value={examProps[1] || ''} placeholder='A vizsga megjegyzése' onChange={handleChange}
-                />
-                <select name='examStatus' className="rounded pl-2 w-25" onChange={handleChange}>
-                    <option defaultValue={examProps[2]}>{examProps[2] ? 'Aktív':'Inaktív'}</option>
-                    <option value={!examProps[2]}>{!examProps[2] ? 'Aktív':'Inaktív'}</option>
-                </select>
-                <h5>Maximum: {maxPoints}</h5>
-                <input type='number' name='examMinPoints' 
-                    value={examProps[3] || ''} placeholder='A vizsga elvégzéséhez szükséges pontszám' onChange={handleChange}
-                />
-                <input type='submit' name='Módosítás' />
-            </form>
+        <div className="container rounded shadow text-center bg-light p-3">
+            <div className="container">
+                <div className="container rounded p-2 mb-3" id="properties">
+                    <h3>A vizsga jellemzői:</h3>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group m-auto"> 
+                            <input type='text' name='examName' className="w50" value={examProps[0] || ''} onChange={handleChange} required autoComplete="off"/>
+                            <label htmlFor="examName" className="label-name">
+                                <span className="content-name">
+                                    A vizsga neve
+                                </span>
+                            </label>
+                        </div>
 
-            <h3>A vizsgához tartozó kérdések</h3>
+                        <div className="form-group m-auto">
+                            <input type='text' name='examNotes' value={examProps[1] || ''} onChange={handleChange} autoComplete="off"/>
+                            <label htmlFor="examNotes" className="label-name">
+                                <span className="content-name">
+                                    A vizsga megjegyzése
+                                </span>
+                            </label>
+                        </div>
 
-            {questions.length === 0 ? warning: <ListManager list={questions} />}
+                        <select name='examStatus' className="rounded pl-2 w-25" onChange={handleChange}>
+                            <option defaultValue={examProps[2]}>{examProps[2] ? 'Aktív':'Inaktív'}</option>
+                            <option value={!examProps[2]}>{!examProps[2] ? 'Aktív':'Inaktív'}</option>
+                        </select>
 
-            <button onClick={setDisplay}>{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
+                        <h5>Maximum: {maxPoints}</h5>
 
-            <AddQuestion display={displayQuestion} />
+                        <div className="form-group m-auto">
+                            <input type='number' name='examMinPoints' value={examProps[3] || ''} onChange={handleChange} required autoComplete="off"/>
+                            <label htmlFor="examMinPoints" className="label-name">
+                                <span className="content-name">
+                                    A vizsga elvégzéséhez szükséges pontszám
+                                </span>
+                            </label>
+                        </div>
 
-            <button>A vizsga törlése</button>
+                        <div className="text-center">
+                            <button type='submit' name='Módosítás' className="btn btn-warning my-3"> Módosítás!</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div className="container rounded p-2 mb-3" id="kerdesek">
+                    <h3>A vizsgához tartozó kérdések</h3>
+                    {questions.length === 0 ? warning: <ListManager list={questions} />}
+                    <button onClick={setDisplay}>{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
+                    <AddQuestion display={displayQuestion} />
+                    <button>A vizsga törlése</button>
+                </div>
+            </div>
         </div>
     )
 }

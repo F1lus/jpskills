@@ -125,7 +125,7 @@ export default function CreateTest(props){
                     </select>
                 </div>
                 
-                <div className="form-group m-auto">
+                <div className="form-group m-auto w-75">
                     <input type="text" name="examName" onChange={handleChange} value={examName || ''} required autoComplete="off"/>
                     <label htmlFor="examName" className="label-name">
                         <span className="content-name">
@@ -133,7 +133,7 @@ export default function CreateTest(props){
                         </span>
                     </label>
                 </div>
-                <div className="form-group m-auto">
+                <div className="form-group m-auto w-75">
                     <input type="text" name="comment" onChange={handleChange} value={comment || ''} autoComplete="off"/>
                     <label htmlFor="comment" className="label-name">
                         <span className="content-name">
@@ -141,8 +141,8 @@ export default function CreateTest(props){
                         </span>
                     </label>
                 </div>
-                <div className="container mx-auto mb-2 mt-3 text-center">
-                    <input type="file" onChange={handleChange} id="pdfFel" name="examDoc"/>
+                <div className="d-flex align-items-center justify-content-center">
+                    <input type="file" className="mx-auto" onChange={handleChange} id="pdfFel" name="examDoc"/>
                 </div>
                 <div className="container text-center">
                     <button type="submit" className="btn btn-warning" value="Létrehozás">Feltöltés!</button>

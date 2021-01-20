@@ -63,7 +63,7 @@ export default function ExamDocument(){
     },[exam.examCode])
 
     return (
-        <div className="container text-center bg-light rounded shadow mb-3 p-2">
+        <div className="container text-center bg-light rounded shadow mb-3">
             <Document file={{data: examDoc}} onLoadSuccess={page => onDocumentLoadSuccess(page.numPages)}>
                 <Page pageNumber={currentPage} />
             </Document>
