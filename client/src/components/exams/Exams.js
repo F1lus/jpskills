@@ -1,18 +1,18 @@
 import React, {useState, useEffect} from 'react'
 
-import {io} from 'socket.io-client'
-
 import {NavLink} from 'react-router-dom'
 
 export default function Exams(props){
 
-    const socket = io('http://localhost:5000', {withCredentials:true})
+    const socket = props.socket
 
     const [exams, setExams] = useState([])
 
     useEffect(() => {
         socket.emit('exams-get-signal')
+    }, [])
 
+    useEffect(() => {
         socket.on('exams-get-emitter', (dbExams) => {
             if(dbExams){
                 let examList = []
@@ -27,8 +27,6 @@ export default function Exams(props){
                 setExams([])
             }
         })
-
-        return () => socket.disconnect()
     })
 
     return(

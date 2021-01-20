@@ -160,7 +160,7 @@ export default function ExamModify(props){
 
                 <button onClick={setDisplay} className="btn btn-warning m-2">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
 
-                <AddQuestion display={displayQuestion} />
+                <AddQuestion socket={socket} display={displayQuestion} />
 
                 <button className="btn btn-warning m-3">A vizsga törlése</button>
             </div>
