@@ -45,6 +45,7 @@ export default function ExamModify(props){
             setQuestions([])
             setWarning('Nincsenek megjeleníthető kérdések.')
             setStatus(status)
+            setMaxPoints(points)
             setExamProps([examName, notes, status, points])
         })
 
@@ -124,7 +125,7 @@ export default function ExamModify(props){
                     </div>
 
                     <div className="form-group m-auto">
-                        <input type='text' name='examNotes' alue={examProps[1] || ''} onChange={handleChange}/>
+                        <input type='text' name='examNotes' value={examProps[1] || ''} onChange={handleChange}/>
                         <label htmlFor="examNotes" className="label-name">
                             <span className="content-name">
                                 A vizsga megjegyzése
