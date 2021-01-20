@@ -99,6 +99,7 @@ export default function App(){
                 <ExamDocument />
               </div>
             )
+            
           }else{
             return <Redirect to='/' from='/exams/learn/:examCode' />
           }
