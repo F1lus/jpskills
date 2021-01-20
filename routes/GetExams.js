@@ -30,7 +30,7 @@ function getExams(socket){
         })
         socket.emit('exams-get-emitter', examResult)
     })
-    .catch(err => socket.emit('exams-get-emitter', examResult))
+    .catch(err => console.log(err))
 }
 
 module.exports = getExams

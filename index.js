@@ -16,6 +16,8 @@ const getLoginInfo = require('./routes/GetLoginInfo')
 const handleLogout = require('./routes/Logout')
 const getProducts = require('./routes/GetProducts')
 const updater = require('./routes/ExamUpdate')
+const removeAnswer = require('./routes/RemoveAnswer')
+const removeQuestion = require('./routes/RemoveQuestion')
 
 const session = require('./model/SessionSetup')
 
@@ -52,11 +54,9 @@ io.use(sharedSession(session, {autoSave: true}))
 //Routing
 
 io.on('connection', (socket) => {
-    let examInterval = null
     
     socket.on('exams-get-signal', () => {
         getExams(socket)
-        examInterval = setInterval(() => getExams(socket), 10000)
     })
 
     socket.on('request-login-info', () => {
@@ -79,8 +79,12 @@ io.on('connection', (socket) => {
         socket.emit('server-accept')
     })
 
-    socket.on('disconnect', () => {
-        clearInterval(examInterval)
+    socket.on('remove-answer', (answerId, examCode) => {
+        removeAnswer(socket, examCode, answerId)
+    })
+
+    socket.on('remove-question', (questionId, examCode) => {
+        removeQuestion(socket, examCode, questionId)
     })
 })
 

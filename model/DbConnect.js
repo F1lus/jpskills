@@ -13,6 +13,82 @@ class Connection {
         })
     }
 
+    removeQuestion = (user, questionId, examCode) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(result => {
+                if(result){
+                    this.con('exam_prepare').where(this.con.raw('question_id = ?', [questionId]))
+                    .then(resultIds => {
+                        if(resultIds){
+                            this.con('exam_prepare').delete().where(this.con.raw('question_id = ?', [questionId]))
+                            .then(response => {
+                                if(response){
+                                    this.removeMultipleAnswers(resultIds)
+                                    .then(response => {
+                                        if(response){
+                                            this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
+                                            .then(result => {
+                                                if(result){
+                                                    this.updateExamModify(user, examCode)
+                                                    .then(res => resolve(res != null))
+                                                    .catch(err => reject(err))
+                                                }
+                                            }).catch(err => reject(err))
+                                        }
+                                    }).catch(err => reject(err))
+                                }else{
+                                    this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
+                                    .then(result => {
+                                        if(result){
+                                            this.updateExamModify(user, examCode)
+                                            .then(res => resolve(res != null))
+                                            .catch(err => reject(err))
+                                        }
+                                    }).catch(err => reject(err))
+                                }
+                            }).catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    removeMultipleAnswers = (resultIds) => {
+        return new Promise((resolve, reject) => {
+            resultIds.forEach((id, index) => {
+                this.con('results').delete().where('results_id = ?', [id.results_id])
+                .then(() => {
+                    if(resultIds.length-1 === index){
+                        resolve(true)
+                    }
+                }).catch(err => reject(err))
+            })
+        })
+    }
+
+    removeAnswer = (user, answerId, examCode) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(result => {
+                if(result){
+                    this.con('exam_prepare').delete().where(this.con.raw('results_id = ?', [answerId]))
+                    .then(response => {
+                        if(response){
+                            this.con('results').delete().where(this.con.raw('results_id = ?', [answerId]))
+                            .then(res => {
+                                if(res){
+                                    this.updateExamModify(user, examCode)
+                                    .then(res => resolve(res != null))
+                                    .catch(err => reject(err))
+                                }
+                            }).catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
     insertAnswer = (user, examCode, questionId, answerText, value) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
@@ -143,8 +219,10 @@ class Connection {
 
     updateExam = (user, examName, examCode, notes, status, points) => {
         return new Promise((resolve, reject) => {
+            console.log('h')
             this.checkExamCreator(user, examCode)
             .then(result => {
+                console.log('h')
                 if(result){
                     this.con('exams').update({
                         exam_name: examName,
@@ -275,6 +353,9 @@ class Connection {
     selectResults = (answersIdList) =>{
         return new Promise((resolve, reject) =>{
             let result = new Array()
+            if(answersIdList.length === 0){
+                resolve([])
+            }
             answersIdList.forEach((answerId, index) =>{
                 this.con('results').where(this.con.raw('results_id = ?', [answerId.results_id])).first()
                 .then(answer => {
@@ -300,10 +381,11 @@ class Connection {
                 .then(questions => {
                     if(questions.length !== 0){
                         this.selectTest(questions).then(questionList => {
-                            resolve([exam.exam_name, questionList, exam.exam_notes, exam.exam_status, exam.points_required])
+                            resolve([true, exam.exam_name, questionList, exam.exam_notes, exam.exam_status, exam.points_required])
                         })
                     }else{
-                        resolve([exam.exam_name, exam.exam_notes, exam.exam_status, exam.points_required])
+                        console.log('c')
+                        resolve([false, exam.exam_name, exam.exam_notes, exam.exam_status, exam.points_required])
                     }
                 }).catch(err => reject(err))
             }).catch(err => reject(err))

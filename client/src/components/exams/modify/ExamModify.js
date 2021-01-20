@@ -137,7 +137,7 @@ export default function ExamModify(props){
 
             <button onClick={setDisplay}>{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
 
-            <AddQuestion display={displayQuestion} />
+            <AddQuestion socket={socket} display={displayQuestion} />
 
             <button>A vizsga törlése</button>
         </div>
