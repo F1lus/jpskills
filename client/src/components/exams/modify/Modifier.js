@@ -56,9 +56,15 @@ export default function Modifier(props){
         if(type === 'number' || type === 'text'){
             return (
                 <form onSubmit={handleSubmit}>
-                    <input name='modify' type={type || 'text'} 
-                        value={value || ''} onChange={handleChange}/>
-                    <input type='submit' value="Módosítás" />
+                    <div className="form-group text-center m-auto">
+                        <input name='modify' type={type || 'text'} value={value || ''} onChange={handleChange}/>
+                        <label htmlFor="modify" className="label-name">
+                            <span className="content-name">
+
+                            </span>
+                        </label>
+                    </div>
+                    <button className="btn btn-warning m-2">Módosítás!</button>
                 </form>)
         }else if(type === 'bool'){
             return (
@@ -69,7 +75,7 @@ export default function Modifier(props){
                         <option value={0}>Helytelen</option>
                     </select>
                     
-                    <input type='submit' value="Módosítás" />
+                    <button className="btn btn-warning">Módosítás!</button>
                 </form>
             )
         }

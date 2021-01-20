@@ -32,7 +32,7 @@ export default function ListManager(props){
                                 <ListManager socket={props.socket} questionId={el[0]} list={inner} isAnswer={true}/>
                             </div>)
                         }else if(index === 0){
-                            return (<li key={index}>Azonosító: {inner} <button>Törlés</button></li>)
+                            return (<li key={index}>Azonosító: {inner} <br/><button className="btn btn-warning">Törlés</button></li>)
                         }else if(index === 2){
                             if(typeof inner === 'boolean'){
                                 return (
@@ -54,7 +54,7 @@ export default function ListManager(props){
             }
             <AddAnswer socket={props.socket} questionId={questionId} display={display} updated={updated}/>
             {
-                props.isAnswer ? <li><button onClick={modifyDisplay}>{
+                props.isAnswer ? <li><button onClick={modifyDisplay} className="btn btn-warning">{
                     !display ? 'Válasz hozzáadása' : 'Mégse'
                 }</button></li> : null
             }       

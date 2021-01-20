@@ -19,14 +19,27 @@ export default function AddQuestion(props){
     }
 
     return (
-        <div>
+        <div className="container text-center rounded">
            { props.display ? 
                 <form>
-                    <input type='text' name='question' 
-                        value={question || ''} placeholder='A kérdés szövege' onChange={handleChange}/>
-                    <input type='number' name='points' 
-                        value={points || ''} placeholder='Pontszám' onChange={handleChange}/>
-                    <input type='submit' value='Feltöltés' />
+                    <div className="form-group m-auto">
+                        <input type='text' name='question' value={question || ''} onChange={handleChange} required/>
+                        <label htmlFor="question" className="label-name">
+                            <span className="content-name">
+                                A kérdés szövege
+                            </span>
+                        </label>
+                    </div>
+
+                    <div className="form-group m-auto">
+                        <input type='number' name='points' value={points || ''} onChange={handleChange} required/>
+                        <label htmlFor="points" className="label-name">
+                            <span className="content-name">
+                                Pontszám
+                            </span>
+                        </label>
+                    </div>
+                    <button className="btn btn-warning">Feltöltés!</button>
                 </form>
             : null} 
         </div>

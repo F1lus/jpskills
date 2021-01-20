@@ -6,6 +6,10 @@ body {
     background-position: top left;
 }
 
+ul {
+    list-style: none;
+}
+
 /*navbar*/
 #hatter {
     height: 43px;
@@ -69,55 +73,40 @@ select {
     height: 40px;
     text-align: center;
     vertical-align: center;
-    border: 2px solid rgb(33,12,185);
+    border: none;
+    border-bottom: 1px solid rgb(33,12,185);
     color: rgb(33,12,185);
-    font-weight: 500;
     background-color: #f8f9fa;
     cursor: pointer;
-}
-
-select:hover {
-    background-color: rgb(33,12,185);
-    color: white;
-    font-size: 17px;
-    transition: all 0.4s ease;
 }
 
 select option {
     background-color: #f8f9fa;
     color: rgb(33,12,185);
+    margin-top: 3px;
 }
 
 #pdfFel {
     color: rgb(33,12,185);
+    margin-left: 35%;
+    width: 25%;
 }
 
 ::-webkit-file-upload-button {
     text-align: center;
     vertical-align: center;
     color: rgb(33,12,185);
-    border: 2px solid rgb(33,12,185);
-    font-weight: 500;
+    border: none;
+    border-bottom: 1px solid rgb(33,12,185);
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
     background-color: #f8f9fa;
     height: 40px;
     outline: none;
     cursor: pointer;
 }
 
-::-webkit-file-upload-button:hover {
-    text-align: center;
-    vertical-align: center;
-    color: #f8f9fa;
-    border: 2px solid rgb(33,12,185);
-    background-color: rgb(33,12,185);
-    transition: all 0.4s ease;
-    height: 40px;
-    font-size: 17px;
-    outline: none;
-}
-
 .react-pdf__Page__canvas {
-    float: center;
     margin-left: auto;
     margin-right: auto;
     padding-top: 30px;
@@ -182,13 +171,4 @@ form input:valid + .label-name .content-name {
 form input:focus + .label-name::after,
 form input:valid + .label-name {
     transform: translateX(0%);
-}
-
-/*examModify*/
-#properties {
-    border: 1.5px solid rgb(33,12,185);
-}
-
-#kerdesek {
-    border: 1.5px solid rgb(33,12,185);
 }

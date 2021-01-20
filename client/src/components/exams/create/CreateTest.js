@@ -116,7 +116,7 @@ export default function CreateTest(props){
             <h1 className="text-center m-3"><p>Új vizsga feltöltése:</p></h1>
             <form onSubmit={handleSubmit}>
                 <div className="container text-center mb-2">
-                    <select name="item" className="pl-2 w-50" onChange={handleChange}>
+                    <select name="item" className="pl-2 w-50 rounded" onChange={handleChange}>
                         <option defaultValue={-1}>A vizsga terméke</option>
                         {items.length === 0 ? <></> : items.map((elem, index) =>{
                             return(
@@ -143,10 +143,12 @@ export default function CreateTest(props){
                     </label>
                 </div>
                 <div className="d-flex align-items-center justify-content-center">
-                    <input type="file" className="mx-auto" onChange={handleChange} id="pdfFel" name="examDoc"/>
+                    <div className="container">
+                        <input type="file" onChange={handleChange} id="pdfFel" name="examDoc"/>
+                    </div>
                 </div>
                 <div className="container text-center">
-                    <button type="submit" className="btn btn-warning" value="Létrehozás">Feltöltés!</button>
+                    <button type="submit" className="btn btn-warning mt-3" value="Létrehozás">Feltöltés!</button>
                 </div>
             </form>
             {result ? <h3 className="alert alert-secondary mt-3 text-center" role="alert">{result}</h3> : <></>}

@@ -40,13 +40,21 @@ export default function AddAnswer(props){
         <div>
            { props.display ? 
                 <form onSubmit={handleSubmit}>
-                    <input type='text' name='answer' 
-                        value={answer || ''} placeholder='A kérdés szövege' onChange={handleChange}/>
+                    <div className="form-group text-center m-auto">
+                        <input type='text' name='answer' value={answer || ''} placeholder='A kérdés szövege' onChange={handleChange}/>
+                        <label htmlFor="answer" className="label-name">
+                            <span className="content-name">
+                                A kérdés szövege
+                            </span>
+                        </label>
+                    </div>
+
                     <select name='value' className="rounded pl-2 w-25" onChange={handleChange}>
                         <option value={1}>Helyes</option>
                         <option value={0}>Helytelen</option>
                     </select>
-                    <input type='submit' value='Feltöltés' />
+
+                    <button className="btn btn-warning">Módosítás</button>
                 </form> 
                 : null
             } 
