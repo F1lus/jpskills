@@ -1,4 +1,3 @@
-const setup = require('express').Router()
 const session = require('express-session')
 const mysqlStore = require ('express-mysql-session')(session)
 
@@ -19,6 +18,4 @@ const sessionSetup = session({
     saveUninitialized: false,
 })
 
-setup.use(sessionSetup)
-
-module.exports = setup
+module.exports = sessionSetup

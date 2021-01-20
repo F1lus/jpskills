@@ -303,7 +303,7 @@ class Connection {
                             resolve([exam.exam_name, questionList, exam.exam_notes, exam.exam_status, exam.points_required])
                         })
                     }else{
-                        resolve([exam.exam_name])
+                        resolve([exam.exam_name, exam.exam_notes, exam.exam_status, exam.points_required])
                     }
                 }).catch(err => reject(err))
             }).catch(err => reject(err))
