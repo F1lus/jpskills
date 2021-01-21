@@ -142,10 +142,8 @@ export default function CreateTest(props){
                         </span>
                     </label>
                 </div>
-                <div className="d-flex align-items-center justify-content-center">
-                    <div className="container">
-                        <input type="file" onChange={handleChange} id="pdfFel" name="examDoc"/>
-                    </div>
+                <div className="container">
+                    <input type="file" onChange={handleChange} name="examDoc"/>
                 </div>
                 <div className="container text-center">
                     <button type="submit" className="btn btn-warning mt-3" value="Létrehozás">Feltöltés!</button>

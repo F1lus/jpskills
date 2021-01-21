@@ -22,7 +22,7 @@ export default function AddQuestion(props){
         <div className="container text-center rounded">
            { props.display ? 
                 <form>
-                    <div className="form-group m-auto">
+                    <div className="form-group m-auto mb-3">
                         <input type='text' name='question' value={question || ''} onChange={handleChange} required/>
                         <label htmlFor="question" className="label-name">
                             <span className="content-name">
@@ -38,6 +38,10 @@ export default function AddQuestion(props){
                                 Pontszám
                             </span>
                         </label>
+                    </div>
+
+                    <div className="container text-center">
+                        <input type="file"/>
                     </div>
                     <button className="btn btn-warning">Feltöltés!</button>
                 </form>
