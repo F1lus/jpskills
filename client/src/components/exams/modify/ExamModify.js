@@ -40,7 +40,7 @@ export default function ExamModify(props){
             setQuestions(list)
             setStatus(status)
             setMaxPoints(examPoints)
-            setExamProps([examName, notes, status, points])
+            setExamProps([examName, notes === 'null' ? '' : notes, status, points])
         })
 
         socket.on('exam-content-no-question', (examName, notes, status, points) => {
@@ -48,7 +48,7 @@ export default function ExamModify(props){
             setWarning('Nincsenek megjeleníthető kérdések.')
             setStatus(status)
             setMaxPoints(points)
-            setExamProps([examName, notes, status, points])
+            setExamProps([examName, notes === 'null' ? '' : notes, status, points])
         })
 
         return () => socket.disconnect()
@@ -156,7 +156,7 @@ export default function ExamModify(props){
                     </select>
 
                     <div className="form-group m-auto">
-                        <input type='number' name='examMinPoints' value={examProps[3] || 0} onChange={handleChange} required/>
+                        <input type='number' name='examMinPoints' value={examProps[3] || ''} onChange={handleChange} required/>
                         <label htmlFor="examMinPoints" className="label-name">
                             <span className="content-name">
                                 A vizsga elvégzéséhez szükséges pontszám, de maximum {maxPoints}
