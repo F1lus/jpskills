@@ -1,4 +1,4 @@
-const dbconnect = require('../model/DbConnect')
+const dbconnect = require('../../../model/DbConnect')
 
 function getExamContent(socket, examCode){
     dbconnect.selectWholeExam(examCode)

@@ -7,18 +7,25 @@ const socketio = require('socket.io')
 const sharedSession = require('express-socket.io-session')
 
 //Saját modulok (route-ok)
-const getExams = require('./routes/GetExams')
-const getExamDoc = require('./routes/LearnExam')
-const uploadExam = require('./routes/UploadExam')
-const getExamContent = require('./routes/GetExamContent')
-const login = require('./routes/Login')
-const getLoginInfo = require('./routes/GetLoginInfo')
-const handleLogout = require('./routes/Logout')
-const getProducts = require('./routes/GetProducts')
-const updater = require('./routes/ExamUpdate')
-const removeAnswer = require('./routes/RemoveAnswer')
-const removeQuestion = require('./routes/RemoveQuestion')
 
+//Vizsga lekérdezések
+const getExams = require('./routes/exams/get/GetExams')
+const getExamDoc = require('./routes/exams/LearnExam')
+const getExamContent = require('./routes/exams/get/GetExamContent')
+const getProducts = require('./routes/exams/get/GetProducts')
+
+//Felhasználó kezelés
+const login = require('./routes/users/Login')
+const getLoginInfo = require('./routes/users/GetLoginInfo')
+const handleLogout = require('./routes/users/Logout')
+
+//Vizsgához kapcsolódó műveletek
+const uploadExam = require('./routes/exams/update/UploadExam')
+const updater = require('./routes/exams/update/ExamUpdate')
+const removeAnswer = require('./routes/exams/update/RemoveAnswer')
+const removeQuestion = require('./routes/exams/update/RemoveQuestion')
+
+//Session előkészítés
 const session = require('./model/SessionSetup')
 
 //Előkészítés

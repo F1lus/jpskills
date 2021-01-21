@@ -1,4 +1,4 @@
-const dbconnect = require('../model/DbConnect')
+const dbconnect = require('../../../model/DbConnect')
 
 function removeQuestion(socket, examCode, questionId){
     if(examCode && questionId){

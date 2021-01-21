@@ -1,8 +1,8 @@
 const upload = require('express').Router()
 const fileUpload = require('express-fileupload')
 
-const dbconnect = require('../model/DbConnect')
-const session = require('../model/SessionSetup')
+const dbconnect = require('../../../model/DbConnect')
+const session = require('../../../model/SessionSetup')
 
 upload.use(fileUpload({
     limits: { fileSize: 2 * 1024 * 1024 * 1024 }

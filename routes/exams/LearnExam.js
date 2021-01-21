@@ -1,4 +1,4 @@
-const dbconnect = require('../model/DbConnect')
+const dbconnect = require('../../model/DbConnect')
 
 function getExamDoc(socket, examCode){
     dbconnect.selectExamDoc(examCode).then(result => {

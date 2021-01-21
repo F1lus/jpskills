@@ -1,7 +1,7 @@
 const login = require('express').Router()
 
-const session = require('../model/SessionSetup')
-const dbconnect = require('../model/DbConnect')
+const session = require('../../model/SessionSetup')
+const dbconnect = require('../../model/DbConnect')
 
 login.use(session)
 

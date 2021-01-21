@@ -1,7 +1,7 @@
 const update = require('express').Router()
 
-const dbconnect = require('../model/DbConnect')
-const session = require('../model/SessionSetup')
+const dbconnect = require('../../../model/DbConnect')
+const session = require('../../../model/SessionSetup')
 
 update.use(session)
 
