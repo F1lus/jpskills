@@ -1,9 +1,6 @@
 const update = require('express').Router()
 
 const dbconnect = require('../../../model/DbConnect')
-const session = require('../../../model/SessionSetup')
-
-update.use(session)
 
 update.post('/exams/modify/:examCode', (req,res) => {
     if(req.session.user){
@@ -31,7 +28,7 @@ update.post('/exams/modify/:examCode', (req,res) => {
                 dbconnect.updateAnswer(user, examCode, req.body.answerId, req.body.value, req.body.isBoolean)
                 .then(response => {
                     res.json({updated: response})
-                })
+                }).catch(err => console.log(err))
 
             }else if(req.body.questionId && req.body.answerText && req.body.value != null){
                 //Válasz beszúrás
@@ -39,7 +36,28 @@ update.post('/exams/modify/:examCode', (req,res) => {
                     req.body.questionId, req.body.answerText, req.body.value)
                 .then(response => {
                     res.json({updated: response})
-                })
+                }).catch(err => console.log(err))
+
+            }else if(req.body.questionName && req.body.questionPoints){
+                //Kérdés beszúrása
+                
+                if(!req.files || !req.files.picture){
+                    dbconnect.insertQuestion(user, examCode, 
+                        req.body.questionName, req.body.questionPoints, null)
+                    .then(response => {
+                        res.json({updated: response})
+                    }).catch(err => console.log(err))
+                }else if(req.files.picture.mimetype !== 'image/jpeg' || req.files.picture.mimetype === 'image/png'){
+                    return
+                }else if(req.files.picture.truncated){
+                    return
+                }else{
+                    dbconnect.insertQuestion(user, examCode, 
+                        req.body.questionName, req.body.questionPoints, req.files.picture.data)
+                    .then(response => {
+                        res.json({updated: response})
+                    }).catch(err => console.log(err))
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import {Redirect} from 'react-router-dom'
 
 import API from '../../BackendAPI'
 
@@ -13,6 +14,7 @@ export default function CreateTest(props){
     const [examDoc, setExamDoc] = useState(null)
     const [result, setResult] = useState(null)
     const [items, setItems] = useState([])
+    const [uploaded, setUploaded] = useState(false)
     
     useEffect(() =>{
 
@@ -46,6 +48,7 @@ export default function CreateTest(props){
                 setComment(event.target.value)
                 break
             case 'examDoc':
+                console.log(event.target.files[0])
                 setExamDoc(event.target.files[0])
                 break
             default:
@@ -85,6 +88,7 @@ export default function CreateTest(props){
                         break
                     case 200:
                         setResult('A vizsga felvétele sikeres volt!')
+                        setUploaded(true)
                         socket.emit('get-products')
                         socket.emit('exams-get-signal')
                         break
@@ -113,6 +117,7 @@ export default function CreateTest(props){
 
     return (
         <div className="container shadow rounded p-3 bg-light mt-3">
+            {uploaded ? <Redirect from='/exams' to={`/exams/modify/${item}`} /> : null}
             <h1 className="text-center m-3"><p>Új vizsga feltöltése:</p></h1>
             <form onSubmit={handleSubmit}>
                 <div className="container text-center mb-2">

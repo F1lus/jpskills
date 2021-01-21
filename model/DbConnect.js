@@ -13,6 +13,63 @@ class Connection {
         })
     }
 
+    removeTest = (user, examCode) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(result => {
+                if(result){
+                    this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+                    .then(exam => {
+                        if(exam){
+                            this.removeMultipleQuestions(exam.exam_id).then(response => {
+                                if(response){
+                                    this.con('exams').delete()
+                                    .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
+                                        resolve(response != null)
+                                    }).catch(err => reject(err))
+                                }
+                            }).catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    insertQuestion = (user, examCode, text, points, picture) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(result => {
+                if(result){
+                    this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+                    .then(exam => {
+                        if(exam){
+                            this.con('questions').insert({
+                                exam_id: exam.exam_id,
+                                question_name: text,
+                                points: points,
+                                picture: picture
+                            }).then(response => {
+                                if(response){
+                                    this.updateExamModify(user, examCode)
+                                    .then(res => resolve(res != null))
+                                    .catch(err => reject(err))
+                                }
+                            }).catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    removeMultipleQuestions = (examId) => {
+        return new Promise((resolve, reject) => {
+            this.con('questions').delete().where(this.con.raw('exam_id = ?', [examId]))
+            .then(() => {
+                resolve(true)
+            }).catch(err => reject(err))
+        })
+    }
+
     removeQuestion = (user, questionId, examCode) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {

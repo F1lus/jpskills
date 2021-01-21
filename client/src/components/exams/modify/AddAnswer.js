@@ -7,7 +7,7 @@ export default function AddAnswer(props){
 
     const [param,] = useState(useParams())
     const [answer, setAnswer] = useState(null)
-    const [isCorrect, setCorrect] = useState(true)
+    const [isCorrect, setCorrect] = useState(1)
 
     function handleChange(event){
         switch(event.target.name){
@@ -41,10 +41,10 @@ export default function AddAnswer(props){
            { props.display ? 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group text-center m-auto">
-                        <input type='text' name='answer' value={answer || ''} placeholder='A kérdés szövege' onChange={handleChange}/>
+                        <input type='text' name='answer' value={answer || ''} placeholder='A válasz szövege' onChange={handleChange}/>
                         <label htmlFor="answer" className="label-name">
                             <span className="content-name">
-                                A kérdés szövege
+                                A válasz szövege
                             </span>
                         </label>
                     </div>

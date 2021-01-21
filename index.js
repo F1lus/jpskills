@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const http = require('http')
 const socketio = require('socket.io')
 const sharedSession = require('express-socket.io-session')
+const fileUpload = require('express-fileupload')
 
 //Saját modulok (route-ok)
 
@@ -19,11 +20,12 @@ const login = require('./routes/users/Login')
 const getLoginInfo = require('./routes/users/GetLoginInfo')
 const handleLogout = require('./routes/users/Logout')
 
-//Vizsgához kapcsolódó műveletek
+//Vizsgák kezeléséhez kapcsolódó műveletek
 const uploadExam = require('./routes/exams/update/UploadExam')
 const updater = require('./routes/exams/update/ExamUpdate')
 const removeAnswer = require('./routes/exams/update/RemoveAnswer')
 const removeQuestion = require('./routes/exams/update/RemoveQuestion')
+const removeTest = require('./routes/exams/update/RemoveTest')
 
 //Session előkészítés
 const session = require('./model/SessionSetup')
@@ -49,6 +51,10 @@ app.use(cors({
     methods: 'GET, POST',
     allowedHeaders: 'Content-Type',
     credentials: true
+}))
+
+app.use(fileUpload({
+    limits: { fileSize: 2 * 1024 * 1024 * 1024 }
 }))
 
 app.use(bodyParser.json())
@@ -92,6 +98,10 @@ io.on('connection', (socket) => {
 
     socket.on('remove-question', (questionId, examCode) => {
         removeQuestion(socket, examCode, questionId)
+    })
+
+    socket.on('remove-test', examCode => {
+        removeTest(socket, examCode)
     })
 })
 

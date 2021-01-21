@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {useParams} from 'react-router-dom'
+import {useParams, Redirect} from 'react-router-dom'
 
 import ListManager from './ListManager'
 
@@ -20,6 +20,8 @@ export default function ExamModify(props){
     const [maxPoints, setMaxPoints] = useState(0)
     const [displayQuestion, setDisplayQuestion] = useState(false)
     const [updater, setUpdater] = useState(0)
+
+    const [removed, setRemoved] = useState(false)
 
     useEffect(() => {
         socket.emit('request-exam-content', examCode.examName)
@@ -55,6 +57,12 @@ export default function ExamModify(props){
     useEffect(() => {
         socket.on('server-accept', () => {
             setUpdater(count => ++count)
+        })
+
+        socket.on('removed-exam', () => {
+            socket.emit('get-products')
+            socket.emit('exams-get-signal')
+            setRemoved(true)
         })
     })
 
@@ -109,8 +117,14 @@ export default function ExamModify(props){
         setDisplayQuestion(display => !display)
     }
 
+    function removeExam(event){
+        event.preventDefault()
+        socket.emit('remove-test', examCode.examName)
+    }
+
     return (
         <div>
+            {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
             <div className="container text-center rounded w-75 mb-5 p-3 shadow bg-light">
                 <h3>A vizsga jellemzői:</h3>
                 <form onSubmit={handleSubmit}>
@@ -163,7 +177,7 @@ export default function ExamModify(props){
 
                 <AddQuestion socket={socket} display={displayQuestion} />
 
-                <button className="btn btn-warning m-3">A vizsga törlése</button>
+                <button onClick={removeExam} className="btn btn-warning m-3">A vizsga törlése</button>
             </div>
         </div>
     )

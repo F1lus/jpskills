@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react'
 import {Switch, Route, Redirect} from 'react-router-dom'
-import {io} from 'socket.io-client'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style/styles.css';
 
+import manager from './components/GlobalSocket'
 import API from './components/BackendAPI'
 
 import Login from './components/user_management/Login'
@@ -17,13 +17,13 @@ import Profile from './components/user_management/Profile';
 
 export default function App(){
 
+  const socket = new manager().socket
+
   const [loggedIn, setLoggedIn] = useState(false)
   const [user, setUser] = useState(null)
   const [permission, setPermission] = useState(null)
 
   useEffect(() => {
-    const socket = io('http://localhost:5000', {withCredentials:true})
-
     socket.emit('request-login-info')
 
     socket.on('login-info', (username, perm) => {
