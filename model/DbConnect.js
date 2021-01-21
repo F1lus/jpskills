@@ -382,7 +382,6 @@ class Connection {
                             resolve([true, exam.exam_name, questionList, exam.exam_notes, exam.exam_status, exam.points_required])
                         })
                     }else{
-                        console.log('c')
                         resolve([false, exam.exam_name, exam.exam_notes, exam.exam_status, exam.points_required])
                     }
                 }).catch(err => reject(err))
