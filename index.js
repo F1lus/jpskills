@@ -7,7 +7,7 @@ const socketio = require('socket.io')
 const sharedSession = require('express-socket.io-session')
 const fileUpload = require('express-fileupload')
 
-//Saját modulok (route-ok)
+//Saját modulok
 
 //Vizsga lekérdezések
 const getExams = require('./routes/exams/get/GetExams')
@@ -64,7 +64,7 @@ app.use(session)
 
 io.use(sharedSession(session, {autoSave: true}))
 
-//Routing
+//Valós idejű kommunikáció
 
 io.on('connection', (socket) => {
     
@@ -105,6 +105,8 @@ io.on('connection', (socket) => {
     })
 })
 
+//Routing
+
 app.use(uploadExam)
 
 app.use(updater)
@@ -113,5 +115,5 @@ app.use(login)
 
 app.use(handleLogout)
 
-//Szerver setup
+//Szerver indítás
 server.listen(PORT)

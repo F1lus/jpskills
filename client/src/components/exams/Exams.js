@@ -10,7 +10,8 @@ export default function Exams(props){
 
     useEffect(() => {
         socket.emit('exams-get-signal')
-    }, [socket])
+        // eslint-disable-next-line
+    }, [])
 
     useEffect(() => {
         socket.on('exams-get-emitter', (dbExams) => {

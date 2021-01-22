@@ -19,8 +19,8 @@ export default function CreateTest(props){
     useEffect(() =>{
 
         socket.emit('get-products')
-
-    }, [socket])
+        // eslint-disable-next-line
+    }, [])
 
     useEffect(() => {
         socket.on('products-emitter', products => {
