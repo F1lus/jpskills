@@ -10,7 +10,7 @@ export default function Exams(props){
 
     useEffect(() => {
         socket.emit('exams-get-signal')
-    }, [])
+    }, [socket])
 
     useEffect(() => {
         socket.on('exams-get-emitter', (dbExams) => {
@@ -39,7 +39,9 @@ export default function Exams(props){
                             props.permission === 'admin' ? 
                             `/exams/modify/${exam[1]}` : `/exams/${exam[1]}`
                         }>
-                            <button className="btn btn-outline-primary m-2">
+                            <button disabled={
+                                props.permission !== 'admin' ? exam[3] !== 1 : false
+                            } className="btn btn-outline-primary m-2">
                                 {exam[0]}
                             </button>
                         </NavLink>

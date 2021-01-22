@@ -20,7 +20,7 @@ export default function CreateTest(props){
 
         socket.emit('get-products')
 
-    }, [])
+    }, [socket])
 
     useEffect(() => {
         socket.on('products-emitter', products => {

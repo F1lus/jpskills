@@ -24,7 +24,7 @@ function getExams(socket){
             examResult.push([result.examName, 
                 result.itemCode, 
                 result.comment, 
-                result.creator, 
+                result.status, 
                 dateFormat((''+result.created))
             ])
         })

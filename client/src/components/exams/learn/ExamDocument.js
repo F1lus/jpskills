@@ -11,11 +11,13 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@primer/octicons-react';
 import { NavLink } from 'react-router-dom';
 
 export default function ExamDocument(props){
+
+    const exam = useParams()
     
     const [examDoc, setExamDoc] = useState('/')
-    const [exam,] = useState(useParams())
     const [pageNum, setPageNum] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [learnt, setLearnt] = useState(true)
 
     pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
@@ -62,6 +64,12 @@ export default function ExamDocument(props){
         return () => socket.disconnect()
     },[exam.examCode])
 
+    useEffect(() => {
+        if(currentPage === pageNum){
+            setLearnt(false)
+        }
+    }, [currentPage, pageNum])
+
     return (
         <div className="container text-center bg-light rounded shadow mb-3">
             <Document
@@ -82,6 +90,14 @@ export default function ExamDocument(props){
             <NavLink to="/profile">
                 <button className="btn btn-outline-primary m-2">
                     Vissza!
+                </button>
+            </NavLink>
+
+            <NavLink to={`/exams/${exam.examCode}`}>
+                <button disabled={
+                    props.permission === 'admin' ? true : learnt
+                } className="btn btn-outline-primary m-2">
+                    Levizsgázom!
                 </button>
             </NavLink>
 

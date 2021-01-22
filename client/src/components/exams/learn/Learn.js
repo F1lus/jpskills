@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 import {io} from 'socket.io-client'
 
-import { Bounce } from 'react-reveal';
+//import { Bounce } from 'react-reveal';
 
 export default function Learn(props) {
     

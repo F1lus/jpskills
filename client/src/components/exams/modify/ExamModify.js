@@ -52,7 +52,7 @@ export default function ExamModify(props){
         })
 
         return () => socket.disconnect()
-    }, [updater])
+    }, [updater, socket, examCode.examName])
 
     useEffect(() => {
         socket.on('server-accept', () => {

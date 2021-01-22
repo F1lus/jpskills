@@ -95,7 +95,7 @@ export default function App(){
             return (
               <div>
                 <CustomNavbar/>
-                <ExamDocument />
+                <ExamDocument permission={permission} />
               </div>
             )
             

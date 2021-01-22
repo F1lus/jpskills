@@ -6,6 +6,7 @@ export default function Home(props){
     
     const nev = props.user
     
+    // eslint-disable-next-line
     const [vanVizsga, setVanVizsga] = useState(false)
     
     return(

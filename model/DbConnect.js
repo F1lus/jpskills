@@ -381,7 +381,7 @@ class Connection {
                         examName: result.exam_name,
                         itemCode: result.exam_itemcode,
                         comment: result.exam_notes,
-                        creator: result.exam_creator,
+                        status: result.exam_status,
                         created: result.exam_creation_time
                     }
                     exams.push(examData)
