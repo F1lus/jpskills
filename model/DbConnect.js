@@ -20,7 +20,7 @@ class Connection {
                     this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
                     .then(exam => {
                         if(exam){
-                            this.removeMultipleQuestions(exam.exam_id).then(response => {
+                            this.removeMultipleQuestions(exam.exam_id, user, examCode).then(response => {
                                 if(response){
                                     this.con('exams').delete()
                                     .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
@@ -61,11 +61,21 @@ class Connection {
         })
     }
 
-    removeMultipleQuestions = (examId) => {
+    removeMultipleQuestions = (examId, user, examCode) => {
         return new Promise((resolve, reject) => {
-            this.con('questions').delete().where(this.con.raw('exam_id = ?', [examId]))
-            .then(() => {
-                resolve(true)
+            this.con('questions').where(this.con.raw('exam_id = ?', [examId]))
+            .then(questionIds => {
+                if(questionIds){
+                    questionIds.forEach((id, index) => {
+                        this.removeQuestion(user, id.question_id, examCode).then(() => {
+                            if(index === questionIds.length-1){
+                                resolve(true)
+                            }
+                        }).catch(err => reject(err))
+                    })
+                }else{
+                    resolve(true)
+                }
             }).catch(err => reject(err))
         })
     }
@@ -114,7 +124,7 @@ class Connection {
     removeMultipleAnswers = (resultIds) => {
         return new Promise((resolve, reject) => {
             resultIds.forEach((id, index) => {
-                this.con('results').delete().where('results_id = ?', [id.results_id])
+                this.con('results').delete().where(this.con.raw('results_id = ?', [id.results_id]))
                 .then(() => {
                     if(resultIds.length-1 === index){
                         resolve(true)
