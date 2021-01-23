@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {useParams, Redirect} from 'react-router-dom'
 
 import ListManager from './ListManager'
+import ModalElement from './Modal'
 
 import manager from '../../GlobalSocket'
 
@@ -164,6 +165,8 @@ export default function ExamModify(props){
                             </span>
                         </label>
                     </div>
+
+                    <ModalElement/>
 
                     <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
                 </form>
