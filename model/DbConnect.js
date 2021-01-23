@@ -20,13 +20,11 @@ class Connection {
                     this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
                     .then(exam => {
                         if(exam){
-                            this.removeMultipleQuestions(exam.exam_id, user, examCode).then(response => {
-                                if(response){
-                                    this.con('exams').delete()
-                                    .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
-                                        resolve(response != null)
-                                    }).catch(err => reject(err))
-                                }
+                            this.removeMultipleQuestions(exam.exam_id, user, examCode).then(() => {
+                                this.con('exams').delete()
+                                .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
+                                    resolve(response != null)
+                                }).catch(err => reject(err))
                             }).catch(err => reject(err))
                         }
                     }).catch(err => reject(err))
@@ -65,7 +63,9 @@ class Connection {
         return new Promise((resolve, reject) => {
             this.con('questions').where(this.con.raw('exam_id = ?', [examId]))
             .then(questionIds => {
-                if(questionIds){
+                if(questionIds.length === 0){
+                    resolve(false)
+                }else{
                     questionIds.forEach((id, index) => {
                         this.removeQuestion(user, id.question_id, examCode).then(() => {
                             if(index === questionIds.length-1){
@@ -73,8 +73,6 @@ class Connection {
                             }
                         }).catch(err => reject(err))
                     })
-                }else{
-                    resolve(true)
                 }
             }).catch(err => reject(err))
         })

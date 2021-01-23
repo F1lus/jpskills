@@ -33,7 +33,7 @@ export default function Exams(props){
     return(
         <div className="container shadow rounded text-center p-3 mt-5 mb-3 bg-light">
             <h1><p>Elérhető vizsgák:</p></h1>
-            {exams.length === 0 ? <h1>Jelenleg nem találhatóak elérhető vizsgák</h1> : exams.map((exam, index)=>{                
+            {exams.length === 0 ? <h1>Itt fognak megjelenni az elérhető vizsgák</h1> : exams.map((exam, index)=>{                
                 return(
                     <div key={index}>
                         <NavLink to={
