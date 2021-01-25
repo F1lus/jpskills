@@ -42,11 +42,11 @@ export default function Learn(props) {
                             <div className="card-body text-center">
                                 <p className="card-title">{exam[0]}</p>
                                 <NavLink to={`/exams/learn/${exam[1]}`}>
-                                    <button type="button" className="btn btn-outline-primary card-link">
+                                    <button type="button" className="btn btn-outline-blue card-link">
                                         Megtanulom!
                                     </button>
                                 </NavLink>
-                                        <p>Megjegyzés: {exam[2] !== 'null' ? exam[2] : ' - '}</p>
+                                        <p>{exam[2] !== '' ? `Megjegyzés: ${exam[2]}` : null}</p>
                                         <p className="card-text">Készült: {exam[4]}</p>
                             </div>
                         </div>

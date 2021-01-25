@@ -41,7 +41,7 @@ export default function AddAnswer(props){
            { props.display ? 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group text-center m-auto">
-                        <input type='text' name='answer' value={answer || ''} placeholder='A válasz szövege' onChange={handleChange}/>
+                        <input type='text' name='answer' value={answer || ''} onChange={handleChange}/>
                         <label htmlFor="answer" className="label-name">
                             <span className="content-name">
                                 A válasz szövege

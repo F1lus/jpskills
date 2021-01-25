@@ -42,7 +42,7 @@ export default function Exams(props){
                         }>
                             <button disabled={
                                 props.permission !== 'admin' ? exam[3] !== 1 : false
-                            } className="btn btn-outline-primary m-2">
+                            } className="btn btn-outline-blue m-2">
                                 {exam[0]}
                             </button>
                         </NavLink>
