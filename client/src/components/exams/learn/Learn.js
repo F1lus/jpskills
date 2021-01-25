@@ -34,20 +34,21 @@ export default function Learn(props) {
 
     return (
         <div className="container text-center p-3 mb-3">
+            <h1><p>Elérhető tananyagok:</p></h1>
             <div className="container">
                 <div className="row">
                 {exams.map((exam,index)=>{
                     return(
-                        <div className="card shadow bg-light m-2 text-center" key={index}>
+                        <div className="card shadow bg-light mx-2 text-center" key={index}>
                             <div className="card-body text-center">
-                                <p className="card-title">{exam[0]}</p>
+                                <h4 className="card-title"><p>{exam[0]}</p></h4>
+                                <p className="card-text">{exam[2] !== '' ? `Megjegyzés: ${exam[2]}` : null}</p>
+                                <p className="card-text">Készült: {exam[4]}</p>
                                 <NavLink to={`/exams/learn/${exam[1]}`}>
                                     <button type="button" className="btn btn-outline-blue card-link">
                                         Megtanulom!
                                     </button>
                                 </NavLink>
-                                        <p>{exam[2] !== '' ? `Megjegyzés: ${exam[2]}` : null}</p>
-                                        <p className="card-text">Készült: {exam[4]}</p>
                             </div>
                         </div>
                     )
