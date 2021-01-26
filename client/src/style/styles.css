@@ -10,6 +10,18 @@ ul {
     list-style: none;
 }
 
+.btn-outline-blue {
+    color: rgb(33,12,185);
+    border-color: rgb(33,12,185);
+    background-color: #f8f9fa;
+}
+
+.btn-outline-blue:hover {
+    color: #f8f9fa;
+    border-color: rgb(33,12,185);
+    background-color: rgb(33,12,185);
+}
+
 /*navbar*/
 #hatter {
     height: 43px;
@@ -83,7 +95,6 @@ select {
 select option {
     background-color: #f8f9fa;
     color: rgb(33,12,185);
-    margin-top: 3px;
 }
 
 input[type="file"] {

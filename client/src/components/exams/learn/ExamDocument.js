@@ -82,14 +82,14 @@ export default function ExamDocument(props){
 
             <p>{currentPage} / {pageNum}</p>
 
-            <button className="btn btn-outline-primary m-2" onClick={prevPage}>
+            <button className="btn btn-outline-blue m-2" onClick={prevPage}>
                 <i>
                     <ArrowLeftIcon/>
                 </i>
             </button>
 
             <NavLink to="/profile">
-                <button className="btn btn-outline-primary m-2">
+                <button className="btn btn-outline-blue m-2">
                     Vissza!
                 </button>
             </NavLink>
@@ -97,12 +97,12 @@ export default function ExamDocument(props){
             <NavLink to={`/exams/${exam.examCode}`}>
                 <button disabled={
                     props.permission === 'admin' ? true : learnt
-                } className="btn btn-outline-primary m-2">
+                } className="btn btn-outline-blue m-2">
                     Levizsgázom!
                 </button>
             </NavLink>
 
-            <button className="btn btn-outline-primary m-2" onClick={nextPage}>
+            <button className="btn btn-outline-blue m-2" onClick={nextPage}>
                 <i>
                     <ArrowRightIcon/>
                 </i>

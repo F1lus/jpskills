@@ -74,8 +74,8 @@ export default function Modifier(props){
                         <option value={1}>Helyes</option>
                         <option value={0}>Helytelen</option>
                     </select>
-                    
-                    <button className="btn btn-warning">Módosítás!</button>
+                    <br/>
+                    <button className="btn btn-warning m-2">Módosítás!</button>
                 </form>
             )
         }
