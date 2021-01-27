@@ -640,7 +640,7 @@ class Connection {
             .where(this.con.raw('exam_itemcode = ?', [examCode]))
             .first().then(result => {
                 if(result){
-                    resolve(result.exam_creator !== user)
+                    resolve(result.exam_creator === user)
                 }else{
                     reject('no_exam')
                 }
