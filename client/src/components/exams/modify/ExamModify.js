@@ -182,9 +182,9 @@ export default function ExamModify(props){
 
                 {questions.length === 0 ? warning: <ListManager socket={socket} list={questions} />}
 
-                <button onClick={setDisplay} className="btn btn-warning m-2">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
-
                 <AddQuestion socket={socket} display={displayQuestion} />
+
+                <button onClick={setDisplay} className="btn btn-warning m-2">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
 
                 <button onClick={removeExam} className="btn btn-warning m-3">A vizsga törlése</button>
             </div>
