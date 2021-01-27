@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {Switch, Route, Redirect} from 'react-router-dom'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './style/styles.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './style/styles.css'
 
 import manager from './components/GlobalSocket'
 import API from './components/BackendAPI'
@@ -10,10 +10,11 @@ import API from './components/BackendAPI'
 import Login from './components/user_management/Login'
 import ExamWrapper from './components/exams/ExamWrapper'
 import ExamModify from './components/exams/modify/ExamModify'
-import CustomNavbar from './components/nav/CustomNavbar';
-import Home from './components/home/Home';
+import CustomNavbar from './components/nav/CustomNavbar'
+import Home from './components/home/Home'
 import ExamDocument from './components/exams/learn/ExamDocument'
-import Profile from './components/user_management/Profile';
+import Profile from './components/user_management/Profile'
+import Examination from './components/exams/examination/Examination'
 
 export default function App(){
 
@@ -96,6 +97,20 @@ export default function App(){
               <div>
                 <CustomNavbar/>
                 <ExamDocument permission={permission} />
+              </div>
+            )
+            
+          }else{
+            return <Redirect to='/' from='/exams/learn/:examCode' />
+          }
+        }} />
+
+        <Route exact path='/exams/:examCode' component={() =>{
+          if(loggedIn){
+            return (
+              <div>
+                <CustomNavbar/>
+                <Examination user={user} socket={socket} />
               </div>
             )
             
