@@ -38,18 +38,27 @@ export default function ListManager(props){
             {
                 list.length === 0 ? <li>Nincs megjeleníthető tartalom</li> :
                 list.map((el) => {
-                    return el.map((inner, index) => {
+                    return el.map((inner, index) => { //inner - belső tömb eleme
                         if(index === 3){
+                            /*
+                            Ilyenkor a lista újra meghívásra kerül, mivel akkor már a válaszokat
+                            jeleníti meg
+                            */
                             return (
                             <div key={index}>
                                 <div>A kérdéshez tartozó válaszok:</div>
                                 <ListManager socket={socket} questionId={el[0]} list={inner} isAnswer={true}/>
                             </div>)
                         }else if(index === 0){
+                            //Az azonosító megjelenése, kérdésnél és válasznál is ugyanaz
                             return (<li key={index}>Azonosító: {inner} <button className="btn btn-warning" onClick={e =>{
                                 remove(e, inner)
                             }}>Törlés</button></li>)
                         }else if(index === 2){
+                            /*
+                            Itt jelennek meg a kérdések és a válaszok értékei
+                            Ha boolean típusú az aktuális elem, akkor válasz, ha nem akkor kérdés
+                            */
                             if(typeof inner === 'boolean'){
                                 return (
                                 <li key={index}>Jelenlegi érték: {inner ? 'Helyes' : 'Helytelen'}
@@ -59,6 +68,7 @@ export default function ListManager(props){
                                 return <li key={index}>Pontszám: <Modifier socket={socket} index={el[0]} value={inner}/></li>
                             }
                         }else{
+                            //Itt jelennek meg a kérdések és a válaszok (a konkrét szöveg)
                             if(props.isAnswer){
                                 return <li key={index}>Válasz: <Modifier socket={socket} index={el[0]} value={inner} isAnswer={true}/></li>
                             }else{
