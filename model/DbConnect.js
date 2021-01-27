@@ -1,4 +1,21 @@
+/**@
+ * Általános tudnivalók
+ * 
+ * Ez a fájl kezel minden adatbázis műveletet a @module knex és a @module mysql segítségével.
+ * 
+ * A Connection @class minden metódusa Promise alapú a lekérdezések @async természete miatt.
+ * 
+ * @author Filimon Márk
+ */
+
+
 class Connection {
+
+    /**
+     * @constructor -> A kapcsolat kiépítése
+     * @property con -> connection rövidítése, ez felel a közvetlen kapcsolatért az adatbázissal
+     * @module knex -> dinamikus Promise alapú adatbázis kezelő.
+     */
 
     constructor(){
         this.con = require('knex')({
@@ -13,27 +30,13 @@ class Connection {
         })
     }
 
-    updateExamDoc = (user, examCode, document) => {
-        console.log(examCode)
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(response => {
-                if(response){
-                    this.con('exams').update({
-                        exam_docs: document
-                    }).where('exam_itemcode', examCode)
-                    .then(result => {
-                        if(result){
-                            this.updateExamModify(user, examCode)
-                            .then(res => resolve(res != null))
-                            .catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
-                }
-            }).catch(err => reject(err))
-        })
-    }
+    /*
+    ---------------------------------------------------------------------------
+    Új kérdések és válaszok beszúrása
+    ---------------------------------------------------------------------------
+    */
 
-    removeTest = (user, examCode) => {
+    removeTest = (user, examCode) => { //A vizsga törlése
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
                 if(result){
@@ -53,33 +56,7 @@ class Connection {
         })
     }
 
-    insertQuestion = (user, examCode, text, points, picture) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(result => {
-                if(result){
-                    this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-                    .then(exam => {
-                        if(exam){
-                            this.con('questions').insert({
-                                exam_id: exam.exam_id,
-                                question_name: text,
-                                points: points,
-                                picture: picture
-                            }).then(response => {
-                                if(response){
-                                    this.updateExamModify(user, examCode)
-                                    .then(res => resolve(res != null))
-                                    .catch(err => reject(err))
-                                }
-                            }).catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
-                }
-            }).catch(err => reject(err))
-        })
-    }
-
-    removeMultipleQuestions = (examId, user, examCode) => {
+    removeMultipleQuestions = (examId, user, examCode) => { //Több kérdés törlése (válaszokkal együtt)
         return new Promise((resolve, reject) => {
             this.con('questions').where(this.con.raw('exam_id = ?', [examId]))
             .then(questionIds => {
@@ -98,7 +75,7 @@ class Connection {
         })
     }
 
-    removeQuestion = (user, questionId, examCode) => {
+    removeQuestion = (user, questionId, examCode) => { //Egy adott kérdés törlése (válaszokkal együtt)
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
                 if(result){
@@ -139,7 +116,7 @@ class Connection {
         })
     }
 
-    removeMultipleAnswers = (resultIds) => {
+    removeMultipleAnswers = (resultIds) => { //Több válasz törlése
         return new Promise((resolve, reject) => {
             resultIds.forEach((id, index) => {
                 this.con('results').delete().where(this.con.raw('results_id = ?', [id.results_id]))
@@ -152,7 +129,7 @@ class Connection {
         })
     }
 
-    removeAnswer = (user, answerId, examCode) => {
+    removeAnswer = (user, answerId, examCode) => { //Egy adott válasz törlése
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
                 if(result){
@@ -162,6 +139,38 @@ class Connection {
                             this.con('results').delete().where(this.con.raw('results_id = ?', [answerId]))
                             .then(res => {
                                 if(res){
+                                    this.updateExamModify(user, examCode)
+                                    .then(res => resolve(res != null))
+                                    .catch(err => reject(err))
+                                }
+                            }).catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    /*
+    ---------------------------------------------------------------------------
+    Új kérdések és válaszok beszúrása
+    ---------------------------------------------------------------------------
+    */
+
+    insertQuestion = (user, examCode, text, points, picture) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(result => {
+                if(result){
+                    this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+                    .then(exam => {
+                        if(exam){
+                            this.con('questions').insert({
+                                exam_id: exam.exam_id,
+                                question_name: text,
+                                points: points,
+                                picture: picture
+                            }).then(response => {
+                                if(response){
                                     this.updateExamModify(user, examCode)
                                     .then(res => resolve(res != null))
                                     .catch(err => reject(err))
@@ -198,6 +207,31 @@ class Connection {
                             }).catch(err => reject(err))
                         }else{
                             resolve(false)
+                        }
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+    
+    /*
+    ---------------------------------------------------------------------------
+    Már létező vizsga tulajdonságok módosítása
+    ---------------------------------------------------------------------------
+    */
+
+   updateExamDoc = (user, examCode, document) => { //Vizsgaanyag módosítása
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(response => {
+                if(response){
+                    this.con('exams').update({
+                        exam_docs: document
+                    }).where('exam_itemcode', examCode)
+                    .then(result => {
+                        if(result){
+                            this.updateExamModify(user, examCode)
+                            .then(res => resolve(res != null))
+                            .catch(err => reject(err))
                         }
                     }).catch(err => reject(err))
                 }
@@ -327,17 +361,19 @@ class Connection {
         })
     }
 
-    checkExamCreator = (user, examCode) => {
+    /*
+    ---------------------------------------------------------------------------
+    A vizsga módosításához szükséges segédlekérdezés(ek)
+    ---------------------------------------------------------------------------
+    */
+
+    checkExamCreator = (user, examCode) => { //A vizsga készítőjének összehasonlítása a jelenlegi felhasználóval
         return new Promise((resolve, reject) => {
             this.con('exams').select(['exam_name', 'exam_creator'])
             .where(this.con.raw('exam_itemcode = ?', [examCode]))
             .first().then(result => {
                 if(result){
-                    if(result.exam_creator !== user){
-                        reject('wrong_user')
-                    }else{
-                        resolve(true)
-                    }
+                    resolve(result.exam_creator !== user)
                 }else{
                     reject('no_exam')
                 }
@@ -345,7 +381,7 @@ class Connection {
         })
     }
 
-    updateExamModify = (user, examCode) => {
+    updateExamModify = (user, examCode) => { //A vizsga módosítási idejének frissítése
         return new Promise((resolve, reject) => {
             this.con('exams').update({
                 exam_modifier: user,
@@ -362,7 +398,13 @@ class Connection {
         })
     }
 
-    selectProducts = () => {
+    /*
+    ---------------------------------------------------------------------------
+    Általános vizsga műveletek
+    ---------------------------------------------------------------------------
+    */
+
+    selectProducts = () => { //Lehetséges termékek kiválasztása a vizsgákhoz
         return new Promise((resolve, reject) => {
             this.con('items').select(['ProductName', 'Itemcode'])
             .leftJoin(this.con.raw('exams ON items.Itemcode = exams.exam_itemcode'))
@@ -379,7 +421,7 @@ class Connection {
         })
     }
 
-    selectExamDoc = (exam_itemcode) => {
+    selectExamDoc = (exam_itemcode) => { //A vizsga tananyagának kiválasztása
         return new Promise((resolve, reject) => {
             this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
             .then(result => {
@@ -390,7 +432,7 @@ class Connection {
         })
     }
 
-    selectExams = () =>{
+    selectExams = () =>{ //Általános vizsgainfók kiválasztása
         return new Promise((resolve, reject) => {
             this.con('exams').then(results => {
                 let exams = []
@@ -409,7 +451,13 @@ class Connection {
         })
     }
 
-    selectTest = (questions) => {
+    /*
+    ---------------------------------------------------------------------------
+    A vizsga kiválasztása (Általános jellemzők + Kérdések + válaszok)
+    ---------------------------------------------------------------------------
+    */
+
+    selectTest = (questions) => { //Kérdés + Válasz párosítás
         return new Promise((resolve, reject) => {
             let questionList = new Array()
             questions.forEach( (question) => {
@@ -433,7 +481,7 @@ class Connection {
         })
     }
 
-    selectResults = (answersIdList) =>{
+    selectResults = (answersIdList) =>{ //Válaszok keresése a kérdéshez
         return new Promise((resolve, reject) =>{
             let result = new Array()
             if(answersIdList.length === 0){
@@ -455,7 +503,7 @@ class Connection {
         })
     }
 
-    selectWholeExam = (exam_itemcode) =>{
+    selectWholeExam = (exam_itemcode) =>{ //Az adatok összesítése és tovább küldése
         return new Promise((resolve, reject) => {
             this.con('exams').select(['exam_id', 'exam_name', 'exam_notes', 'exam_status', 'points_required'])
             .where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
@@ -473,6 +521,12 @@ class Connection {
             }).catch(err => reject(err))
         })
     }
+
+    /*
+    --------------------------------------------------------------------------
+    Felhasználó kezelés
+    --------------------------------------------------------------------------
+    */
 
     findUser = (cardNum) =>{
         return new Promise((resolve, reject) => {
@@ -500,6 +554,12 @@ class Connection {
             }).catch((err) => reject(err))
         })
     }
+
+    /*
+    ----------------------------------------------------------------------
+    Vizsga feltöltés rendszere
+    ----------------------------------------------------------------------
+    */ 
 
     itemCodeTest = (itemcode) => { //true -> létezik ilyen, false -> nem létezik ilyen
         return new Promise((resolve, reject) =>{

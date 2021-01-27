@@ -72,7 +72,7 @@ export default function AddQuestion(props){
                     <input type="file" name='pic' onChange={handleChange} />
 
                     <div className="container text-center">
-                        <button className="btn btn-warning my-3">Feltöltés!</button>
+                        <button className="btn btn-warning my-3">Feltöltés</button>
                     </div>
                 </form>
             : null} 

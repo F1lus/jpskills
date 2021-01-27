@@ -37,10 +37,14 @@ export default function ExamModify(props){
                     question.answers.forEach(answer => {
                         answers.push([answer.id, answer.text, answer.correct])
                     })
+                    answers.sort((a, b) => a[0] - b[0])
                 }
                 examPoints += question.points
                 list.push([question.id, question.name, question.points, answers])
             })
+
+            list.sort((a, b) => a[0] - b[0])
+
             setQuestions(list)
             setStatus(status)
             setMaxPoints(examPoints)

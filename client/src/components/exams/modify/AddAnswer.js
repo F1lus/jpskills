@@ -54,7 +54,7 @@ export default function AddAnswer(props){
                         <option value={0}>Helytelen</option>
                     </select>
 
-                    <button className="btn btn-warning">Módosítás</button>
+                    <button className="btn btn-warning">Hozzáadás</button>
                 </form> 
                 : null
             } 
