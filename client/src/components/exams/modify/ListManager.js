@@ -37,7 +37,7 @@ export default function ListManager(props){
         <ul>
             {
                 list.length === 0 ? <li className="alert alert-danger my-2">Nincs megjeleníthető tartalom!</li> :
-                list.map((el) => {
+                list.map((el,kerdesIndex) => {
                     return el.map((inner, index) => { //inner - belső tömb eleme
                         if(index === 3){
                             /*
