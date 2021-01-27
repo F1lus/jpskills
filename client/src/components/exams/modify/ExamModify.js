@@ -132,7 +132,7 @@ export default function ExamModify(props){
     }
 
     return (
-        <div className="container text-center">
+        <div className="container text-center mb-3">
             {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
             <div className="container text-center rounded w-75 mb-5 p-3 shadow bg-light">
                 <h3>A vizsga jellemzői:</h3>
@@ -177,7 +177,7 @@ export default function ExamModify(props){
                 </form>
             </div>
 
-            <div className="container text-center rounded w-75 shadow bg-light p-3">
+            <div className="container text-center rounded w-75 shadow bg-light p-3 mb-3">
                 <h3>A vizsgához tartozó kérdések</h3>
 
                 {questions.length === 0 ? warning: <ListManager socket={socket} list={questions} />}

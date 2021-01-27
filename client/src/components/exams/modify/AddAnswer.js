@@ -37,10 +37,10 @@ export default function AddAnswer(props){
     }
 
     return (
-        <div>
-           { props.display ? 
+        <div className="container rounded">
+           { props.display ?
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group text-center m-auto">
+                    <div className="form-group m-autot">
                         <input type='text' name='answer' value={answer || ''} onChange={handleChange}/>
                         <label htmlFor="answer" className="label-name">
                             <span className="content-name">
@@ -53,9 +53,9 @@ export default function AddAnswer(props){
                         <option value={1}>Helyes</option>
                         <option value={0}>Helytelen</option>
                     </select>
-
-                    <button className="btn btn-warning">Hozzáadás</button>
-                </form> 
+                    <br/>
+                    <button className="btn btn-warning m-2">Hozzáadás!</button>
+                </form>
                 : null
             } 
         </div>

@@ -88,11 +88,11 @@ select {
     border: none;
     border-bottom: 1px solid rgb(33,12,185);
     color: rgb(33,12,185);
-    background-color: #f8f9fa;
+    background-color: inherit;
     cursor: pointer;
 }
 
-select option {
+option {
     background-color: #f8f9fa;
     color: rgb(33,12,185);
 }
@@ -111,7 +111,7 @@ input[type="file"] {
     border-bottom: 1px solid rgb(33,12,185);
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
-    background-color: #f8f9fa;
+    background-color: inherit;
     height: 40px;
     outline: none;
     cursor: pointer;
@@ -139,7 +139,7 @@ form input {
     padding-top: 20px;
     border: none;
     outline: none;
-    background-color: #f8f9fa;
+    background-color: inherit;
 }
 
 .form-group label {
@@ -182,4 +182,9 @@ form input:valid + .label-name .content-name {
 form input:focus + .label-name::after,
 form input:valid + .label-name {
     transform: translateX(0%);
+}
+
+/*modify*/
+#valaszelvalaszto {
+    background-color: #ffc107;
 }

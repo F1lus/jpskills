@@ -56,11 +56,11 @@ export default function Modifier(props){
         if(type === 'number' || type === 'text'){
             return (
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group text-center m-auto">
-                        <input name='modify' type={type || 'text'} value={value || ''} onChange={handleChange}/>
+                    <div className="form-group m-auto">
+                        <input name='modify' type={type || 'text'} value={value || ''} onChange={handleChange} required/>
                         <label htmlFor="modify" className="label-name">
                             <span className="content-name">
-
+                                {type === 'number' ? "Pontszám":"Szöveg"}
                             </span>
                         </label>
                     </div>
@@ -76,6 +76,7 @@ export default function Modifier(props){
                     </select>
                     <br/>
                     <button className="btn btn-warning m-2">Módosítás!</button>
+                    <hr id="valaszelvalaszto"/>
                 </form>
             )
         }

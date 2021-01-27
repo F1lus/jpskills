@@ -48,7 +48,7 @@ export default function AddQuestion(props){
     }
 
     return (
-        <div className="container text-center rounded">
+        <div className="container text-center rounded mb-3">
            { props.display ? 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto mb-3">
