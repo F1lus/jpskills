@@ -26,6 +26,7 @@ const updater = require('./routes/exams/update/ExamUpdate')
 const removeAnswer = require('./routes/exams/update/RemoveAnswer')
 const removeQuestion = require('./routes/exams/update/RemoveQuestion')
 const removeTest = require('./routes/exams/update/RemoveTest')
+const updatePoints = require('./routes/exams/update/UpdatePoints')
 
 //Session előkészítés
 const session = require('./model/SessionSetup')
@@ -102,6 +103,10 @@ io.on('connection', (socket) => {
 
     socket.on('remove-test', examCode => {
         removeTest(socket, examCode)
+    })
+
+    socket.on('examPoints-mislead', (examCode, points) => {
+        updatePoints(socket, examCode, points)
     })
 
 })

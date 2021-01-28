@@ -7,10 +7,18 @@ update.post('/exams/modify/:examCode', (req,res) => {
         if(req.session.perm === 'admin'){
             const user = req.session.user
             const examCode = req.params.examCode
-            if(req.body.examName && req.body.status && req.body.points != null){
+
+            if(req.body.status != null){
+
+                dbconnect.updateExamStatus(user, examCode, req.body.status)
+                .then(response => {
+                    res.json({updated: response})
+                }).catch(err => console.log(err))
+                
+            }else if(req.body.examName && req.body.points != null){
                 //exam tábla adatainak módosítása
                 dbconnect.updateExam(user, req.body.examName, 
-                    examCode, req.body.notes, req.body.status, req.body.points)
+                    examCode, req.body.notes, req.body.points)
                 .then(response => {
                     res.json({updated: response})
                 }).catch(err => console.log(err))

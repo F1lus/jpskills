@@ -162,26 +162,21 @@ class Connection {
                             .then(response => {
                                 if(response){
                                     this.removeMultipleAnswers(resultIds)
-                                    .then(response => {
-                                        if(response){
-                                            this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
-                                            .then(result => {
-                                                if(result){
-                                                    this.updateExamModify(user, examCode)
-                                                    .then(res => resolve(res != null))
-                                                    .catch(err => reject(err))
-                                                }
-                                            }).catch(err => reject(err))
-                                        }
-                                    }).catch(err => reject(err))
-                                }else{
-                                    this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
-                                    .then(result => {
-                                        if(result){
+                                    .then(() => {
+                                        this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
+                                        .then(() => {
                                             this.updateExamModify(user, examCode)
                                             .then(res => resolve(res != null))
                                             .catch(err => reject(err))
-                                        }
+                                        }).catch(err => reject(err))
+                                        
+                                    }).catch(err => reject(err))
+                                }else{
+                                    this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
+                                    .then(() => {
+                                        this.updateExamModify(user, examCode)
+                                        .then(res => resolve(res != null))
+                                        .catch(err => reject(err))
                                     }).catch(err => reject(err))
                                 }
                             }).catch(err => reject(err))
@@ -382,6 +377,38 @@ class Connection {
     Már létező vizsga tulajdonságok módosítása
     ---------------------------------------------------------------------------
     */
+
+    updateExamStatus = (user, examCode, status) => {
+        return new Promise((resolve, reject) => {
+            this.checkExamCreator(user, examCode).then(response => {
+                if(response){
+                    this.con('exams').update({
+                        exam_status: status,
+                        exam_modifier: user,
+                        exam_modified_time: this.con.fn.now()
+                    }).where(this.con.raw('exam_itemcode = ?', [examCode]))
+                    .then(res => resolve(res != null))
+                    .catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    updateExamPoints = (user, examCode, points) => {
+        return new Promise((resolve,reject) => {
+            this.checkExamCreator(user, examCode).then(response => {
+                if(response){
+                    this.con('exams').update({
+                        points_required: points,
+                        exam_modifier: user,
+                        exam_modified_time: this.con.fn.now()
+                    }).where(this.con.raw('exam_itemcode = ?', [examCode]))
+                    .then(res => resolve(res != null))
+                    .catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
 
     /**
      * A vizsga tananyagának módosítása
@@ -587,7 +614,7 @@ class Connection {
      * @returns Hiba esetén visszatér a hibával (reject)
      */
 
-    updateExam = (user, examName, examCode, notes, status, points) => {
+    updateExam = (user, examName, examCode, notes, points) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode)
             .then(result => {
@@ -595,7 +622,6 @@ class Connection {
                     this.con('exams').update({
                         exam_name: examName,
                         exam_notes: notes,
-                        exam_status: status,
                         points_required: points,
                         exam_modifier: user,
                         exam_modified_time: this.con.fn.now()

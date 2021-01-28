@@ -40,6 +40,7 @@ export default function ExamModify(props){
                     answers.sort((a, b) => a[0] - b[0])
                 }
                 examPoints += question.points
+
                 list.push([question.id, question.name, question.points, answers])
             })
 
@@ -47,6 +48,10 @@ export default function ExamModify(props){
 
             setQuestions(list)
             setStatus(status)
+            if(points > examPoints){
+                points = examPoints
+                socket.emit('examPoints-mislead', examCode.examName, examPoints)
+            }
             setMaxPoints(examPoints)
             setExamProps([examName, notes === 'null' ? '' : notes, status, points])
         })
@@ -55,6 +60,10 @@ export default function ExamModify(props){
             setQuestions([])
             setWarning('Nincsenek megjeleníthető kérdések.')
             setStatus(status)
+            if(points > 0){
+                points = 0
+                socket.emit('examPoints-mislead', examCode.examName, 0)
+            }
             setMaxPoints(points)
             setExamProps([examName, notes === 'null' ? '' : notes, status, points])
         })
@@ -79,9 +88,21 @@ export default function ExamModify(props){
         event.preventDefault()
         if(examProps != null){
             API.post(`/exams/modify/${examCode.examName}`, 
-                {examName: examProps[0], notes: examProps[1], status: examProps[2], points: examProps[3]})
+                {examName: examProps[0], notes: examProps[1], points: examProps[3]})
             .then(response => {
-                if(response){
+                if(response.data.updated){
+                    socket.emit('exam-modified')
+                }
+            }).catch(err => console.log(err))
+        }
+    }
+
+    function statusChange(event){
+        event.preventDefault()
+        if(examProps[2] != null){
+            API.post(`/exams/modify/${examCode.examName}`, {status: examProps[2]})
+            .then(response => {
+                if(response.data.updated){
                     socket.emit('exam-modified')
                 }
             }).catch(err => console.log(err))
@@ -136,8 +157,8 @@ export default function ExamModify(props){
             {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
             <div className="container text-center rounded w-75 mb-5 p-3 shadow bg-light">
                 <h3>A vizsga jellemzői:</h3>
-                <form onSubmit={handleSubmit}>
 
+                <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto">
                         <input type='text' name='examName' value={examProps[0] || ''} onChange={handleChange} required/>
                         <label htmlFor="examName" className="label-name">
@@ -156,14 +177,6 @@ export default function ExamModify(props){
                         </label>
                     </div>
 
-                    <p>A vizsga jelenlegi állapota: {status ? 'Aktív' : 'Inaktív'}</p>
-
-                    <select name='examStatus' className="rounded pl-2 w-25 mb-3" onChange={handleChange}>
-                        <option value={null}>Állapotváltás...</option>
-                        <option value={1}>Aktív</option>
-                        <option value={0}>Inaktív</option>
-                    </select>
-
                     <div className="form-group m-auto">
                         <input type='number' name='examMinPoints' value={examProps[3] || ''} onChange={handleChange} required/>
                         <label htmlFor="examMinPoints" className="label-name">
@@ -172,6 +185,20 @@ export default function ExamModify(props){
                             </span>
                         </label>
                     </div>
+
+                    <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
+                </form>
+
+                <form onSubmit={statusChange}>
+                    <p>A vizsga jelenleg {status ? 
+                        <span className="text-success">Aktív</span> : <span className="text-danger">Inaktív</span>
+                    }</p>
+
+                    <select name='examStatus' className="rounded pl-2 w-25 mb-3" onChange={handleChange}>
+                        <option value={null}>Állapotváltás...</option>
+                        <option value={1}>Aktív</option>
+                        <option value={0}>Inaktív</option>
+                    </select>
 
                     <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
                 </form>
