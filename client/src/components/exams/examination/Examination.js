@@ -1,21 +1,46 @@
 import React, {useEffect, useState} from 'react'
+import {useParams} from 'react-router-dom'
 
-export default function Examination(props){
+import RenderContent from './RenderContent'
 
-    const user = props.user
-    const socket = props.socket
+import manager from '../../GlobalSocket'
+
+export default function Examination(){
+
+    const socket = new manager().socket
+    const exam = useParams().examCode
+
+    const [examProps, setExamProps] = useState([])
 
     const [questions, setQuestions] = useState([])
-    const [maxPoints, setMaxPoints] = useState(0)
-    const [points, setPoints] = useState(0)
 
     useEffect(() => {
+        socket.emit('request-exam-content', exam)
 
-    })
+        socket.on('exam-content', (examName, questionList, notes, status, points) => {
+            setExamProps([examName, notes, status, points])
+            let qList = []
+            questionList.forEach(question => {
+                let answers = []
+                question.answers.forEach(answer => {
+                    answers.push([answer.id, answer.text, answer.correct])
+                })
+                answers.sort((a, b) => a[0] - b[0])
+
+                qList.push([question.id, question.name, question.points, question.pic, answers])
+            })
+            qList.sort((a, b) => a[0] - b[0])
+            setQuestions(qList)
+        })
+
+        return () => socket.disconnect()
+
+        // eslint-disable-next-line
+    }, [])
 
     return (
-        <div>
-
+        <div className='container bg-white'>
+            <RenderContent list={questions} />
         </div>
     )
 }

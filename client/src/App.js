@@ -110,7 +110,7 @@ export default function App(){
             return (
               <div>
                 <CustomNavbar/>
-                <Examination user={user} socket={socket} />
+                <Examination />
               </div>
             )
             
