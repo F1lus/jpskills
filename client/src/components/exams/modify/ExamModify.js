@@ -199,7 +199,7 @@ export default function ExamModify(props){
                         <option value={1}>Aktív</option>
                         <option value={0}>Inaktív</option>
                     </select>
-
+                    <br/>
                     <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
                 </form>
             </div>
@@ -212,7 +212,7 @@ export default function ExamModify(props){
                 <AddQuestion socket={socket} display={displayQuestion} />
 
                 <button onClick={setDisplay} className="btn btn-warning m-2">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
-
+                <br/>
                 <button onClick={removeExam} className="btn btn-warning m-3">A vizsga törlése</button>
             </div>
         </div>
