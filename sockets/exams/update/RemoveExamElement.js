@@ -2,7 +2,7 @@ const dbconnect = require('../../../model/DbConnect')
 
 module.exports = (socket) => {
 
-    const removeAnswer = (examCode, answerId) => {
+    const removeAnswer = (answerId, examCode) => {
         if(examCode && answerId){
             dbconnect.removeAnswer(socket.handshake.session.user, answerId, examCode)
             .then(result => {
@@ -13,7 +13,7 @@ module.exports = (socket) => {
         }
     }
 
-    const removeQuestion = (examCode, questionId) => {
+    const removeQuestion = (questionId, examCode) => {
         if(examCode && questionId){
             dbconnect.removeQuestion(socket.handshake.session.user, questionId, examCode)
             .then(result => {

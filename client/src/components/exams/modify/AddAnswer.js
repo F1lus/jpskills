@@ -5,9 +5,12 @@ import API from '../../BackendAPI'
 
 export default function AddAnswer(props){
 
-    const [param,] = useState(useParams())
+    const param = useParams()
+
+    const [disableButton, setDisableButton] = useState(props.disable || false)
     const [answer, setAnswer] = useState(null)
     const [isCorrect, setCorrect] = useState(1)
+
 
     function handleChange(event){
         switch(event.target.name){
@@ -24,6 +27,7 @@ export default function AddAnswer(props){
 
     function handleSubmit(event){
         event.preventDefault()
+        setDisableButton(true)
         if(props.questionId && answer && isCorrect){
             API.post(`/exams/modify/${param.examName}`, 
                 {questionId: props.questionId, answerText: answer, value: isCorrect})
@@ -54,7 +58,7 @@ export default function AddAnswer(props){
                         <option value={0}>Helytelen</option>
                     </select>
                     <br/>
-                    <button className="btn btn-warning m-2">Hozzáadás!</button>
+                    <button disabled={disableButton} className="btn btn-warning m-2">Hozzáadás!</button>
                 </form>
                 : null
             } 
