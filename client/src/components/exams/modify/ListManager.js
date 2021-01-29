@@ -50,9 +50,15 @@ export default function ListManager(props){
                                 <ListManager socket={socket} questionId={el[0]} list={inner} isAnswer={true}/>
                             </div>)
                         }else if(index === 0){
-                            return (<li key={index}><button className="btn btn-warning" onClick={e =>{
-                                remove(e, inner)
-                            }}>Törlés</button></li>)
+                            return (
+                                <div className="container" key={index}>
+                                    <span className="float-left"><b>{kerdesIndex+1}.</b></span>
+                                    <li>
+                                        <button className="btn btn-warning float-right" onClick={e =>{remove(e, inner)}}>
+                                            Törlés
+                                        </button>
+                                    </li>
+                                </div>)
                         }else if(index === 2){
                             /*
                             Itt jelennek meg a kérdések és a válaszok értékei
@@ -60,7 +66,7 @@ export default function ListManager(props){
                             */
                             if(typeof inner === 'boolean'){
                                 return (
-                                <li key={index}>Jelenlegi érték: {inner ? 'Helyes' : 'Helytelen'}
+                                <li key={index}><b>{inner ? <span className="text-success">Helyes</span> : <span className="text-danger">Helytelen</span>}</b>
                                     <Modifier socket={socket} index={el[0]} value={inner} isAnswer={true}/>
                                 </li>)
                             }else{
