@@ -1,14 +1,14 @@
 /**
  * Általános tudnivalók
- * ---------------------------------------------------------
+ * 
  * @classdesc Ez az osztály kezeli az adatbázissal kapcsolatos összes műveletet
- * ---------------------------------------------------------
+ * 
  * Külső modulok:
  * 
  * @module knex
  * @module mysql
  * 
- * -----------------------------------------------------------
+ * 
  * Minden funkció Promise alapú
  * 
  * @author Filimon Márk
@@ -37,34 +37,21 @@ class Connection {
     }
 
     /*
-     *---------------------------------------------------------------------------*
-     *                                                                           *
-     *Új kérdések és válaszok beszúrása                                          *
-     *                                                                           *
-     *---------------------------------------------------------------------------*
+     *---------------------------------------------------------------------------
+     *
+     *Új kérdések és válaszok beszúrása
+     *
+     *---------------------------------------------------------------------------
     */
 
 
     /**
      * A vizsga törlését végrehajtó folyamat
-     * --------------------------------------------------------------
+     * 
      * @param {string} user 
      * @param {number | string} examCode 
      * 
      * Használt táblák: exams, questions, results, exam_prepare
-     * ---------------------------------------------------------------
-     * Felhasznált eszközök:
-     * 
-     * @function checkExamCreator
-     * @function removeMultipleQuestions
-     * 
-     * exams -> a felhasználó és a vizsga létezésének validálása, a folyamat végén törlés,
-     * questions -> a vizsga kérdéseinek törlése,
-     * results -> a vizsga kérdéseihez tartozó válaszok törlése,
-     * exam_prepare -> a kérdések és a válaszok közötti kapcsolatok törlése,
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     removeTest = (user, examCode) => {
@@ -89,24 +76,13 @@ class Connection {
 
     /**
      * Több kérdés törlését végrehajtó folyamat
-     * ------------------------------------------------------------
+     * 
      * @param {number} examId 
      * @param {string} user 
      * @param {number | string} examCode
      * 
      * 
      * Használt táblák: questions, results, exam_prepare
-     * -------------------------------------------------------------
-     * Felhasznált eszközök:
-     * 
-     * @function removeQuestion
-     * 
-     * questions -> a vizsga kérdéseinek törlése,
-     * results -> a vizsga kérdéseihez tartozó válaszok törlése,
-     * exam_prepare -> a kérdések és a válaszok közötti kapcsolatok törlése
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     removeMultipleQuestions = (examId, user, examCode) => {
@@ -130,25 +106,12 @@ class Connection {
 
     /**
      * Egy adott kérdés törlése válaszokkal együtt
-     * ----------------------------------------------------------------
+     * 
      * @param {string} user 
      * @param {number} questionId 
      * @param {number | string} examCode 
      * 
      * Használt táblák: questions, results, exam_prepare
-     * ----------------------------------------------------------------
-     * Használt eszközök:
-     * 
-     * @function checkExamCreator
-     * @function removeMultipleAnswers
-     * @function updateExamModify
-     * 
-     * questions -> az adott kérdés törlése,
-     * results -> az adott kérdés válaszainak törlése,
-     * exam_prepare -> a kérdés és a válaszok közötti kapcsolat bontása
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     removeQuestion = (user, questionId, examCode) => {
@@ -189,17 +152,10 @@ class Connection {
 
     /**
      * Adott kérdéshez tartozó összes válasz törlése
-     * ----------------------------------------------------------------
+     * 
      * @param {number[]} resultIds
      * 
      * Használt táblák: results
-     * ----------------------------------------------------------------
-     * Használt eszközök: -
-     * 
-     * results -> az adott kérdés válaszainak törlése
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     removeMultipleAnswers = (resultIds) => {
@@ -217,26 +173,15 @@ class Connection {
 
     /**
      * Adott kérdés adott válaszának törlése
-     * ----------------------------------------------------------------
+     * 
      * @param {string} user
      * @param {number} answerId
      * @param {number | string} examCode
      * 
      * Használt táblák: results, exam_prepare
-     * ----------------------------------------------------------------
-     * Használt eszközök:
-     * 
-     * @function checkExamCreator
-     * @function updateExamModify
-     * 
-     * results -> az adott kérdés válaszainak törlése,
-     * exam_prepare -> A kérdés és a válasz közötti kapcsolat bontása
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
-    removeAnswer = (user, answerId, examCode) => { //Egy adott válasz törlése
+    removeAnswer = (user, answerId, examCode) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
                 if(result){
@@ -270,7 +215,7 @@ class Connection {
 
     /**
      * Új kérdés beszúrása
-     * -------------------------------
+     * 
      * @param {string} user 
      * @param {number | string} examCode 
      * @param {string} text 
@@ -278,17 +223,6 @@ class Connection {
      * @param {Blob} picture 
      * 
      * Használt táblák: exams, questions
-     * ---------------------------------
-     * Használt eszközök:
-     * 
-     * @function checkExamCreator
-     * @function updateExamModify
-     * 
-     * exams -> A vizsga létezésének vizsgálata, és az azonosító lekérdezése
-     * questions -> A kérdés beszúrása
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     insertQuestion = (user, examCode, text, points, picture) => {
@@ -319,7 +253,7 @@ class Connection {
 
     /**
      * Új válasz beszúrása
-     * -------------------------------
+     * 
      * @param {string} user 
      * @param {number | string} examCode 
      * @param {number} questionId
@@ -327,18 +261,6 @@ class Connection {
      * @param {[0,1]} value
      * 
      * Használt táblák: questions, results, exam_prepare
-     * ---------------------------------
-     * Használt eszközök:
-     * 
-     * @function checkExamCreator
-     * @function updateExamModify
-     * 
-     * questions -> A kérdés létezésének ellenőrzése,
-     * results -> A válasz beszúrása,
-     * exam_prepare -> A kérdés és a válasz összekapcsolása
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     insertAnswer = (user, examCode, questionId, answerText, value) => {
@@ -382,13 +304,21 @@ class Connection {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(response => {
                 if(response){
-                    this.con('exams').update({
-                        exam_status: status,
-                        exam_modifier: user,
-                        exam_modified_time: this.con.fn.now()
-                    }).where(this.con.raw('exam_itemcode = ?', [examCode]))
-                    .then(res => resolve(res != null))
-                    .catch(err => reject(err))
+                    this.con('exams').select('exam_status')
+                    .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                    .then(result => {
+                        if(result){
+                            resolve(false)
+                        }else{
+                            this.con('exams').update({
+                                exam_status: status,
+                                exam_modifier: user,
+                                exam_modified_time: this.con.fn.now()
+                            }).where(this.con.raw('exam_itemcode = ?', [examCode]))
+                            .then(res => resolve(res != null))
+                            .catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
@@ -398,13 +328,21 @@ class Connection {
         return new Promise((resolve,reject) => {
             this.checkExamCreator(user, examCode).then(response => {
                 if(response){
-                    this.con('exams').update({
-                        points_required: points,
-                        exam_modifier: user,
-                        exam_modified_time: this.con.fn.now()
-                    }).where(this.con.raw('exam_itemcode = ?', [examCode]))
-                    .then(res => resolve(res != null))
-                    .catch(err => reject(err))
+                    this.con('exams').select('points_required')
+                    .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                    .then(result => {
+                        if(result){
+                            resolve(false)
+                        }else{
+                            this.con('exams').update({
+                                points_required: points,
+                                exam_modifier: user,
+                                exam_modified_time: this.con.fn.now()
+                            }).where(this.con.raw('exam_itemcode = ?', [examCode]))
+                            .then(res => resolve(res != null))
+                            .catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
@@ -412,22 +350,13 @@ class Connection {
 
     /**
      * A vizsga tananyagának módosítása
-     * -------------------------------
+     * 
      * @param {string} user 
      * @param {number | string} examCode 
      * @param {Blob} document
      * 
      * Használt táblák: exams
-     * ---------------------------------
-     * Használt eszközök:
      * 
-     * @function checkExamCreator
-     * @function updateExamModify
-     * 
-     * exams -> A dokumentum módosítása
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
    updateExamDoc = (user, examCode, document) => {
@@ -451,7 +380,7 @@ class Connection {
 
     /**
      * Már létező válasz módosítása
-     * -------------------------------
+     * 
      * @param {string} user 
      * @param {number | string} examCode 
      * @param {number} answerId
@@ -459,25 +388,13 @@ class Connection {
      * @param {boolean} isBoolean
      * 
      * Használt táblák: results
-     * ---------------------------------
-     * Használt eszközök:
-     * 
-     * @function checkExamCreator
-     * @function updateExamModify
-     * 
-     * results -> A válasz létezésének ellenőrzése, majd megvizsgálja, hogy történt-e változás.
-     * Ha nem, akkor leáll a folyamat és nem történik módosítás
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     updateAnswer = (user, examCode, answerId, value, isBoolean) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
                 if(result){
-                    this.con('results').select(['result_text', 'correct', 'results_id'])
-                    .where(this.con.raw('results_id = ?', [answerId]))
+                    this.con('results').where(this.con.raw('results_id = ?', [answerId]))
                     .first().then(result => {
                         if(result){
                             if(!isBoolean){
@@ -522,7 +439,7 @@ class Connection {
 
     /**
      * Már létező kérdés módosítása
-     * -------------------------------
+     * 
      * @param {string} user 
      * @param {number | string} examCode 
      * @param {number} questionId
@@ -530,17 +447,6 @@ class Connection {
      * @param {boolean} isNumber
      * 
      * Használt táblák: questions
-     * ---------------------------------
-     * Használt eszközök:
-     * 
-     * @function checkExamCreator
-     * @function updateExamModify
-     * 
-     * questions -> A kérdés létezésének ellenőrzése, majd megvizsgálja, hogy történt-e változás.
-     * Ha nem, akkor leáll a folyamat és nem történik módosítás
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     updateQuestion = (user, examCode, questionId, value, isNumber) => {
@@ -594,7 +500,7 @@ class Connection {
 
     /**
      * Már létező vizsga módosítása
-     * -------------------------------
+     * 
      * @param {string} user
      * @param {string} examName
      * @param {number | string} examCode 
@@ -603,15 +509,6 @@ class Connection {
      * @param {number} points
      * 
      * Használt táblák: exams
-     * ---------------------------------
-     * Használt eszközök:
-     * 
-     * @function checkExamCreator
-     * 
-     * exams -> A vizsga létezésének ellenőrzése, majd az értékek beszúrása
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     updateExam = (user, examName, examCode, notes, points) => {
@@ -646,18 +543,11 @@ class Connection {
 
     /**
      * A felhasználó és a vizsga készítőjének összehasonlítása
-     * -------------------------------
+     * 
      * @param {string} user
      * @param {number | string} examCode
      * 
      * Használt táblák: exams
-     * ---------------------------------
-     * Használt eszközök: - 
-     * 
-     * exams -> A vizsga készítőjének összevetése a jelenlegi felhasználóval, hogy módosíthatja-e a vizsgát.
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     checkExamCreator = (user, examCode) => {
@@ -676,18 +566,11 @@ class Connection {
 
     /**
      * A vizsga módosítási idejének rögzítése
-     * -------------------------------
+     *
      * @param {string} user
      * @param {number | string} examCode
      * 
      * Használt táblák: exams
-     * ---------------------------------
-     * Használt eszközök: - 
-     * 
-     * exams -> Frissíti, hogy mikor, és ki által lett módosítva a vizsga.
-     * 
-     * @returns true -> Sikeres végrehajtás || false -> a folyamat nem teljesíthető (resolve)
-     * @returns Hiba esetén visszatér a hibával (reject)
      */
 
     updateExamModify = (user, examCode) => {

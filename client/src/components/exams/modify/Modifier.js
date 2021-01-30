@@ -5,11 +5,14 @@ import API from '../../BackendAPI'
 
 export default function Modifier(props){
 
-    const [param,] = useState(useParams())
+    const param = useParams()
+
+
     const [type, setType] = useState(null)
     const [index,] = useState(props.index)
     const [value, setValue] = useState(props.value || false)
     const [isAnswer,] = useState(props.isAnswer || false)
+    const [disableButton, setDisableButton] = useState(props.disable || false)
 
     useEffect(() => {
         let valueType = typeof props.value
@@ -31,6 +34,7 @@ export default function Modifier(props){
 
     function handleSubmit(event){
         event.preventDefault()
+        setDisableButton(true)
         if(index && value){
             if(!isAnswer){
                 API.post(`/exams/modify/${param.examName}`, 
@@ -39,7 +43,10 @@ export default function Modifier(props){
                     if(response){
                         props.socket.emit('exam-modified')
                     }
-                }).catch(err => console.log(err))
+                }).catch(err => {
+                    setDisableButton(false)
+                    console.log(err)
+                })
             }else{
                 API.post(`/exams/modify/${param.examName}`, 
                     {answerId: index, value: value, isBoolean: type === 'bool'})
@@ -47,7 +54,10 @@ export default function Modifier(props){
                     if(response){
                         props.socket.emit('exam-modified')
                     }
-                }).catch(err => console.log(err))
+                }).catch(err => {
+                    setDisableButton(false)
+                    console.log(err)
+                })
             }
         }
     }
@@ -64,7 +74,7 @@ export default function Modifier(props){
                             </span>
                         </label>
                     </div>
-                    <button className="btn btn-warning m-2">Módosítás!</button>
+                    <button disabled={disableButton} className="btn btn-warning m-2">Módosítás!</button>
                 </form>)
         }else if(type === 'bool'){
             return (
@@ -75,7 +85,7 @@ export default function Modifier(props){
                         <option value={0}>Helytelen</option>
                     </select>
                     <br/>
-                    <button className="btn btn-warning m-2">Módosítás!</button>
+                    <button disabled={disableButton} className="btn btn-warning m-2">Módosítás!</button>
                     <hr id="valaszelvalaszto"/>
                 </form>
             )
