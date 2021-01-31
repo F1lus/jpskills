@@ -79,12 +79,11 @@ export default function Modifier(props){
         }else if(type === 'bool'){
             return (
                 <form onSubmit={handleSubmit}>
-                    <select name='modify' className="rounded pl-2 w-25" onChange={handleChange}>
+                    <select name='modify' className="rounded pl-3 w-25" onChange={handleChange}>
                         <option value={null}>Állapotváltás...</option>
                         <option value={1}>Helyes</option>
                         <option value={0}>Helytelen</option>
                     </select>
-                    <br/>
                     <button disabled={disableButton} className="btn btn-warning m-2">Módosítás!</button>
                     <hr id="valaszelvalaszto"/>
                 </form>

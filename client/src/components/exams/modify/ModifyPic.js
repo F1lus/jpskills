@@ -90,6 +90,7 @@ export default function ModifyPic(props) {
 
                 {alert ? <h3 className="alert alert-secondary mt-3 text-center" role="alert">{alert}</h3> : <></>}
 
+                <button className="btn btn-warning m-3" onClick={close}>Bezár</button>
             </Modal>
         </div>
     )

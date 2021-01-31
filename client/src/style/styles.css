@@ -99,9 +99,10 @@ option {
 
 input[type="file"] {
     color: rgb(33,12,185);
-    margin-right: 40%;
-    margin-left: 40%;
-    width: 40%;
+    margin-right: 35%;
+    margin-left: 35%;
+    width: 35%;
+    padding: 0 !important;
 }
 
 ::-webkit-file-upload-button {

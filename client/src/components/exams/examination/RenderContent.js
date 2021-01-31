@@ -11,7 +11,7 @@ export default function RenderContent(props){
             {list.map((question, index) => {
                 return question.map((content, innerIndex) => {
                     if(innerIndex === 1){
-                        return <li key={innerIndex}>{content}</li>
+                        return <li key={innerIndex}><b><span>{index+1}. </span></b> {content}</li>
                     }else if(innerIndex === 3){
                         return <li key={innerIndex}></li>
                     }else if(innerIndex === 4){
