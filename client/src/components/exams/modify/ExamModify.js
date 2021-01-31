@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react'
 import {useParams, Redirect} from 'react-router-dom'
 
 import ListManager from './ListManager'
-import ModalElement from './ModifyPdf'
 
 import manager from '../../GlobalSocket'
 
@@ -41,7 +40,7 @@ export default function ExamModify(props){
                 }
                 examPoints += question.points
 
-                list.push([question.id, question.name, question.points, answers])
+                list.push([question.id, question.name, question.points, question.pic, answers])
             })
 
             list.sort((a, b) => a[0] - b[0])

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom'
 
 import AddAnswer from './AddAnswer'
-
+import ModifyPic from './ModifyPic'
 import Modifier from './Modifier'
 
 export default function ListManager(props){
@@ -74,7 +74,7 @@ export default function ListManager(props){
                                     <Modifier socket={socket} index={el[0]} value={inner} disable={disableButton}/>
                                     </li>
                             }
-                        }else if(index === 3){
+                        }else if(index === 4){
                             /*
                             Ilyenkor a lista újra meghívásra kerül, mivel akkor már a válaszokat
                             jeleníti meg
@@ -86,6 +86,12 @@ export default function ListManager(props){
                                     list={inner} isAnswer={true} disable={disableButton}/>
                             </div>)
 
+                        }else if(index === 3){
+                            return (
+                                <li key={index}>
+                                    <ModifyPic picture={inner} socket={socket} questionId={el[0]} exam={examCode}/>
+                                </li>
+                            )
                         }else{
                             //Itt jelennek meg a kérdések és a válaszok (a konkrét szöveg)
                             if(props.isAnswer){

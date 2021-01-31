@@ -349,30 +349,35 @@ class Connection {
     }
 
     /**
-     * A vizsga tananyagának módosítása
+     * A vizsga egy adott kérdéséhez tartozó kép módosítása
      * 
      * @param {string} user 
-     * @param {number | string} examCode 
-     * @param {Blob} document
+     * @param {number | string} examCode
+     * @param {number} questionId
+     * @param {Blob | Buffer | ArrayBuffer | Uint8Array} picture
      * 
      * Használt táblák: exams
      * 
      */
 
-   updateExamDoc = (user, examCode, document) => {
+   updateQuestionPic = (user, examCode, questionId, picture) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(response => {
                 if(response){
-                    this.con('exams').update({
-                        exam_docs: document
-                    }).where('exam_itemcode', examCode)
-                    .then(result => {
-                        if(result){
+                    this.con('questions').update({
+                        picture: picture
+                    }).where(this.con.raw('question_id = ?', [questionId]))
+                    .then(response => {
+                        if(response){
                             this.updateExamModify(user, examCode)
-                            .then(res => resolve(res != null))
-                            .catch(err => reject(err))
+                                .then(res => resolve(res != null))
+                                .catch(err => reject(err))
+                        }else{
+                            resolve(false)
                         }
                     }).catch(err => reject(err))
+                }else{
+                    resolve(false)
                 }
             }).catch(err => reject(err))
         })

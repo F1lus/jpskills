@@ -50,21 +50,41 @@ update.post('/exams/modify/:examCode', (req,res) => {
                 //Kérdés beszúrása
                 
                 if(!req.files || !req.files.picture){
+
                     dbconnect.insertQuestion(user, examCode, 
                         req.body.questionName, req.body.questionPoints, null)
                     .then(response => {
                         res.json({updated: response})
                     }).catch(err => console.log(err))
-                }else if(req.files.picture.mimetype !== 'image/jpeg' || req.files.picture.mimetype === 'image/png'){
+
+                }else if(!['.png', '.jpeg', '.jpg'].map(value => req.files.newPic.name.toLowerCase().includes(value))){
+                    res.json({error: 'invalid_mime'})
                     return
                 }else if(req.files.picture.truncated){
+                    res.json({error: 'oversize'})
                     return
                 }else{
+
                     dbconnect.insertQuestion(user, examCode, 
                         req.body.questionName, req.body.questionPoints, req.files.picture.data)
                     .then(response => {
                         res.json({updated: response})
                     }).catch(err => console.log(err))
+                }
+
+            }else if(req.body.questionModifyId){
+                if(!req.files || !req.files.newPic){
+                    return
+                }else if(!['.png', '.jpeg', '.jpg'].map(value => req.files.newPic.name.toLowerCase().includes(value))){
+                    res.json({error: 'invalid_mime'})
+                    return
+                }else if(req.files.newPic.truncated){
+                    res.json({error: 'oversize'})
+                    return
+                }else{
+                    dbconnect.updateQuestionPic(user, examCode, req.body.questionModifyId, req.files.newPic.data)
+                    .then(response => res.json({updated: response}))
+                    .catch(err => console.log(err))
                 }
             }
         }
