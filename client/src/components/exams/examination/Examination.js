@@ -39,8 +39,9 @@ export default function Examination(){
     }, [])
 
     return (
-        <div className='container bg-white'>
-            <RenderContent list={questions} />
+        <div className="container bg-white rounded shadow py-3 mb-3">
+            <h2><p className="text-center">Vizsga: {examProps[0]}</p></h2>
+            <RenderContent list={questions}/>
         </div>
     )
 }

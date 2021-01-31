@@ -39,7 +39,7 @@ export default function Learn(props) {
                 <div className="row">
                 {exams.map((exam,index)=>{
                     return(
-                        <div className="card shadow bg-light mx-2 text-center" key={index}>
+                        <div className="card shadow bg-light m-2 text-center" key={index}>
                             <div className="card-body text-center">
                                 <h4 className="card-title"><p>{exam[0]}</p></h4>
                                 <p className="card-text">{exam[2] !== '' ? `Megjegyzés: ${exam[2]}` : null}</p>

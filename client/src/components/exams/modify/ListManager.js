@@ -53,8 +53,7 @@ export default function ListManager(props){
                                     <li>
                                         <button disabled={disableButton}
                                             className="btn btn-warning float-right" 
-                                            onClick={e =>{remove(e, inner)}}
-                                        >
+                                            onClick={e =>{remove(e, inner)}}>
                                                 Törlés
                                         </button>
                                     </li>

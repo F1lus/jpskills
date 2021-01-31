@@ -16,8 +16,15 @@ export default function RenderContent(props){
                         return <li key={innerIndex}></li>
                     }else if(innerIndex === 4){
                         return (
-                            <div key={innerIndex} className="jumbotron mb-2">
-                                <RenderContent questionId={question[0]} list={content} isAnswer={true}/>
+                            <div key={innerIndex} className="jumbotron mb-3">
+                               {content.map((text, index) => {
+                                   return(
+                                    <div className="container" key={index}>
+                                        <input type="checkbox" name={index}/>
+                                        <label htmlFor={index} className="pl-1"> {text[1]}</label>
+                                    </div>
+                                   )
+                               })}
                             </div>
                         )
                     }
