@@ -16,7 +16,7 @@ export default function RenderContent(props){
                         return <li key={innerIndex}></li>
                     }else if(innerIndex === 4){
                         return (
-                            <div key={innerIndex} className="my-3">
+                            <li key={innerIndex} className="my-3">
                                {content.map((text, index) => {
                                    return(
                                     <div className="container" key={index}>
@@ -25,7 +25,7 @@ export default function RenderContent(props){
                                     </div>
                                    )
                                })}
-                            </div>
+                            </li>
                         )
                     }
                 })
