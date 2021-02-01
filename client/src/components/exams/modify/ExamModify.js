@@ -198,7 +198,7 @@ export default function ExamModify(props){
                         <option value={1}>Aktív</option>
                         <option value={0}>Inaktív</option>
                     </select>
-                    <br/>
+                    
                     <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
                 </form>
             </div>
