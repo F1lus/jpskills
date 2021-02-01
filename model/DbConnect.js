@@ -304,21 +304,13 @@ class Connection {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(response => {
                 if(response){
-                    this.con('exams').select('exam_status')
-                    .where(this.con.raw('exam_itemcode = ?', [examCode]))
-                    .then(result => {
-                        if(result){
-                            resolve(false)
-                        }else{
-                            this.con('exams').update({
-                                exam_status: status,
-                                exam_modifier: user,
-                                exam_modified_time: this.con.fn.now()
-                            }).where(this.con.raw('exam_itemcode = ?', [examCode]))
-                            .then(res => resolve(res != null))
-                            .catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
+                    this.con('exams').update({
+                        exam_status: status,
+                        exam_modifier: user,
+                        exam_modified_time: this.con.fn.now()
+                    }).where(this.con.raw('exam_itemcode = ?', [examCode]))
+                    .then(res => resolve(res != null))
+                    .catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })

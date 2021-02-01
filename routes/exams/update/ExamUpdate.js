@@ -9,7 +9,6 @@ update.post('/exams/modify/:examCode', (req,res) => {
             const examCode = req.params.examCode
 
             if(req.body.status != null){
-
                 dbconnect.updateExamStatus(user, examCode, req.body.status)
                 .then(response => {
                     res.json({updated: response})
