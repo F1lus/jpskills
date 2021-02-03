@@ -6,14 +6,26 @@ export default function RenderContent(props){
     const list = props.list
     const isAnswer = props.isAnswer
 
+    function createImage(picture){
+        const arrayBufferView = new Uint8Array(picture)
+        const blob = new Blob([arrayBufferView], {type: 'image/jpeg'}) 
+        const urlCreator = window.URL || window.webkitURL
+
+        return urlCreator.createObjectURL(blob)
+    }
+
     return (
         <ul>
             {list.map((question, index) => {
                 return question.map((content, innerIndex) => {
                     if(innerIndex === 1){
-                        return <li key={innerIndex}><b><span>{index+1}. </span></b> {content}</li>
-                    }else if(innerIndex === 3){
-                        return <li key={innerIndex}></li>
+                        return <li key={innerIndex}><b><span>{index+1}. </span></b> {content} ({question[2]} pont)</li>
+                    }else if(innerIndex === 3 && !isAnswer && content != null){
+                        return (
+                            <li key={innerIndex}>
+                                <img className='img-fluid' src={createImage(content)} alt=''/>
+                            </li>
+                        )
                     }else if(innerIndex === 4){
                         return (
                             <li key={innerIndex} className="my-3">
