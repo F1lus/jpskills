@@ -20,7 +20,7 @@ function dateFormat(rawDate){
 module.exports = (socket) => {
 
     const getExams = (shouldBroadcast) => {
-        dbconnect.selectExams()
+        dbconnect.selectExams(socket.handshake.session.user, socket.handshake.session.perm === 'admin')
         .then(results => {
             let examResult = []
             results.forEach(result => {

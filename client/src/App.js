@@ -115,22 +115,35 @@ export default function App(){
             )
             
           }else{
-            return <Redirect to='/' from='/exams/learn/:examCode' />
+            return <Redirect to='/' from='/exams/:examCode' />
           }
         }} />
 
-          <Route exact path='/profile' component={() =>{
-            if(loggedIn){
-              return (
-                <div>
-                  <CustomNavbar/>
-                  <Profile user={user} permission={permission} />
-                </div>
-              )
-            }else{
-              return <Redirect to='/' from='/profile' />
-            }
-          }} />
+        <Route exact path='/exams/:examCode/results' component={() =>{
+          if(loggedIn){
+            return (
+              <div>
+                <CustomNavbar/>
+              </div>
+            )
+            
+          }else{
+            return <Redirect to='/' from='/exams/:examCode' />
+          }
+        }} />
+
+        <Route exact path='/profile' component={() =>{
+          if(loggedIn){
+            return (
+              <div>
+                <CustomNavbar/>
+                <Profile user={user} permission={permission} />
+              </div>
+            )
+          }else{
+            return <Redirect to='/' from='/profile' />
+          }
+        }} />
 
         <Route exact path='/logout' component={() =>{
           if(loggedIn){

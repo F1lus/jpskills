@@ -36,6 +36,34 @@ class Connection {
         })
     }
 
+    processAnswers = (answers, user, examCode, cardNum) => {
+        return new Promise((resolve, reject) => {
+            if(answers.length === 0){
+                resolve(false)
+            }else{
+                let totalPoints = 0
+                console.log(answers)
+                answers.forEach((answerObj, index) => {
+                    this.con('results').select('results.results_id')
+                    .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
+                    .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
+                    .then(result => {
+                        console.log(result)
+                        let isCorrect = answerObj.answers.every(answer => result.findIndex(id => id.results_id === answer) > -1)
+
+                        if(isCorrect){
+                            this.con('questions').where(this.con.raw('question_id = ?', [answerObj.id]))
+                            .first().then(questionResult => {
+                                totalPoints += questionResult.points
+                                console.log(totalPoints)
+                            })
+                        }
+                    })
+                })
+            }
+        })
+    }
+
     /*
      *---------------------------------------------------------------------------
      *
@@ -621,22 +649,39 @@ class Connection {
         })
     }
 
-    selectExams = () =>{ //Általános vizsgainfók kiválasztása
+    selectExams = (user, userIsAdmin) =>{ //Általános vizsgainfók kiválasztása
         return new Promise((resolve, reject) => {
-            this.con('exams').then(results => {
-                let exams = []
-                results.forEach((result) => {
-                    const examData = {
-                        examName: result.exam_name,
-                        itemCode: result.exam_itemcode,
-                        comment: result.exam_notes,
-                        status: result.exam_status,
-                        created: result.exam_creation_time
-                    }
-                    exams.push(examData)
-                })
-                resolve(exams)
-            }).catch(err => reject(err))
+            if(userIsAdmin){
+                this.con('exams').where('exam_creator', [user]).then(results => {
+                    let exams = []
+                    results.forEach((result) => {
+                        const examData = {
+                            examName: result.exam_name,
+                            itemCode: result.exam_itemcode,
+                            comment: result.exam_notes,
+                            status: result.exam_status,
+                            created: result.exam_creation_time
+                        }
+                        exams.push(examData)
+                    })
+                    resolve(exams)
+                }).catch(err => reject(err))
+            }else{
+                this.con('exams').then(results => {
+                    let exams = []
+                    results.forEach((result) => {
+                        const examData = {
+                            examName: result.exam_name,
+                            itemCode: result.exam_itemcode,
+                            comment: result.exam_notes,
+                            status: result.exam_status,
+                            created: result.exam_creation_time
+                        }
+                        exams.push(examData)
+                    })
+                    resolve(exams)
+                }).catch(err => reject(err))
+            }
         })
     }
 
