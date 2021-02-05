@@ -51,7 +51,7 @@ class Connection {
                             let isCorrect = false
                             if(result){
                                 isCorrect = answerObj.answers
-                                .every(answer => result.findIndex(id => id.results_id === answer) > -1)
+                                .every(answer => result.findIndex(id => id.results_id === answer) > -1) && answerObj.answers.length === result.length
                             }
 
                             this.con('questions').select(['question_id', 'points'])
@@ -61,13 +61,13 @@ class Connection {
                                     if(isCorrect){
                                         totalPoints += question.points
                                     }
-                                    this.uploadPartialResults(cardNum, question.question_id, question.points, isCorrect)
-                                    .catch(err => reject(err))
-                                }
-
-                                if(index === answers.length-1){
-                                    this.uploadResults(examCode, cardNum, totalPoints)
-                                    .then(response => resolve(response))
+                                    this.uploadPartialResults(cardNum, question.question_id, question.points, isCorrect).then(() => {
+                                        if(index === answers.length-1){
+                                            this.uploadResults(examCode, cardNum, totalPoints)
+                                            .then(response => resolve(response))
+                                            .catch(err => reject(err))
+                                        }
+                                    })
                                     .catch(err => reject(err))
                                 }
                             }).catch(err => reject(err))
@@ -77,13 +77,14 @@ class Connection {
                             .then(question => {
                                 if(question){
                                     this.uploadPartialResults(cardNum, question.question_id, 0, false)
+                                    .then(() => {
+                                        if(index === answers.length-1){
+                                            this.uploadResults(examCode, cardNum, totalPoints)
+                                            .then(response => resolve(response))
+                                            .catch(err => reject(err))
+                                        }
+                                    })
                                     .catch(err => reject(err))
-
-                                    if(index === answers.length-1){
-                                        this.uploadResults(examCode, cardNum, totalPoints)
-                                        .then(response => resolve(response))
-                                        .catch(err => reject(err))
-                                    }
                                 }
                             })
                         }

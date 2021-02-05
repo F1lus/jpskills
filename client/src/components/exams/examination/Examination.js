@@ -17,6 +17,16 @@ export default function Examination(){
     useEffect(() => {
         socket.emit('request-exam-content', exam)
 
+        return () => socket.disconnect()
+
+        // eslint-disable-next-line
+    }, [])
+
+    useEffect(() => {
+        socket.on('exam-processed', () => {
+            setFinished(true)
+        })
+
         socket.on('exam-content', (examName, questionList, notes, status, points) => {
             setExamProps([examName, notes, status, points])
             let qList = []
@@ -31,16 +41,6 @@ export default function Examination(){
             })
             qList.sort((a, b) => a[0] - b[0])
             setQuestions(qList)
-        })
-
-        return () => socket.disconnect()
-
-        // eslint-disable-next-line
-    }, [])
-
-    useEffect(() => {
-        socket.on('exam-processed', () => {
-            setFinished(true)
         })
     })
 
