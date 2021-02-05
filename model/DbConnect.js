@@ -36,7 +36,7 @@ class Connection {
         })
     }
 
-    processAnswers = (answers, examCode, cardNum) => {
+    processAnswers = (answers, examCode, cardNum, time) => {
         return new Promise((resolve, reject) => {
             if(answers.length === 0){
                 resolve(false)
@@ -63,7 +63,7 @@ class Connection {
                                     }
                                     this.uploadPartialResults(cardNum, question.question_id, question.points, isCorrect).then(() => {
                                         if(index === answers.length-1){
-                                            this.uploadResults(examCode, cardNum, totalPoints)
+                                            this.uploadResults(examCode, cardNum, totalPoints, time)
                                             .then(response => resolve(response))
                                             .catch(err => reject(err))
                                         }
@@ -79,7 +79,7 @@ class Connection {
                                     this.uploadPartialResults(cardNum, question.question_id, 0, false)
                                     .then(() => {
                                         if(index === answers.length-1){
-                                            this.uploadResults(examCode, cardNum, totalPoints)
+                                            this.uploadResults(examCode, cardNum, totalPoints, time)
                                             .then(response => resolve(response))
                                             .catch(err => reject(err))
                                         }
@@ -96,7 +96,7 @@ class Connection {
         })
     }
 
-    uploadResults = (examCode, cardNum, totalPoints) => {
+    uploadResults = (examCode, cardNum, totalPoints, time) => {
         return new Promise((resolve, reject) => {
             this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [cardNum]))
             .first().then(worker => { 
@@ -110,6 +110,7 @@ class Connection {
                                 worker_id: worker.worker_id,
                                 exam_id: exam.exam_id,
                                 points: totalPoints,
+                                time: time,
                                 completed: completed
                             }).then(response => resolve(response != null)).catch(err => reject(err))
                         }else{

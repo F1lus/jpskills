@@ -41,6 +41,7 @@ export default function RenderContent(props){
             alert('Még nem jelölt meg egy választ sem! Kérjük adjon meg legalább egyet!')
         }else{
             socket.emit('exam-finished', answers, props.exam)
+            setDisable(true)
         }
     }
 

@@ -16,6 +16,7 @@ export default function Examination(){
 
     useEffect(() => {
         socket.emit('request-exam-content', exam)
+        socket.emit('begin-timer')
 
         return () => socket.disconnect()
 

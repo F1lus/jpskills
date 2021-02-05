@@ -25,6 +25,8 @@ const getLoginInfo = require('./users/GetLoginInfo')
  */
 module.exports = (socket) => {
 
+    var timer = null
+
     //Lekérdezések regisztrálása
     getExamContent(socket)
     getExams(socket)
@@ -43,5 +45,15 @@ module.exports = (socket) => {
     //Egyéb események
     socket.on('exam-modified', () => {
         socket.emit('server-accept')
+    })
+
+    socket.on('request-timer', () => {
+        
+    })
+
+    socket.on('disconnect', () => {
+        if(timer){
+            clearInterval(timer)
+        }
     })
 }
