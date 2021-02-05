@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 
 export default function RenderContent(props){
 
@@ -18,21 +18,10 @@ export default function RenderContent(props){
 
     function handleChange(event, qId, aId){
         const answersCopy = answers.slice()
-        const answerObj = {id: qId, answers: []}
         if(event.target.checked){
-            if(answersCopy.length === 0){
-                answerObj.answers.push(aId)
-                answersCopy.push(answerObj)
-            }else{
-                const index = answersCopy.findIndex(value => value.id === qId)
-                if(index === -1){
-                    answerObj.answers.push(aId)
-                    answersCopy.push(answerObj)
-                }else{
-                    if(answersCopy[index].answers.findIndex(value => value === aId) === -1){
-                        answersCopy[index].answers.push(aId)
-                    }
-                }
+            const index = answersCopy.findIndex(value => value.id === qId)
+            if(answersCopy[index].answers.findIndex(value => value === aId) === -1){
+                answersCopy[index].answers.push(aId)
             }
         }else{
             const index = answersCopy.findIndex(value => value.id === qId)
@@ -40,11 +29,7 @@ export default function RenderContent(props){
                 const answerIndex = answersCopy[index].answers.findIndex(value => value === aId)
                 if(answerIndex !== -1){
                     answersCopy[index].answers.splice(answerIndex, 1)
-                    if(answersCopy[index].answers.length === 0){
-                        answersCopy.splice(index, 1)
-                    }
                 }
-
             }
         }
         setAnswers(answersCopy)
@@ -58,6 +43,17 @@ export default function RenderContent(props){
             socket.emit('exam-finished', answers, props.exam)
         }
     }
+
+    useEffect(() => {
+        const temp = []
+        list.forEach(question => {
+            const answerObj = {id: question[0], answers:[]}
+            temp.push(answerObj)
+        })
+        setAnswers(temp)
+
+        // eslint-disable-next-line
+    }, [list])
 
     return (
         <div>

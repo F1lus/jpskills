@@ -36,31 +36,107 @@ class Connection {
         })
     }
 
-    processAnswers = (answers, user, examCode, cardNum) => {
+    processAnswers = (answers, examCode, cardNum) => {
         return new Promise((resolve, reject) => {
             if(answers.length === 0){
                 resolve(false)
             }else{
                 let totalPoints = 0
-                console.log(answers)
                 answers.forEach((answerObj, index) => {
                     this.con('results').select('results.results_id')
                     .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
                     .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
                     .then(result => {
-                        console.log(result)
-                        let isCorrect = answerObj.answers.every(answer => result.findIndex(id => id.results_id === answer) > -1)
+                        if(answerObj.answers.length > 0){
+                            let isCorrect = false
+                            if(result){
+                                isCorrect = answerObj.answers
+                                .every(answer => result.findIndex(id => id.results_id === answer) > -1)
+                            }
 
-                        if(isCorrect){
-                            this.con('questions').where(this.con.raw('question_id = ?', [answerObj.id]))
-                            .first().then(questionResult => {
-                                totalPoints += questionResult.points
-                                console.log(totalPoints)
+                            this.con('questions').select(['question_id', 'points'])
+                            .where(this.con.raw('question_id = ?', [answerObj.id])).first()
+                            .then(question => {
+                                if(question){
+                                    if(isCorrect){
+                                        totalPoints += question.points
+                                    }
+                                    this.uploadPartialResults(cardNum, question.question_id, question.points, isCorrect)
+                                    .catch(err => reject(err))
+                                }
+
+                                if(index === answers.length-1){
+                                    this.uploadResults(examCode, cardNum, totalPoints)
+                                    .then(response => resolve(response))
+                                    .catch(err => reject(err))
+                                }
+                            }).catch(err => reject(err))
+                        }else{
+                            this.con('questions').select('question_id')
+                            .where(this.con.raw('question_id = ?', [answerObj.id])).first()
+                            .then(question => {
+                                if(question){
+                                    this.uploadPartialResults(cardNum, question.question_id, 0, false)
+                                    .catch(err => reject(err))
+
+                                    if(index === answers.length-1){
+                                        this.uploadResults(examCode, cardNum, totalPoints)
+                                        .then(response => resolve(response))
+                                        .catch(err => reject(err))
+                                    }
+                                }
                             })
                         }
-                    })
+                        
+
+                    }).catch(err => reject(err))
                 })
             }
+        })
+    }
+
+    uploadResults = (examCode, cardNum, totalPoints) => {
+        return new Promise((resolve, reject) => {
+            this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [cardNum]))
+            .first().then(worker => { 
+                if(worker){
+                    this.con('exams').select(['exam_id', 'points_required'])
+                    .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+                    .then(exam => {
+                        if(exam){
+                            const completed = totalPoints >= exam.points_required ? 1 : 0
+                            this.con('skills').insert({
+                                worker_id: worker.worker_id,
+                                exam_id: exam.exam_id,
+                                points: totalPoints,
+                                completed: completed
+                            }).then(response => resolve(response != null)).catch(err => reject(err))
+                        }else{
+                            resolve(false)
+                        }
+                    }).catch(err => reject(err))
+                }else{
+                    resolve(false)
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    uploadPartialResults = (cardNum, questionId, points, isCorrect) => {
+        return new Promise((resolve, reject) => {
+            this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [cardNum]))
+            .first().then(worker => {
+                if(worker){
+                    this.con('exam_result').insert({
+                        worker_id: worker.worker_id,
+                        question_id: questionId,
+                        points: isCorrect ? points : 0
+                    }).then(response => resolve(response != null))
+                    .catch(err => reject(err))
+                }else{
+                    resolve(false)
+                }
+            }).catch(err => reject(err))
         })
     }
 
