@@ -36,6 +36,8 @@ class Connection {
         })
     }
 
+    
+
     /*selectUserAnswers = (examCode, cardNum) => {
         return new Promise((resolve, reject) => {
             const answers = []
@@ -711,7 +713,7 @@ class Connection {
             .where(this.con.raw('exam_itemcode = ?', [examCode]))
             .first().then(result => {
                 if(result){
-                    resolve(result.exam_creator === user)
+                    resolve(result.exam_creator == user)
                 }else{
                     reject('no_exam')
                 }
@@ -781,8 +783,11 @@ class Connection {
 
     selectExams = (user, userIsAdmin) =>{ //Általános vizsgainfók kiválasztása
         return new Promise((resolve, reject) => {
+            this.con('workers').select(['worker_id'])
             if(userIsAdmin){
-                this.con('exams').where('exam_creator', [user]).then(results => {
+                this.con('exams')
+                .select(['exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
+                .where('exam_creator', [user]).then(results => {
                     let exams = []
                     results.forEach((result) => {
                         const examData = {
@@ -797,7 +802,11 @@ class Connection {
                     resolve(exams)
                 }).catch(err => reject(err))
             }else{
-                this.con('exams').then(results => {
+                this.con('exams')
+                .select(['exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
+                .leftJoin(this.con.raw('skills ON exams.exam_id = skills.exam_id'))
+                .where(this.con.raw('skills.exam_id IS NULL'))
+                .then(results => {
                     let exams = []
                     results.forEach((result) => {
                         const examData = {

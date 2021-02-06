@@ -19,8 +19,8 @@ upload.post('/exams/upload', async (req, res) =>{
         let arrayOfData = []
         arrayOfData.push(
             req.body.item, req.body.examName, 
-            req.body.comment, req.files.examDoc.data, req.session.user,
-            req.session.user
+            req.body.comment, req.files.examDoc.data, req.session.cardNum,
+            req.session.cardNum
         )
         dbconnect.insertExam(arrayOfData)
         .then(response =>{

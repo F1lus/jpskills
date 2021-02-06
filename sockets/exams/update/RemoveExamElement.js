@@ -4,7 +4,7 @@ module.exports = (socket) => {
 
     const removeAnswer = (answerId, examCode) => {
         if(examCode && answerId){
-            dbconnect.removeAnswer(socket.handshake.session.user, answerId, examCode)
+            dbconnect.removeAnswer(socket.handshake.session.cardNum, answerId, examCode)
             .then(result => {
                 if(result){
                     socket.emit('server-accept')
@@ -15,7 +15,7 @@ module.exports = (socket) => {
 
     const removeQuestion = (questionId, examCode) => {
         if(examCode && questionId){
-            dbconnect.removeQuestion(socket.handshake.session.user, questionId, examCode)
+            dbconnect.removeQuestion(socket.handshake.session.cardNum, questionId, examCode)
             .then(result => {
                 if(result){
                     socket.emit('server-accept')

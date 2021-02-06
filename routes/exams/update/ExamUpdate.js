@@ -5,7 +5,7 @@ const dbconnect = require('../../../model/DbConnect')
 update.post('/exams/modify/:examCode', (req,res) => {
     if(req.session.user){
         if(req.session.perm === 'admin'){
-            const user = req.session.user
+            const user = req.session.cardNum
             const examCode = req.params.examCode
 
             if(req.body.status != null){

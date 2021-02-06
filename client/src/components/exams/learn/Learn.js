@@ -28,7 +28,7 @@ export default function Learn() {
             <h1><p>Elérhető tananyagok:</p></h1>
             <div className="container">
                 <div className="row">
-                {exams.map((exam,index)=>{
+                {exams.length !== 0 ? exams.map((exam,index)=>{
                     return(
                         <div className="card shadow bg-light m-2 text-center" key={index}>
                             <div className="card-body text-center">
@@ -43,7 +43,7 @@ export default function Learn() {
                             </div>
                         </div>
                     )
-                })}
+                }) : <h2>Itt fognak megjelenni az elérhető tanagyagok.</h2>}
                 </div>
             </div>
         </div>

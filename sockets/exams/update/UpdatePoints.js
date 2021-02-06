@@ -4,7 +4,7 @@ module.exports = (socket) => {
 
     const updatePoints = (examCode, points) => {
         if(socket.handshake.session.user){
-            dbconnect.updateExamPoints(socket.handshake.session.user, examCode, points)
+            dbconnect.updateExamPoints(socket.handshake.session.cardNum, examCode, points)
             .catch(err => console.log(err))
         }
     }
