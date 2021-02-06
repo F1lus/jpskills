@@ -5,4 +5,14 @@ import manager from '../../GlobalSocket'
 
 export default function ExamResults(){
     
+    const exam = useParams().examCode
+    const socket = new manager().socket
+
+    const [results, setResults] = useState([])
+
+    useEffect(() => {
+        socket.emit('request-results', exam)
+
+        
+    })
 }
