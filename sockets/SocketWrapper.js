@@ -7,6 +7,9 @@ const learnExam = require('./exams/get/LearnExam')
 //Vizsga leadás
 const processExam = require('./exams/get/ProcessExamResults')
 
+//Vizsgaeredmény
+const getResults = require('./exams/get/GetResults')
+
 //Vizsga frissítés
 const removeExam = require('./exams/update/RemoveExam')
 const removeExamElement = require('./exams/update/RemoveExamElement')
@@ -41,6 +44,9 @@ module.exports = (socket) => {
     //Felhasználói művelet(ek) regisztrálása
     getLoginInfo(socket)
     processExam(socket)
+
+    //Vizsga eredmény eseményének regisztrálása
+    getResults(socket)
 
     //Egyéb események
     socket.on('exam-modified', () => {

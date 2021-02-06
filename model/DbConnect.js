@@ -36,7 +36,7 @@ class Connection {
         })
     }
 
-    selectUserAnswers = (examCode, cardNum) => {
+    /*selectUserAnswers = (examCode, cardNum) => {
         return new Promise((resolve, reject) => {
             const answers = []
             this.con('exams').select('exam_id').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
@@ -46,24 +46,21 @@ class Connection {
                     .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
                     .then(worker => {
                         if(worker){
-                            this.con('questions').select(['question_id', 'question_name', 'points'])
-                            .where('exam_id', [exam.exam_id]).then(questions => {
-                                if(questions){
-                                    questions.forEach((question, index) => {
-                                        this.con('results').where()
-                                    })
-                                }
-                            })
+                            this.con('exam_result')
+                            .select(['questions.question_name', 'exam_result.points', 'questions.points'])
+                            .innerJoin(this.con.raw('questions ON questions.question_id = exam_result.question_id'))
+                            .where('exam_result.worker_id', worker.worker_id).andWhere()
                         }
                     })
                 }
             })
         })
-    }
+    }*/
 
     selectSkill = (examCode, cardNum) => {
         return new Promise((resolve, reject) => {
-            this.con('exams').select('exam_id').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+            this.con('exams').select(['exam_id', 'exam_name', 'points_required'])
+            .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
             .then(exam => {
                 if(exam){
                     this.con('workers').select('worker_id')
@@ -74,7 +71,10 @@ class Connection {
                             .andWhere('exam_id', exam.exam_id).first()
                             .then(skill => {
                                 if(skill){
-                                    resolve([skill.points, skill.time, skill.completed])
+                                    resolve([
+                                        exam.exam_name, exam.points_required, 
+                                        skill.points, skill.time, skill.completed
+                                    ])
                                 }else{
                                     resolve([])
                                 }
