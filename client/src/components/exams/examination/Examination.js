@@ -41,7 +41,7 @@ export default function Examination(){
 
     return (
         <div className="container bg-white rounded shadow py-3 mb-3">
-            {finished ? <Redirect to='/exams/:examCode/results' /> : null}
+            {finished ? <Redirect to={`/exams/result/${exam}`} /> : null}
             <h2><p className="text-center">Vizsga: {examProps[0]}</p></h2>
             <RenderContent socket={socket} list={questions} exam={exam}/>
         </div>

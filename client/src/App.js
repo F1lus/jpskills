@@ -15,6 +15,7 @@ import Home from './components/home/Home'
 import ExamDocument from './components/exams/learn/ExamDocument'
 import Profile from './components/user_management/Profile'
 import Examination from './components/exams/examination/Examination'
+import ExamResults from './components/exams/examination/ExamResults'
 
 export default function App(){
 
@@ -119,16 +120,17 @@ export default function App(){
           }
         }} />
 
-        <Route exact path='/exams/:examCode/results' component={() =>{
+        <Route exact path='/exams/result/:examCode/' component={() =>{
           if(loggedIn){
             return (
               <div>
                 <CustomNavbar/>
+                <ExamResults />
               </div>
             )
             
           }else{
-            return <Redirect to='/' from='/exams/:examCode' />
+            return <Redirect to='/' from='/exams/result/:examCode' />
           }
         }} />
 

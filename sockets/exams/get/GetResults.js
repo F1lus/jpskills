@@ -6,7 +6,7 @@ module.exports = (socket) => {
         dbconnect.selectSkill(examCode, socket.handshake.session.cardNum)
         .then(skill => {
             if(skill){
-                socket.emit('exam-finalize', skill)
+                socket.emit('exam-finalized', skill)
             }
         })
     }
