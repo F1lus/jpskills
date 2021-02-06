@@ -2,11 +2,11 @@ import React, {useState, useEffect} from 'react'
 import {useParams, Redirect} from 'react-router-dom'
 
 import ListManager from './ListManager'
+import AddQuestion from './AddQuestion'
+import model from '../models/QuestionsModel'
 
 import manager from '../../GlobalSocket'
-
 import API from '../../BackendAPI'
-import AddQuestion from './AddQuestion'
 
 export default function ExamModify(props){
 
@@ -27,31 +27,17 @@ export default function ExamModify(props){
         socket.emit('request-exam-content', examCode.examName)
 
         socket.on('exam-content', (examName, questionList, notes, status, points) => {
-            let list = []
-            let examPoints = 0
             setQuestions([])
-            questionList.forEach((question) => {
-                let answers = []
-                if(question.answers){
-                    question.answers.forEach(answer => {
-                        answers.push([answer.id, answer.text, answer.correct])
-                    })
-                    answers.sort((a, b) => a[0] - b[0])
-                }
-                examPoints += question.points
 
-                list.push([question.id, question.name, question.points, question.pic, answers])
-            })
+            const questionsModel = model(questionList)
 
-            list.sort((a, b) => a[0] - b[0])
-
-            setQuestions(list)
+            setQuestions(questionsModel.questions)
             setStatus(status)
-            if(points > examPoints){
-                points = examPoints
-                socket.emit('examPoints-mislead', examCode.examName, examPoints)
+            if(points > questionsModel.points){
+                socket.emit('examPoints-mislead', examCode.examName, questionsModel.points)
+            }else{
+                setMaxPoints(questionsModel.points)
             }
-            setMaxPoints(examPoints)
             setExamProps([examName, notes === 'null' ? '' : notes, status, points])
         })
 

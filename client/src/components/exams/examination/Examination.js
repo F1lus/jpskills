@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {Redirect, useParams} from 'react-router-dom'
 
 import RenderContent from './RenderContent'
+import model from '../models/QuestionsModel'
 
 import manager from '../../GlobalSocket'
 
@@ -18,7 +19,10 @@ export default function Examination(){
         socket.emit('request-exam-content', exam)
         socket.emit('begin-timer')
 
-        return () => socket.disconnect()
+        return () => {
+            socket.emit('cancel-timer')
+            socket.disconnect()
+        }
 
         // eslint-disable-next-line
     }, [])
@@ -30,18 +34,8 @@ export default function Examination(){
 
         socket.on('exam-content', (examName, questionList, notes, status, points) => {
             setExamProps([examName, notes, status, points])
-            let qList = []
-            questionList.forEach(question => {
-                let answers = []
-                question.answers.forEach(answer => {
-                    answers.push([answer.id, answer.text])
-                })
-                answers.sort((a, b) => a[0] - b[0])
-
-                qList.push([question.id, question.name, question.points, question.pic, answers])
-            })
-            qList.sort((a, b) => a[0] - b[0])
-            setQuestions(qList)
+            
+            setQuestions(model(questionList).questions)
         })
     })
 

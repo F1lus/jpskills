@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 
+import model from '../models/ExamsModel'
+
 import {io} from 'socket.io-client'
 
 //import { Bounce } from 'react-reveal';
 
-export default function Learn(props) {
+export default function Learn() {
     
     const [exams, setExams] = useState([])
 
@@ -15,18 +17,7 @@ export default function Learn(props) {
         socket.emit('exams-get-signal')
 
         socket.on('exams-get-emitter', (dbExams) => {
-            if(dbExams){
-                let examList = []
-                
-                if(JSON.stringify(exams) !== JSON.stringify(dbExams)){
-                    dbExams.forEach((exam) => {
-                        examList.push([exam[0], exam[1], exam[2], exam[3], exam[4]])
-                    })
-                    setExams(examList)
-                }
-            }else{
-                setExams([])
-            }
+            setExams(model(dbExams))
         })
 
         return () => socket.disconnect()

@@ -36,6 +36,58 @@ class Connection {
         })
     }
 
+    selectUserAnswers = (examCode, cardNum) => {
+        return new Promise((resolve, reject) => {
+            const answers = []
+            this.con('exams').select('exam_id').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+            .then(exam => {
+                if(exam){
+                    this.con('workers').select('worker_id')
+                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
+                    .then(worker => {
+                        if(worker){
+                            this.con('questions').select(['question_id', 'question_name', 'points'])
+                            .where('exam_id', [exam.exam_id]).then(questions => {
+                                if(questions){
+                                    questions.forEach((question, index) => {
+                                        this.con('results').where()
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        })
+    }
+
+    selectSkill = (examCode, cardNum) => {
+        return new Promise((resolve, reject) => {
+            this.con('exams').select('exam_id').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+            .then(exam => {
+                if(exam){
+                    this.con('workers').select('worker_id')
+                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
+                    .then(worker => {
+                        if(worker){
+                            this.con('skills').where('worker_id', [worker.worker_id])
+                            .andWhere('exam_id', exam.exam_id).first()
+                            .then(skill => {
+                                if(skill){
+                                    resolve([skill.points, skill.time, skill.completed])
+                                }else{
+                                    resolve([])
+                                }
+                            }).catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
+                }else{
+                    resolve([])
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
     processAnswers = (answers, examCode, cardNum, time) => {
         return new Promise((resolve, reject) => {
             if(answers.length === 0){
