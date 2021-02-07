@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { } from 'react';
 import Learn from '../exams/learn/Learn';
 
 export default function Profile(props) {
 
     const nev = props.user
     const csoport = props.permission
-    // eslint-disable-next-line
-    const [vizsgaszam, setVizsgaszam] = useState(5)
     
     return (
         <div className="container text-center">

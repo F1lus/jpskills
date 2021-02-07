@@ -3,12 +3,12 @@ import {NavLink} from 'react-router-dom';
 
 import manager from '../GlobalSocket'
 
-import './Timer.js';
+//import './Timer.js';
 
 export default function Home(props){
     
-    const nev = props.user
     const socket = new manager().socket
+    const nev = props.user
     
     const [vanVizsga, setVanVizsga] = useState(false)
 
@@ -50,11 +50,19 @@ export default function Home(props){
 
                     {
                         props.permission === 'admin' ?
+                        <div>
+                            <NavLink to="/profile">
+                                <button type="button" className="btn btn-warning m-2" >
+                                    Nézze meg a statisztikákat
+                                </button>
+                            </NavLink>
+                            <h4>vagy</h4>
                             <NavLink to="/exams">
                                 <button type="button" className="btn btn-warning m-2" >
                                     Töltsön fel új vizsgát!
                                 </button>
                             </NavLink>
+                        </div>
                         :
                             vanVizsga ? 
                                 <NavLink to="/exams">

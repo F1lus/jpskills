@@ -19,13 +19,13 @@ import ExamResults from './components/exams/examination/ExamResults'
 
 export default function App(){
 
-  const socket = new manager().socket
-
   const [loggedIn, setLoggedIn] = useState(false)
   const [user, setUser] = useState(null)
   const [permission, setPermission] = useState(null)
 
   useEffect(() => {
+    const socket = new manager().socket
+
     socket.emit('request-login-info')
 
     socket.on('login-info', (username, perm) => {
@@ -37,7 +37,7 @@ export default function App(){
     })
 
     return () => socket.disconnect()
-  })
+  },[loggedIn])
 
   return (
         <Switch>
