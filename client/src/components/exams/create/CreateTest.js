@@ -15,12 +15,6 @@ export default function CreateTest(props){
     const [result, setResult] = useState(null)
     const [items, setItems] = useState([])
     const [uploaded, setUploaded] = useState(false)
-    
-    useEffect(() =>{
-
-        socket.emit('get-products')
-        // eslint-disable-next-line
-    }, [])
 
     useEffect(() => {
         socket.on('products-emitter', products => {
@@ -89,8 +83,6 @@ export default function CreateTest(props){
                     case 200:
                         setResult('A vizsga felvétele sikeres volt!')
                         setUploaded(true)
-                        socket.emit('get-products')
-                        socket.emit('exams-get-signal')
                         break
                     case 'invalid_file_size':
                         setResult('A fájl mérete meghaladta a maximális méretet! (2 Mb)')

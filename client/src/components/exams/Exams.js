@@ -10,11 +10,6 @@ export default function Exams(props){
     const [exams, setExams] = useState([])
 
     useEffect(() => {
-        socket.emit('exams-get-signal')
-        // eslint-disable-next-line
-    }, [])
-
-    useEffect(() => {
         socket.on('exams-get-emitter', (dbExams) => {
             setExams(model(dbExams))
         })
@@ -34,7 +29,7 @@ export default function Exams(props){
                             <div key={index} className="card m-2 bg-light text-center shadow" style={{borderColor: exam[3] === 1 ? "green" : "red"}}>
                                 <div className="card-body">
                                     <NavLink to={props.permission === 'admin' ? `/exams/modify/${exam[1]}` : `/exams/${exam[1]}`}>
-                                        <button disabled={props.permission !== 'admin' ? exam[3] !== 1 : false} className="btn btn-outline-blue m-2">
+                                        <button disabled={props.permission !== 'admin' ? exam[3] === 0 : false} className="btn btn-outline-blue m-2">
                                             {exam[0]}
                                         </button>
                                     </NavLink>

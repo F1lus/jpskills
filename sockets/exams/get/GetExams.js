@@ -19,7 +19,7 @@ function dateFormat(rawDate){
 
 module.exports = (socket) => {
 
-    const getExams = (shouldBroadcast) => {
+    const getExams = () => {
         dbconnect.selectExams(socket.handshake.session.cardNum, socket.handshake.session.perm === 'admin')
         .then(results => {
             let examResult = []
@@ -31,16 +31,10 @@ module.exports = (socket) => {
                     dateFormat((''+result.created))
                 ])
             })
-            if(shouldBroadcast){
-                socket.broadcast.emit('exams-get-emitter', examResult)
-            }else{
-                socket.emit('exams-get-emitter', examResult)
-            }
+            socket.emit('exams-get-emitter', examResult)
         })
         .catch(err => console.log(err))
     }
 
-    socket.on('exams-get-signal', () => getExams(false))
-
-    socket.on('exams-global-signal', () => getExams(true))
+    socket.on('exams-get-signal', () => getExams())
 }

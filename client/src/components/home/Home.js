@@ -1,13 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {NavLink} from 'react-router-dom';
+
+import manager from '../GlobalSocket'
+
 import './Timer.js';
 
 export default function Home(props){
     
     const nev = props.user
+    const socket = new manager().socket
     
-    // eslint-disable-next-line
     const [vanVizsga, setVanVizsga] = useState(false)
+
+    useEffect(() => {
+
+        socket.emit('exams-get-signal')
+
+        return () => {
+            socket.disconnect()
+        }
+        // eslint-disable-next-line
+    },[])
+
+    useEffect(() => {
+        socket.on('exams-get-emitter', (dbExams) => {
+            setVanVizsga(dbExams.length > 0)
+        })
+    })
     
     return(
         <div className="container d-flex align-items-center vh-100">
@@ -29,17 +48,26 @@ export default function Home(props){
                         <span id="nev">Kedves {nev}!</span>
                     </div>
 
-                    {vanVizsga ? 
-                        <NavLink to="/exams">
-                            <button type="button" className="btn btn-warning m-2" >
-                                Van teljesítetlen vizsgája!
-                            </button>
-                        </NavLink>
-                        :   <div className="container w-50 text-center rounded m-auto p-2 border border-warning" id="nincs">
-                                <b>
-                                    Gratulálunk, nincs teljesítetlen vizsgája!
-                                </b>
-                            </div>
+                    {
+                        props.permission === 'admin' ?
+                            <NavLink to="/exams">
+                                <button type="button" className="btn btn-warning m-2" >
+                                    Töltsön fel új vizsgát!
+                                </button>
+                            </NavLink>
+                        :
+                            vanVizsga ? 
+                                <NavLink to="/exams">
+                                    <button type="button" className="btn btn-warning m-2" >
+                                        Van teljesítetlen vizsgája!
+                                    </button>
+                                </NavLink>
+                            :   
+                                <div className="container w-50 text-center rounded m-auto p-2 border border-warning" id="nincs">
+                                    <b>
+                                        Gratulálunk, nincs teljesítetlen vizsgája!
+                                    </b>
+                                </div>
                     }
                 </div>
             </div>

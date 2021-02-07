@@ -3,24 +3,30 @@ import { NavLink } from 'react-router-dom';
 
 import model from '../models/ExamsModel'
 
-import {io} from 'socket.io-client'
+import manager from '../../GlobalSocket'
 
 //import { Bounce } from 'react-reveal';
 
 export default function Learn() {
+
+    const socket = new manager().socket
     
     const [exams, setExams] = useState([])
 
     useEffect(() => {
-        const socket = io('http://localhost:5000', {withCredentials:true})
-        
+
         socket.emit('exams-get-signal')
 
+        return () => {
+            socket.disconnect()
+        }
+        // eslint-disable-next-line
+    },[])
+
+    useEffect(() => {
         socket.on('exams-get-emitter', (dbExams) => {
             setExams(model(dbExams))
         })
-
-        return () => socket.disconnect()
     })
 
     return (

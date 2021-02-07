@@ -63,7 +63,6 @@ export default function ExamModify(props){
         })
 
         socket.on('removed-exam', () => {
-            socket.emit('exams-global-signal')
             setRemoved(true)
         })
     })
@@ -88,7 +87,6 @@ export default function ExamModify(props){
             .then(response => {
                 if(response.data.updated){
                     socket.emit('exam-modified')
-                    socket.emit('exams-global-signal')
                 }
             }).catch(err => console.log(err))
         }

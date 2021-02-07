@@ -54,7 +54,7 @@ export default function App(){
               return (
                 <div>
                   <CustomNavbar/>
-                  <Home user={user} />
+                  <Home user={user} permission={permission}/>
                 </div>
               )
             }else{

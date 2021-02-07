@@ -802,23 +802,32 @@ class Connection {
                     resolve(exams)
                 }).catch(err => reject(err))
             }else{
-                this.con('exams')
-                .select(['exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
-                .leftJoin(this.con.raw('skills ON exams.exam_id = skills.exam_id'))
-                .where(this.con.raw('skills.exam_id IS NULL'))
-                .then(results => {
-                    let exams = []
-                    results.forEach((result) => {
-                        const examData = {
-                            examName: result.exam_name,
-                            itemCode: result.exam_itemcode,
-                            comment: result.exam_notes,
-                            status: result.exam_status,
-                            created: result.exam_creation_time
-                        }
-                        exams.push(examData)
-                    })
-                    resolve(exams)
+                this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [user])).first()
+                .then(worker => {
+                    if(worker){
+                        this.con('exams')
+                        .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
+                        .then(results => {
+                            this.con('skills').select('exam_id').where('worker_id', worker.worker_id).then(skills => {
+                                if(skills){
+                                    let exams = []
+                                    results.forEach((result) => {
+                                        if(skills.findIndex(value => value.exam_id === result.exam_id) == -1){
+                                            const examData = {
+                                                examName: result.exam_name,
+                                                itemCode: result.exam_itemcode,
+                                                comment: result.exam_notes,
+                                                status: result.exam_status,
+                                                created: result.exam_creation_time
+                                            }
+                                            exams.push(examData)
+                                        }
+                                    })
+                                    resolve(exams)
+                                }
+                            }).catch(err => reject(err))
+                        }).catch(err => reject(err))
+                    }
                 }).catch(err => reject(err))
             }
         })
