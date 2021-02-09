@@ -78,6 +78,9 @@ export default function ModifyPic(props) {
                     }
                 }
             }>
+                <button type="button" className="close" aria-label="Close" onClick={close}>
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 {picture == null ? 'Nincs feltöltött kép' : <img className='img-fluid' src={createImage()} alt=''/>}
                 <form onSubmit={handleSubmit}>
                     <div className="container">
@@ -88,9 +91,8 @@ export default function ModifyPic(props) {
                     </div>
                 </form>
 
-                {alert ? <h3 className="alert alert-secondary mt-3 text-center" role="alert">{alert}</h3> : <></>}
+                {alert && (<h3 className="alert alert-secondary mt-3 text-center" role="alert">{alert}</h3>)}
 
-                <button className="btn btn-warning m-3" onClick={close}>Bezár</button>
             </Modal>
         </div>
     )

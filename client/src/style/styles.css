@@ -60,20 +60,6 @@ p {
     font-weight: bold;
 }
 
-/*home*/
-#ido {
-    letter-spacing: 5px;
-    font-size: 50px;
-    color: #ffc107;
-    font-weight: bold;
-}
-
-#ido .container {
-    width: 50px;
-    border: 3px solid rgb(33,12,185);
-    border-radius: 10px;
-}
-
 /*profil*/
 #nev {
     font-weight: bold;
