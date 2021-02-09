@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import Modal from 'react-modal'
 
-import {XIcon} from '@primer/octicons-react'
-
 import API from '../../BackendAPI'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
