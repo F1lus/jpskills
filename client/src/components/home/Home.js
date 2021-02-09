@@ -59,7 +59,7 @@ export default function Home(props){
                             <h4>vagy</h4>
                             <NavLink to="/exams">
                                 <button type="button" className="btn btn-warning m-2" >
-                                    Töltsön fel új vizsgát!
+                                    Ugorjon a vizsgákhoz
                                 </button>
                             </NavLink>
                         </div>

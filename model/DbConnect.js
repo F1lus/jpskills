@@ -36,6 +36,71 @@ class Connection {
         })
     }
 
+    globalStatisticsForAdmin = (cardNum) => {
+        return new Promise((resolve, reject) => {
+            const results = []
+            this.con('exams').select(['exam_id', 'exam_name', 'points_required'])
+            .where('exam_creator', cardNum)
+            .then(exams => {
+                if(exams){
+                    exams.forEach((exam, index) => {
+                        this.con('skills').where('exam_id', [exam.exam_id]).first()
+                        .then(skill => {
+                            if(skill){
+                                results.push([
+                                    exam.exam_name, exam.points_required, 
+                                    skill.points, skill.time, skill.completed
+                                ])
+                            }
+
+                            if(index === exams.length-1){
+                                resolve(results)
+                            }
+                        }).catch(err => reject(err))
+                    })
+                }else{
+                    resolve(results)
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    globalStatisticsForUser = (cardNum) => {
+        return new Promise((resolve, reject) => {
+            const results = []
+            this.con('workers').select('worker_id').where('worker_cardcode', [cardNum]).first()
+            .then(worker => {
+                if(worker){
+                    this.con('skills').where('worker_id', [worker.worker_id])
+                    .then(skills => {
+                        if(skills){
+                            skills.forEach((skill, index) => {
+                                this.con('exams').select(['exam_id', 'exam_name', 'points_required'])
+                                .where('exam_id', skill.exam_id).first()
+                                .then(exam => {
+                                    if(exam){
+                                        results.push([
+                                            exam.exam_name, exam.points_required, 
+                                            skill.points, skill.time, skill.completed
+                                        ])
+                                    }
+
+                                    if(index === skills.length-1){
+                                        resolve(results)
+                                    }
+                                }).catch(err => reject(err))
+                            })
+                        }else{
+                            resolve(results)
+                        }
+                    }).catch(err => reject(err))
+                }else{
+                    resolve(results)
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
     
 
     /*selectUserAnswers = (examCode, cardNum) => {
@@ -894,10 +959,10 @@ class Connection {
                 .then(questions => {
                     if(questions.length !== 0){
                         this.selectTest(questions).then(questionList => {
-                            resolve([true, exam.exam_name, questionList, exam.exam_notes, exam.exam_status, exam.points_required])
+                            resolve([exam.exam_name, questionList, exam.exam_notes, exam.exam_status, exam.points_required])
                         })
                     }else{
-                        resolve([false, exam.exam_name, exam.exam_notes, exam.exam_status, exam.points_required])
+                        resolve([exam.exam_name, [], exam.exam_notes, exam.exam_status, exam.points_required])
                     }
                 }).catch(err => reject(err))
             }).catch(err => reject(err))

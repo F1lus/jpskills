@@ -28,28 +28,20 @@ export default function ExamModify(props){
 
         socket.on('exam-content', (examName, questionList, notes, status, points) => {
             setQuestions([])
-
+            
             const questionsModel = model(questionList)
 
-            setQuestions(questionsModel.questions)
+            if(questionsModel.questions.length > 0){
+                setQuestions(questionsModel.questions)
+            }else{
+                setWarning('Nincsenek megjeleníthető kérdések.')
+            }
             setStatus(status)
             if(points > questionsModel.points){
                 socket.emit('examPoints-mislead', examCode.examName, questionsModel.points)
             }else{
                 setMaxPoints(questionsModel.points)
             }
-            setExamProps([examName, notes === 'null' ? '' : notes, status, points])
-        })
-
-        socket.on('exam-content-no-question', (examName, notes, status, points) => {
-            setQuestions([])
-            setWarning('Nincsenek megjeleníthető kérdések.')
-            setStatus(status)
-            if(points > 0){
-                points = 0
-                socket.emit('examPoints-mislead', examCode.examName, 0)
-            }
-            setMaxPoints(points)
             setExamProps([examName, notes === 'null' ? '' : notes, status, points])
         })
 

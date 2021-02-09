@@ -11,10 +11,12 @@ export default function Profile(props) {
             <div className="container shadow rounded text-center bg-light mb-5 mt-3">
                 <span id="nev"><p>{nev}</p></span>
                 <p>Besorolás: {csoport}</p>
+
+                <h2>Globális statisztika</h2>
             </div>
 
             <div className="container shadow rounded text-center bg-light">
-                <Learn />
+                {csoport === 'admin' ? null :<Learn />}
             </div>
         </div>
     )
