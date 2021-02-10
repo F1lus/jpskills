@@ -10,6 +10,7 @@ export default function ResultTable(props) {
         if(props.results){
             const array = []
             props.results.forEach(skill => {
+                if(array.includes({key: skill.examName, value: skill.examCode}))
                 array.push({key: skill.examName, value: skill.examCode})
             })
             setExams(new Set(array))
