@@ -32,23 +32,25 @@ export default function ExamResults(){
     })
 
     return (
-        <div className="container bg-white text-center">
+        <div className="container bg-white text-center rounded shadow">
             {redirect ? <Redirect to='/exams'/> : null}
 
             <h2><p>Vizsga: {result.examName}</p></h2>
 
-            <p>A teljesítés ideje: {result.time}</p>
-            <p>A vizsga teljesítéséhez szükséges pontszám: {result.minPoints}</p>
-            <p>Az Ön által elért pontszám: {result.userScore}</p>
+            <h1>{result.time}</h1>
 
-            <p>A vizsga ezáltal {
+            <h2><b>{result.minPoints}/{result.userScore}</b></h2>
+
+            <h1>{
                 result.completed ? 
                     <span className='text-success'>SIKERES</span>
                 :
                     <span className='text-danger'>SIKERTELEN</span>
-            }</p>
+            }</h1>
 
-            <button onClick={handleClick}>Tovább</button>
+            <div className="container text-center">
+                <button className="btn btn-warning m-2" onClick={handleClick}>Tovább</button>
+            </div>
         </div>
     )
 }

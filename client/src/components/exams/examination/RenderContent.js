@@ -57,28 +57,28 @@ export default function RenderContent(props){
     }, [list])
 
     return (
-        <div>
-            <ul>
+        <div className="container">
+            <ul className="text-center">
                 {list.map((question, qId) => {
                     return question.map((content, innerIndex) => {
                         if(innerIndex === 1){
                             return (
-                                <li key={innerIndex}>
-                                    <b><span>{qId+1}. </span></b> {content} ({question[2]} pont)
+                                <li key={innerIndex} className="container-fluid mb-2 mt-3">
+                                    <b><span>{qId+1}. </span> {content} ({question[2]} pont)</b>
                                 </li>)
                         }else if(innerIndex === 3 && content != null){
                             return (
                                 <li key={innerIndex}>
-                                    <img className='img-fluid' src={createImage(content)} alt=''/>
+                                    <img className='rounded' src={createImage(content)} alt=''/>
                                 </li>
                             )
                         }else if(innerIndex === 4){
                             return (
-                                <li key={innerIndex} className="my-3">
+                                <li key={innerIndex}>
                                     {content.map((text, index) => {
                                         return(
-                                            <div className="container" key={index}>
-                                                <input type="checkbox" name={index} onChange={e => {
+                                            <div className="my-2" key={index}>
+                                                <input type="checkbox"name={index} onChange={e => {
                                                     handleChange(e, question[0], text[0])
                                                 }}/>
                                                 <label htmlFor={index} className="pl-1"> {text[1]}</label>
@@ -93,7 +93,9 @@ export default function RenderContent(props){
                     })
                 })}
             </ul>
-            <button onClick={handleSubmit} disabled={disable}>Leadás</button>
+            <div className="container text-center">
+                <button className="btn btn-warning" onClick={handleSubmit} disabled={disable}>Leadás</button>
+            </div>
         </div>
     )
 }
