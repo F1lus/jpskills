@@ -12,14 +12,14 @@ export default function ResultTable(props) {
             props.results.forEach(skill => {
                 array.push({key: skill.examName, value: skill.examCode})
             })
-            setExams(array)
+            setExams(new Set(array))
         }
     }, [props.results])
 
     useEffect(() => {
         if(props.results && examCode){
-            const filteredArray = props.results.filter(skill => skill.examCode === examCode)
-            setResults(new Set(filteredArray))
+            let filteredArray = props.results.filter(skill => skill.examCode === examCode) 
+            setResults(filteredArray)
         }else{
             setResults([])
         }
