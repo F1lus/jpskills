@@ -36,7 +36,7 @@ export default function ResultTable(props) {
     function renderRows(){
         return results.map((result, index) => {
             return (
-                <tr key={index}>
+                <tr key={index} className={result.completed ? "table-success" : "table-danger"}>
                     <td>{result.worker}</td>
                     <td>{result.score+"/"+result.minScore}</td>
                     <td>{Math.floor(result.time/60)+":"+result.time%60}</td>
@@ -47,17 +47,17 @@ export default function ResultTable(props) {
     }
 
     return (
-        <div>
+        <div className="container text-center">
             <br/>
-            <h3>Vizsgánkénti statisztika</h3>
-            <hr/>
-            <select onChange={handleChange}>
+            <h1><p>Vizsgánkénti statisztika</p></h1>
+
+            <select onChange={handleChange} className="mb-3">
                 <option value={null}>Vizsga kiválasztása</option>
                 {exams.length > 0 ? exams.map((exam, index) => {
                     return <option key={index} value={exam.value}>{exam.key}</option>
                 }) : null}
             </select>
-            <hr/>
+
             {results.length > 0 ?
                 <table className="table table-hover">
                     <thead>

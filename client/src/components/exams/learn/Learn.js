@@ -49,7 +49,7 @@ export default function Learn() {
                             </div>
                         </div>
                     )
-                }) : <h2>Itt fognak megjelenni az elérhető tanagyagok.</h2>}
+                }) : <div className="container text-center"><h2>Itt fognak megjelenni az elérhető tananyagok.</h2></div>}
                 </div>
             </div>
         </div>
