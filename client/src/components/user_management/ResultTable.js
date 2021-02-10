@@ -19,7 +19,7 @@ export default function ResultTable(props) {
     useEffect(() => {
         if(props.results && examCode){
             const filteredArray = props.results.filter(skill => skill.examCode === examCode)
-            setResults(filteredArray)
+            setResults(new Set(filteredArray))
         }else{
             setResults([])
         }
