@@ -40,7 +40,7 @@ class Connection {
         return new Promise((resolve, reject) => {
             const results = []
             this.con('exams')
-            .select(['exams.exam_id', 'exam_name', 'points_required', 'points', 'time', 'completed', 'worker_id'])
+            .select(['exams.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed', 'worker_id'])
             .innerJoin(this.con.raw('skills ON exams.exam_id = skills.exam_id')).where('exam_creator', cardNum)
             .then(exams => {
                 if(exams){
@@ -50,8 +50,8 @@ class Connection {
                         .then(worker => {
                             if(worker){
                                 results.push([
-                                    exam.exam_name, worker.worker_name, exam.points_required, 
-                                    exam.points, exam.time, exam.completed === 1
+                                    exam.exam_name, exam.exam_itemcode, exam.points_required, 
+                                    exam.points, exam.time, exam.completed === 1, worker.worker_name
                                 ])
                             }
                             if(index === exams.length-1){
@@ -70,24 +70,19 @@ class Connection {
             this.con('workers').select('worker_id').where('worker_cardcode', [cardNum]).first()
             .then(worker => {
                 if(worker){
-                    this.con('skills').where('worker_id', [worker.worker_id])
+                    this.con('skills').select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
+                    .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
+                    .where('worker_id', [worker.worker_id])
                     .then(skills => {
                         if(skills){
                             skills.forEach((skill, index) => {
-                                this.con('exams').select(['exam_id', 'exam_name', 'points_required'])
-                                .where('exam_id', skill.exam_id).first()
-                                .then(exam => {
-                                    if(exam){
-                                        results.push([
-                                            exam.exam_name, exam.points_required, 
-                                            skill.points, skill.time, skill.completed
-                                        ])
-                                    }
-
-                                    if(index === skills.length-1){
-                                        resolve(results)
-                                    }
-                                }).catch(err => reject(err))
+                                results.push([
+                                    skill.exam_name, skill.exam_itemcode, skill.points_required, 
+                                    skill.points, skill.time, skill.completed === 1
+                                ])
+                                if(index === skills.length-1){
+                                    resolve(results)
+                                }
                             })
                         }else{
                             resolve(results)
