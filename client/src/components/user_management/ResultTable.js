@@ -10,7 +10,7 @@ export default function ResultTable(props) {
         if(props.results){
             const array = []
             props.results.forEach(skill => {
-                if(array.findIndex(value => value.key === skill.examName && value.value === skill.examCode) !== -1){
+                if(array.findIndex(value => value.key === skill.examName && value.value === skill.examCode) === -1){
                     array.push({key: skill.examName, value: skill.examCode})
                 }
             })
