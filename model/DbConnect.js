@@ -39,27 +39,26 @@ class Connection {
     globalStatisticsForAdmin = (cardNum) => {
         return new Promise((resolve, reject) => {
             const results = []
-            this.con('exams').select(['exam_id', 'exam_name', 'points_required'])
-            .where('exam_creator', cardNum)
+            this.con('exams')
+            .select(['exams.exam_id', 'exam_name', 'points_required', 'points', 'time', 'completed', 'worker_id'])
+            .innerJoin(this.con.raw('skills ON exams.exam_id = skills.exam_id')).where('exam_creator', cardNum)
             .then(exams => {
                 if(exams){
                     exams.forEach((exam, index) => {
-                        this.con('skills').where('exam_id', [exam.exam_id]).first()
-                        .then(skill => {
-                            if(skill){
+                        this.con('workers').select('worker_name')
+                        .where('worker_id', [exam.worker_id]).first()
+                        .then(worker => {
+                            if(worker){
                                 results.push([
-                                    exam.exam_name, exam.points_required, 
-                                    skill.points, skill.time, skill.completed
+                                    exam.exam_name, worker.worker_name, exam.points_required, 
+                                    exam.points, exam.time, exam.completed === 1
                                 ])
                             }
-
                             if(index === exams.length-1){
                                 resolve(results)
                             }
                         }).catch(err => reject(err))
                     })
-                }else{
-                    resolve(results)
                 }
             }).catch(err => reject(err))
         })
@@ -991,10 +990,10 @@ class Connection {
     userExists = (cardNum, password) =>{
         return new Promise((resolve, reject) => {
             this.con('admin_login').where(this.con.raw('cardcode = ?', [cardNum]))
-            .andWhere(this.con.raw('password = ?', [password])).first()
+            .first()
             .then((result) =>{
                 if(result){
-                    resolve(true)
+                    resolve(result.password === password)
                 }else{
                     resolve(false)
                 }

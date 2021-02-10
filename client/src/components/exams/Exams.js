@@ -33,7 +33,7 @@ export default function Exams(props){
                                             {exam[0]}
                                         </button>
                                     </NavLink>
-                                    <p className="card-text">{exam[2] !== '' ? `Megjegyzés: ${exam[2]}` : ''}</p>
+                                    <p className="card-text">{exam[2] != null ? `Megjegyzés: ${exam[2]}` : ''}</p>
                                     <p className="card-text">Készült: {exam[4]}</p>
                                 </div>
                             </div>

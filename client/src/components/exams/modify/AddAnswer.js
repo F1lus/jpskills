@@ -27,8 +27,8 @@ export default function AddAnswer(props){
 
     function handleSubmit(event){
         event.preventDefault()
-        setDisableButton(true)
         if(props.questionId && answer && isCorrect){
+            setDisableButton(true)
             API.post(`/exams/modify/${param.examName}`, 
                 {questionId: props.questionId, answerText: answer, value: isCorrect})
             .then(result => {

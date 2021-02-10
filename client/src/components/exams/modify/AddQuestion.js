@@ -8,6 +8,7 @@ export default function AddQuestion(props){
     const examCode = useParams().examName
 
     const [question, setQuestion] = useState(null)
+    const [disable, setDisable] = useState(false)
     const [points, setPoints] = useState(null)
     const [pic, setPic] = useState(null)
 
@@ -30,6 +31,7 @@ export default function AddQuestion(props){
     function handleSubmit(event){
         event.preventDefault()
         if(question && points){
+            setDisable(true)
             const data = new FormData()
             data.append('questionName', question)
             data.append('questionPoints', points)
@@ -41,6 +43,7 @@ export default function AddQuestion(props){
                     setQuestion(null)
                     setPoints(null)
                     setPic(null)
+                    setDisable(false)
                     props.socket.emit('exam-modified')
                 }
             }).catch(err => console.log(err))
@@ -74,7 +77,7 @@ export default function AddQuestion(props){
                     </div>
 
                     <div className="container text-center">
-                        <button className="btn btn-warning my-3">Feltöltés</button>
+                        <button className="btn btn-warning my-3" disabled={disable}>Feltöltés</button>
                     </div>
                 </form>
             : null} 

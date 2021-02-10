@@ -1,10 +1,26 @@
-import React, { } from 'react';
+import React, { useEffect } from 'react';
 import Learn from '../exams/learn/Learn';
+
+import manager from '../GlobalSocket'
 
 export default function Profile(props) {
 
     const nev = props.user
     const csoport = props.permission
+
+    const socket = new manager().socket
+
+    useEffect(() => {
+        socket.emit('requesting-statistics')
+        // eslint-disable-next-line
+    },[])
+
+    useEffect(() => {
+        socket.on('sending-statistics', (stats) => {
+            console.log(stats)
+            console.log('h')
+        })
+    })
     
     return (
         <div className="container text-center">
@@ -16,7 +32,7 @@ export default function Profile(props) {
             </div>
 
             <div className="container shadow rounded text-center bg-light">
-                {csoport === 'admin' ? null :<Learn />}
+                {csoport === 'admin' ? null : <Learn />}
             </div>
         </div>
     )

@@ -3,12 +3,12 @@ import {useParams, Redirect} from 'react-router-dom'
 
 import ListManager from './ListManager'
 import AddQuestion from './AddQuestion'
-import model from '../models/QuestionsModel'
+import Qmodel from '../models/QuestionsModel'
 
 import manager from '../../GlobalSocket'
 import API from '../../BackendAPI'
 
-export default function ExamModify(props){
+export default function ExamModify(){
 
     const examCode = useParams()
     const socket = new manager().socket
@@ -29,7 +29,7 @@ export default function ExamModify(props){
         socket.on('exam-content', (examName, questionList, notes, status, points) => {
             setQuestions([])
             
-            const questionsModel = model(questionList)
+            const questionsModel = Qmodel(questionList)
 
             if(questionsModel.questions.length > 0){
                 setQuestions(questionsModel.questions)
