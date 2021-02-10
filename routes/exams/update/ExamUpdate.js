@@ -56,7 +56,7 @@ update.post('/exams/modify/:examCode', (req,res) => {
                         res.json({updated: response})
                     }).catch(err => console.log(err))
 
-                }else if(!['.png', '.jpeg', '.jpg'].map(value => req.files.newPic.name.toLowerCase().includes(value))){
+                }else if(!['.png', '.jpeg', '.jpg'].map(value => req.files.picture.name.toLowerCase().includes(value))){
                     res.json({error: 'invalid_mime'})
                     return
                 }else if(req.files.picture.truncated){

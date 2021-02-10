@@ -40,7 +40,7 @@ export default function ResultTable(props) {
             return (
                 <tr key={index} className={result.completed ? "table-success" : "table-danger"}>
                     <td>{result.worker}</td>
-                    <td>{result.score+"/"+result.minScore}</td>
+                    <td>{result.score}</td>
                     <td>{Math.floor(result.time/60)+":"+result.time%60}</td>
                     <td>{result.completed ? 'Átment' : 'Megbukott'}</td>
                 </tr>
