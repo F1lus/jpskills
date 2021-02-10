@@ -61,7 +61,7 @@ export default function Login(){
                         </label>
                     </div>
                     <div className="form-group m-auto">
-                        <input type="password" name="password" value={password || ''} onChange={handleChange} required/>
+                        <input type="password" name="password" autoComplete="off" value={password || ''} onChange={handleChange} required/>
                         <label htmlFor="password" className="label-name">
                             <span className="content-name">
                                 Jelszó:

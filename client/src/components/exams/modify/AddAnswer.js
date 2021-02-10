@@ -45,7 +45,7 @@ export default function AddAnswer(props){
            { props.display ?
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-autot">
-                        <input type='text' name='answer' value={answer || ''} onChange={handleChange}/>
+                        <input type='text' name='answer' value={answer || ''} onChange={handleChange} autoComplete="off"/>
                         <label htmlFor="answer" className="label-name">
                             <span className="content-name">
                                 A válasz szövege
