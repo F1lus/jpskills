@@ -84,7 +84,7 @@ export default function ModifyPic(props) {
                 {picture == null ? 'Nincs feltöltött kép' : <img className='img-fluid' src={createImage()} alt=''/>}
                 <form onSubmit={handleSubmit}>
                     <div className="container">
-                        <input type="file" onChange={handleChange}/>
+                        <input type="file" onChange={handleChange} accept="image/jpeg, image/jpg, image/png"/>
                     </div>
                     <div className="container text-center">
                         <button type="submit" className="btn btn-warning mt-3" value="Létrehozás">Módosítás</button>

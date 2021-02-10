@@ -135,7 +135,7 @@ export default function ExamModify(){
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto">
-                        <input type='text' name='examName' value={examProps[0] || ''} onChange={handleChange} required/>
+                        <input type='text' name='examName' value={examProps[0] || ''} onChange={handleChange} required autoComplete="off"/>
                         <label htmlFor="examName" className="label-name">
                             <span className="content-name">
                                 A vizsga neve
@@ -144,7 +144,7 @@ export default function ExamModify(){
                     </div>
 
                     <div className="form-group m-auto">
-                        <input type='text' name='examNotes' value={examProps[1] || ''} onChange={handleChange}/>
+                        <input type='text' name='examNotes' value={examProps[1] || ''} onChange={handleChange} autoComplete="off"/>
                         <label htmlFor="examNotes" className="label-name">
                             <span className="content-name">
                                 A vizsga megjegyzése

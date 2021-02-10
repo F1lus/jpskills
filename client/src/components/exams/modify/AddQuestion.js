@@ -55,7 +55,7 @@ export default function AddQuestion(props){
            { props.display ? 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto mb-3">
-                        <input type='text' name='question' value={question || ''} onChange={handleChange} required/>
+                        <input type='text' name='question' value={question || ''} onChange={handleChange} required autoComplete="off"/>
                         <label htmlFor="question" className="label-name">
                             <span className="content-name">
                                 A kérdés szövege
@@ -64,7 +64,7 @@ export default function AddQuestion(props){
                     </div>
 
                     <div className="form-group m-auto">
-                        <input type='number' name='points' value={points || ''} onChange={handleChange} required/>
+                        <input type='number' name='points' value={points || ''} onChange={handleChange} required autoComplete="off"/>
                         <label htmlFor="points" className="label-name">
                             <span className="content-name">
                                 Pontszám
@@ -73,7 +73,7 @@ export default function AddQuestion(props){
                     </div>
 
                     <div className="container float-center">
-                        <input type="file" name='pic' onChange={handleChange} />
+                        <input type="file" name='pic' onChange={handleChange} accept="image/jpeg, image/jpg, image/png"/>
                     </div>
 
                     <div className="container text-center">

@@ -67,7 +67,7 @@ export default function Modifier(props){
             return (
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto">
-                        <input name='modify' type={type || 'text'} value={value || ''} onChange={handleChange} required/>
+                        <input name='modify' type={type || 'text'} value={value || ''} onChange={handleChange} required autoComplete="off"/>
                         <label htmlFor="modify" className="label-name">
                             <span className="content-name">
                                 {type === 'number' ? "Pontszám":"Szöveg"}
