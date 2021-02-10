@@ -23,7 +23,7 @@ export default function Exams(props){
             <div className="container">
                 <div className="row">
                     {exams.length === 0 ? 
-                        <h1 className='text-center'>Itt fognak megjelenni az elérhető vizsgák</h1>  
+                        <div className="container text-center"><h2 className='text-center'>Itt fognak megjelenni az elérhető vizsgák</h2></div>  
                     : exams.map((exam, index)=>{                
                         return(
                             <div key={index} className="card m-2 bg-light text-center shadow" style={{borderColor: exam[3] === 1 ? "green" : "red"}}>

@@ -22,6 +22,10 @@ ul {
     background-color: rgb(33,12,185);
 }
 
+#customline {
+    background-color: #ffc107;
+}
+
 /*navbar*/
 #hatter {
     height: 43px;
@@ -170,9 +174,4 @@ form input:valid + .label-name .content-name {
 form input:focus + .label-name::after,
 form input:valid + .label-name {
     transform: translateX(0%);
-}
-
-/*modify*/
-#valaszelvalaszto {
-    background-color: #ffc107;
 }

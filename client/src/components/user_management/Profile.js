@@ -48,10 +48,12 @@ export default function Profile(props) {
         <div className="container text-center">
             <div className="container shadow rounded text-center bg-light mb-5 mt-3">
                 <span id="nev"><p>{nev}</p></span>
-                <hr/>
+                <hr className="w-75" id="customline"/>
+                
                 <h2>Besorolás: {csoport}</h2>
-                <hr/>
-                <h3>Az Ön vizsgáiról általánosságban</h3>
+
+                <hr className="w-75" id="customline"/>
+                <h3>Az Ön vizsgáiról általánosságban:</h3>
                 <br/>
                 <p>Az eddigi vizsgáihoz szükséges átlag idő: {renderStatsObject('time')}</p>
                 <p>Az eddigi vizsgáin az átlagos pont: {renderStatsObject('score')}</p>
@@ -59,7 +61,7 @@ export default function Profile(props) {
                 <br/>
             </div>
 
-            <div className="container shadow rounded text-center bg-light">
+            <div className="container shadow rounded text-center bg-light mb-3">
                 {csoport === 'admin' ? <ResultTable results={renderStatsObject('skills')} /> : <Learn />}
             </div>
         </div>
