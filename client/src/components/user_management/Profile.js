@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
-import Learn from '../exams/learn/Learn';
+import Learn from '../exams/learn/Learn'
+import ResultTable from './ResultTable'
 
 import globalStats from './models/GlobalStatistics'
 
@@ -35,6 +36,8 @@ export default function Profile(props) {
                     return stats.avgScore
                 case 'completion':
                     return stats.completedRate+"%"
+                case 'skills':
+                    return stats.skills
                 default:
                     return null
             }
@@ -48,7 +51,8 @@ export default function Profile(props) {
                 <hr/>
                 <h2>Besorolás: {csoport}</h2>
                 <hr/>
-                <h3>Globális statisztika</h3>
+                <h3>Az Ön vizsgáiról általánosságban</h3>
+                <br/>
                 <p>Az eddigi vizsgáihoz szükséges átlag idő: {renderStatsObject('time')}</p>
                 <p>Az eddigi vizsgáin az átlagos pont: {renderStatsObject('score')}</p>
                 <p>A vizsgák sikerességi aránya: {renderStatsObject('completion')}</p>
@@ -56,7 +60,7 @@ export default function Profile(props) {
             </div>
 
             <div className="container shadow rounded text-center bg-light">
-                {csoport === 'admin' ? null : <Learn />}
+                {csoport === 'admin' ? <ResultTable results={renderStatsObject('skills')} /> : <Learn />}
             </div>
         </div>
     )
