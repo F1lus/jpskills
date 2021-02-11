@@ -17,6 +17,7 @@ export default function Profile(props) {
     const [stats, setStats] = useState(null)
 
     useEffect(() => {
+        socket.open()
         socket.emit('requesting-statistics')
         // eslint-disable-next-line
     },[])

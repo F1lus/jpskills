@@ -53,11 +53,14 @@ export default function ResultTable(props) {
 
     function renderRows(){
         return results.map((result, index) => {
+            const timeFormat = (result.time%60).toString().length < 2 ? 
+                Math.floor(result.time/60)+":0"+(result.time%60).toString() 
+                : Math.floor(result.time/60)+":"+(result.time%60).toString()
             return (
                 <tr key={index} className={result.completed ? "table-success" : "table-danger"}>
                     <td>{result.worker}</td>
                     <td>{result.score}</td>
-                    <td>{Math.floor(result.time/60)+":"+result.time%60}</td>
+                    <td>{timeFormat}</td>
                     <td>{result.completed ? 'Átment' : 'Megbukott'}</td>
                 </tr>
             )

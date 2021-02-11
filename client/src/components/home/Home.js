@@ -32,6 +32,7 @@ export default function Home(props){
                 <div className="container text-center">
                     <div className="container text-center m-3">
                         <span id="nev">Kedves {nev}!</span>
+                        <hr/>
                     </div>
                     {props.permission === 'admin' ?
                         <div>
