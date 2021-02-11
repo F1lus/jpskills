@@ -38,10 +38,6 @@ export default function ListManager(props){
         socket.on('server-accept', () => {
             setDisableButton(false)
         })
-        if(props.isAnswer){
-            document.getElementsByTagName('ul')[0].classList.remove('bg-light')
-            document.getElementsByTagName('ul')[0].classList.remove('bg-secondary')
-        }
     })
 
     return (
