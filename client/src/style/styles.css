@@ -57,7 +57,7 @@ a.current {
 
 /*tananyagok*/
 p::first-letter {
-    color: #ffc107;
+    color: rgb(218, 167, 2);
 }
 
 p {
