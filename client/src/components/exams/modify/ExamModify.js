@@ -179,10 +179,10 @@ export default function ExamModify(){
                 </form>
             </div>
 
-            <div className="container text-center rounded w-75 shadow bg-light p-3 mb-3">
-                <h3><p>A vizsgához tartozó kérdések</p></h3>
+            {questions.length === 0 ? warning: <ListManager socket={socket} list={questions} />}
 
-                {questions.length === 0 ? warning: <ListManager socket={socket} list={questions} />}
+            <div className="container text-center rounded w-75 shadow bg-light p-3 mb-3">
+                <h3><p>Általános műveletek</p></h3>
 
                 <AddQuestion socket={socket} display={displayQuestion} />
 

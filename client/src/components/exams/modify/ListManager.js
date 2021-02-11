@@ -38,14 +38,19 @@ export default function ListManager(props){
         socket.on('server-accept', () => {
             setDisableButton(false)
         })
+        if(props.isAnswer){
+            document.getElementsByTagName('ul')[0].classList.remove('bg-light')
+            document.getElementsByTagName('ul')[0].classList.remove('bg-secondary')
+        }
     })
 
     return (
-        <ul>
+        <div>
             {
                 list.length === 0 ? <li className="alert alert-danger my-2">Nincs megjeleníthető tartalom!</li> :
                 list.map((el,kerdesIndex) => {
-                    return el.map((inner, index) => { //inner - belső tömb eleme
+                    return <ul key={kerdesIndex} className='container text-center rounded w-75 shadow-lg bg-light p-3 mb-3'>{
+                        el.map((inner, index) => { //inner - belső tömb eleme
                         if(index === 0){
                             return (
                                 <div className="container" key={index}>
@@ -80,8 +85,7 @@ export default function ListManager(props){
                             jeleníti meg
                             */
                             return (
-                            <div key={index} className="jumbotron mb-2">
-                                <h3><p>A kérdéshez tartozó válaszok:</p></h3>
+                            <div key={index}>
                                 <ListManager socket={socket} questionId={el[0]} 
                                     list={inner} isAnswer={true} disable={disableButton}/>
                             </div>)
@@ -105,7 +109,7 @@ export default function ListManager(props){
                                     </li>
                             }
                         }
-                    })
+                    })}</ul>
                 })    
             }
             <AddAnswer socket={props.socket} questionId={questionId} display={display}  disable={disableButton}/>
@@ -115,6 +119,6 @@ export default function ListManager(props){
                         {!display ? 'Válasz hozzáadása' : 'Mégse'}
                     </button>
                 </li> : null}       
-        </ul>
+        </div>
     )
 }
