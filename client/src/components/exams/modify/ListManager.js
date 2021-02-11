@@ -45,9 +45,9 @@ export default function ListManager(props){
     })
 
     return (
-        <div>
+        <div className="container">
             {
-                list.length === 0 ? <li className="alert alert-danger my-2">Nincs megjeleníthető tartalom!</li> :
+                list.length === 0 ? <li className="alert alert-danger my-2 w-50 ml-auto mr-auto">Nincs megjeleníthető tartalom!</li> :
                 list.map((el,kerdesIndex) => {
                     return <ul key={kerdesIndex} className='container text-center rounded w-75 shadow-lg bg-light p-3 mb-3'>{
                         el.map((inner, index) => { //inner - belső tömb eleme
@@ -118,7 +118,7 @@ export default function ListManager(props){
                     <button onClick={modifyDisplay} className="btn btn-warning">
                         {!display ? 'Válasz hozzáadása' : 'Mégse'}
                     </button>
-                </li> : null}       
+                </li> : null}
         </div>
     )
 }
