@@ -26,6 +26,8 @@ export default function Profile(props) {
         socket.on('sending-statistics', (stats) => {
             setStats(globalStats(stats))
         })
+
+        return () => socket.disconnect()
     })
 
     function renderStatsObject(entry){
@@ -44,6 +46,20 @@ export default function Profile(props) {
             }
         }
     }
+
+    function renderGlobalStats(){
+        if(stats != null){
+            return (
+                <div className="alert alert-primary my-2">
+                    <p>Az eddigi vizsgáihoz szükséges átlag idő: {renderStatsObject('time') || 'Nincs adat'}</p>
+                    <p>Az eddigi vizsgáin az átlagos pont: {renderStatsObject('score') || 'Nincs adat'}</p>
+                    <p>A vizsgák sikerességi aránya: {renderStatsObject('completion') || 'Nincs adat'}</p>
+                </div>
+            )
+        }else{
+            return <p className="alert alert-danger my-2">Nincs megjeleníthető tartalom</p>
+        }
+    }
     
     return (
         <div className="container text-center">
@@ -56,9 +72,7 @@ export default function Profile(props) {
                 <hr className="w-75" id="customline"/>
                 <h3>Az Ön vizsgáiról általánosságban:</h3>
                 <br/>
-                <p>Az eddigi vizsgáihoz szükséges átlag idő: {renderStatsObject('time')}</p>
-                <p>Az eddigi vizsgáin az átlagos pont: {renderStatsObject('score')}</p>
-                <p>A vizsgák sikerességi aránya: {renderStatsObject('completion')}</p>
+                {renderGlobalStats()}
                 <br/>
             </div>
 
