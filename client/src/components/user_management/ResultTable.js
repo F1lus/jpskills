@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react'
 
+import examStats from './models/ExamStatistics'
+
 export default function ResultTable(props) {
 
     const [exams, setExams] = useState([])
@@ -20,7 +22,8 @@ export default function ResultTable(props) {
 
     useEffect(() => {
         if(props.results && examCode){
-            let filteredArray = props.results.filter(skill => skill.examCode === examCode) 
+            let filteredArray = props.results.filter(skill => skill.examCode === examCode)
+            filteredArray.sort((a, b) => b.score - a.score)
             setResults(filteredArray)
         }else{
             setResults([])
@@ -32,6 +35,19 @@ export default function ResultTable(props) {
             setExamCode(null)
         }else{
             setExamCode(event.target.value)
+        }
+    }
+
+    function examStatistics(){
+        if(examCode && props.permission === 'admin' && results.length > 0){
+            const stats = examStats(results)
+            return (
+                <div>
+                    <p>Átlagos teljesítési idő: {stats.avgTime.avgMins+" perc "+stats.avgTime.avgSecs+" másodperc"}</p>
+                    <p>Átlagosan elért pontszám: {stats.avgScore}</p>
+                    <p>Sikerességi arány: {stats.completionRate+"%"}</p>
+                </div>
+            )
         }
     }
 
@@ -61,20 +77,23 @@ export default function ResultTable(props) {
             </select>
 
             {results.length > 0 ?
-                <table className="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Vizsgázó neve</th>
-                            <th>Eredmény</th>
-                            <th>Idő</th>
-                            <th>Konklúzió</th>
-                        </tr>
-                    </thead>
+                <div>
+                    {examStatistics()}
+                    <table className="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Vizsgázó neve</th>
+                                <th>Eredmény</th>
+                                <th>Idő</th>
+                                <th>Konklúzió</th>
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        {renderRows()}
-                    </tbody>
-                </table> : null
+                        <tbody>
+                            {renderRows()}
+                        </tbody>
+                    </table>
+                </div> : null
             }
             <br/>
         </div>

@@ -62,7 +62,7 @@ export default function Profile(props) {
             </div>
 
             <div className="container shadow rounded text-center bg-light mb-3">
-                {csoport === 'admin' ? <ResultTable results={renderStatsObject('skills')} /> : <Learn />}
+                {csoport === 'admin' ? <ResultTable permission={csoport} results={renderStatsObject('skills')} /> : <Learn />}
             </div>
         </div>
     )

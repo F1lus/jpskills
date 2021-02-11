@@ -32,7 +32,7 @@ export default (rawSkillMatrix) => {
 
     return {
         skills: skills,
-        avgScore: avgScore,
+        avgScore: Math.round(avgScore),
         avgTime:{
             avgMins: Math.floor(avgTime / 60),
             avgSecs: avgTime % 60
