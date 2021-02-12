@@ -44,11 +44,11 @@ ul {
 }
 
 .nav-link {
-    color: #ffc107;
+    color: goldenrod;
 }
 
 .nav-link:hover {
-    color: goldenrod;
+    color: #ffc107;
 }
 
 a.current {
@@ -57,7 +57,7 @@ a.current {
 
 /*tananyagok*/
 p::first-letter {
-    color: rgb(218, 167, 2);
+    color: goldenrod;
 }
 
 p {

@@ -85,7 +85,6 @@ export default function Modifier(props){
                         <option value={0}>Helytelen</option>
                     </select>
                     <button disabled={disableButton} className="btn btn-warning m-2">Módosítás!</button>
-                    <hr id="customline"/>
                 </form>
             )
         }
