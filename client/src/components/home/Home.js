@@ -11,7 +11,7 @@ export default function Home(props){
     const [vanVizsga, setVanVizsga] = useState(false)
 
     useEffect(() => {
-
+        socket.open()
         socket.emit('exams-get-signal')
 
         return () => {

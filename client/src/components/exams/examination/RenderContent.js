@@ -57,10 +57,10 @@ export default function RenderContent(props){
     }, [list])
 
     return (
-        <div className="container">
-            <ul className="text-center">
+        <div>
                 {list.map((question, qId) => {
-                    return question.map((content, innerIndex) => {
+                    return <ul className="container bg-white rounded shadow py-3 mb-3 text-center">
+                        {question.map((content, innerIndex) => {
                         if(innerIndex === 1){
                             return (
                                 <li key={innerIndex} className="container-fluid mb-2 mt-3">
@@ -69,7 +69,7 @@ export default function RenderContent(props){
                         }else if(innerIndex === 3 && content != null){
                             return (
                                 <li key={innerIndex}>
-                                    <img className='rounded' src={createImage(content)} alt=''/>
+                                    <img className='rounded img-fluid' src={createImage(content)} alt=''/>
                                 </li>
                             )
                         }else if(innerIndex === 4){
@@ -90,9 +90,8 @@ export default function RenderContent(props){
                         }else{
                             return null
                         }
-                    })
+                    })}</ul>
                 })}
-            </ul>
             <div className="container text-center">
                 <button className="btn btn-warning" onClick={handleSubmit} disabled={disable}>Leadás</button>
             </div>

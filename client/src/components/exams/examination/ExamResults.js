@@ -19,6 +19,8 @@ export default function ExamResults(){
     }
 
     useEffect(() => {
+        socket.open()
+
         socket.emit('request-results', exam)
 
         return () => socket.disconnect()

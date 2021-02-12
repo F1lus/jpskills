@@ -13,7 +13,6 @@ export default function ExamModify(){
     const examCode = useParams()
     const socket = new manager().socket
 
-    const [warning, setWarning] = useState(null)
     const [examProps, setExamProps] = useState([])
     const [status, setStatus] = useState(null)
     const [questions, setQuestions] = useState([])
@@ -24,6 +23,8 @@ export default function ExamModify(){
     const [removed, setRemoved] = useState(false)
 
     useEffect(() => {
+        socket.open()
+
         socket.emit('request-exam-content', examCode.examName)
 
         socket.on('exam-content', (examName, questionList, notes, status, points) => {
@@ -33,9 +34,8 @@ export default function ExamModify(){
 
             if(questionsModel.questions.length > 0){
                 setQuestions(questionsModel.questions)
-            }else{
-                setWarning('Nincsenek megjeleníthető kérdések.')
             }
+
             setStatus(status)
             if(points > questionsModel.points){
                 socket.emit('examPoints-mislead', examCode.examName, questionsModel.points)
@@ -179,7 +179,7 @@ export default function ExamModify(){
                 </form>
             </div>
 
-            {questions.length === 0 ? warning: <ListManager socket={socket} list={questions} />}
+            {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}
 
             <div className="container text-center rounded w-75 shadow bg-light p-3 mb-3">
                 <h3><p>Általános műveletek</p></h3>

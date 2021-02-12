@@ -41,8 +41,9 @@ export default function AddAnswer(props){
     }
 
     return (
-        <div className="container shadow-lg w-75 mt-4 py-2 mb-2 rounded">
+        <div>
            { props.display ?
+            <div className="container shadow-lg w-75 mt-4 py-2 mb-2 rounded">
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-autot">
                         <input type='text' name='answer' value={answer || ''} onChange={handleChange} autoComplete="off"/>
@@ -60,6 +61,7 @@ export default function AddAnswer(props){
                     <br/>
                     <button disabled={disableButton} className="btn btn-warning m-2">Hozzáadás!</button>
                 </form>
+            </div>
                 : null
             } 
         </div>
