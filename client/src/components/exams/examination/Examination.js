@@ -16,7 +16,9 @@ export default function Examination(){
     const [questions, setQuestions] = useState([])
 
     useEffect(() => {
+        socket.open()
         socket.emit('request-exam-content', exam)
+        socket.emit('request-exam-props', exam)
         socket.emit('begin-timer')
 
         return () => {
@@ -31,11 +33,13 @@ export default function Examination(){
         socket.on('exam-processed', () => {
             setFinished(true)
         })
-
-        socket.on('exam-content', (examName, questionList, notes, status, points) => {
-            setExamProps([examName, notes, status, points])
-            
+        
+        socket.on('exam-content', (questionList) => {
             setQuestions(model(questionList).questions)
+        })
+
+        socket.on('exam-props', examProps => {
+            setExamProps(examProps)
         })
     })
 

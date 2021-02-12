@@ -45,7 +45,7 @@ export default function ListManager(props){
             {
                 list.length === 0 ? <li className="alert alert-danger my-2 w-50 ml-auto mr-auto">Nincs megjeleníthető tartalom!</li> :
                 list.map((el,kerdesIndex) => {
-                    return <ul key={kerdesIndex} className='container text-center rounded w-75 shadow-lg bg-light p-3 mb-3'>{
+                    return <ul key={kerdesIndex} className='container text-center border border-warning rounded w-75 shadow-lg bg-light p-3 mb-3'>{
                         el.map((inner, index) => { //inner - belső tömb eleme
                         if(index === 0){
                             return (

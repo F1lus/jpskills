@@ -6,10 +6,19 @@ module.exports = (socket) => {
 
     const getExamContent = (examCode) => {
 
-        dbconnect.selectWholeExam(examCode)
+        dbconnect.selectExamContent(examCode)
         .then(results => {
             if(results){
-                socket.emit('exam-content', results[0], results[1], results[2], results[3], results[4])
+                socket.emit('exam-content', results)
+            }
+        }).catch(err => console.log(err))
+    }
+
+    const getExamProps = (examCode) => {
+        dbconnect.selectExamProps(examCode)
+        .then(results => {
+            if(results){
+                socket.emit('exam-props', results)
             }
         }).catch(err => console.log(err))
     }
@@ -29,6 +38,7 @@ module.exports = (socket) => {
     }
 
     socket.on('request-exam-content', getExamContent)
+    socket.on('request-exam-props', getExamProps)
     socket.on('begin-timer', beginTimer)
 
 }

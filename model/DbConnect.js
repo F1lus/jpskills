@@ -212,25 +212,7 @@ class Connection {
                                     .catch(err => reject(err))
                                 }
                             }).catch(err => reject(err))
-                        }else{
-                            /*this.con('questions').select('question_id')
-                            .where(this.con.raw('question_id = ?', [answerObj.id])).first()
-                            .then(question => {
-                                if(question){
-                                    this.uploadPartialResults(cardNum, question.question_id, 0)
-                                    .then(() => {
-                                        if(index === answers.length-1){
-                                            this.uploadResults(examCode, cardNum, totalPoints, time, )
-                                            .then(response => resolve(response))
-                                            .catch(err => reject(err))
-                                        }
-                                    })
-                                    .catch(err => reject(err))
-                                }
-                            })*/
                         }
-                        
-
                     }).catch(err => reject(err))
                 })
             }
@@ -972,21 +954,35 @@ class Connection {
         })
     }
 
-    selectWholeExam = (exam_itemcode) =>{ //Az adatok összesítése és tovább küldése
+    selectExamContent = (exam_itemcode) =>{ //Az adatok összesítése és tovább küldése
         return new Promise((resolve, reject) => {
-            this.con('exams').select(['exam_id', 'exam_name', 'exam_notes', 'exam_status', 'points_required'])
+            this.con('exams').select('exam_id')
             .where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
             .then(exam => {
-                this.con('questions').where(this.con.raw('exam_id = ?', [exam.exam_id]))
+                this.con('questions').where('exam_id', [exam.exam_id])
                 .then(questions => {
                     if(questions.length !== 0){
                         this.selectTest(questions).then(questionList => {
-                            resolve([exam.exam_name, questionList, exam.exam_notes, exam.exam_status, exam.points_required])
+                            resolve(questionList)
                         })
                     }else{
-                        resolve([exam.exam_name, [], exam.exam_notes, exam.exam_status, exam.points_required])
+                        resolve([])
                     }
                 }).catch(err => reject(err))
+            }).catch(err => reject(err))
+        })
+    }
+
+    selectExamProps = (exam_itemcode) => {
+        return new Promise((resolve, reject) => {
+            this.con('exams').select(['exam_name', 'exam_notes', 'exam_status', 'points_required'])
+            .where('exam_itemcode', [exam_itemcode]).first()
+            .then(exam => {
+                if(exam){
+                    resolve([exam.exam_name, exam.exam_notes, exam.exam_status, exam.points_required])
+                }else{
+                    resolve([])
+                }
             }).catch(err => reject(err))
         })
     }
@@ -1005,6 +1001,8 @@ class Connection {
                 .then((result) =>{
                     if(result){
                         resolve([result.worker_name, result.worker_usergroup])
+                    }else{
+                        resolve('no_user')
                     }
                 }).catch(err => reject(err))
         })
