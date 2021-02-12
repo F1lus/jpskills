@@ -13,7 +13,7 @@ export default (rawSkillMatrix) => {
                 score: skillVector[3],
                 time: skillVector[4],
                 completed: skillVector[5],
-                worker: skillVector[6] || 'Ön'
+                worker: skillVector[6]
             })
         })
 

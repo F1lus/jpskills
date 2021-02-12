@@ -70,7 +70,7 @@ export default function Modifier(props){
                         <input name='modify' type={type || 'text'} value={value || ''} onChange={handleChange} required autoComplete="off"/>
                         <label htmlFor="modify" className="label-name">
                             <span className="content-name">
-                                {type === 'number' ? "Pontszám":"Szöveg"}
+                                {type === 'number' ? "Helyes válaszonként adható egész pontszám":"A szöveg megadása"}
                             </span>
                         </label>
                     </div>

@@ -41,7 +41,7 @@ export default function AddAnswer(props){
     }
 
     return (
-        <div className="container rounded">
+        <div className="container shadow-lg w-75 mt-4 py-2 mb-2 rounded">
            { props.display ?
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-autot">

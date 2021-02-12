@@ -36,12 +36,16 @@ export default function ExamResults(){
             {redirect ? <Redirect to='/exams'/> : null}
 
             <h2><p>Vizsga: {result.examName}</p></h2>
-
-            <h1>{result.time}</h1>
-
-            <h2><b>{result.minPoints}/{result.userScore}</b></h2>
-
-            <h1>{
+            <hr/>
+            <h1>Vizsgaidő: {result.time}</h1>
+            <br/>
+            <h2><b>A sikeres vizsga feltétele minimum {Math.floor(result.maxPoints*result.minPercent)} pont ({result.minPercent*100}%)</b></h2>
+            <br/>
+            <h2><b>Az Ön eredménye: <span className={result.completed ? 'text-success':'text-danger'}>
+                {result.userScore}/{result.maxPoints}
+            </span></b></h2>
+            <hr/>
+            <h1>A vizsga ezáltal {
                 result.completed ? 
                     <span className='text-success'>SIKERES</span>
                 :
