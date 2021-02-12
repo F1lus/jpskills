@@ -13,7 +13,6 @@ export default function ExamModify(){
     const examCode = useParams()
     const socket = new manager().socket
 
-    const [warning, setWarning] = useState(null)
     const [examProps, setExamProps] = useState([])
     const [status, setStatus] = useState(null)
     const [questions, setQuestions] = useState([])
@@ -24,6 +23,8 @@ export default function ExamModify(){
     const [removed, setRemoved] = useState(false)
 
     useEffect(() => {
+        socket.open()
+
         socket.emit('request-exam-content', examCode.examName)
 
         socket.on('exam-content', (examName, questionList, notes, status, points) => {
@@ -33,16 +34,15 @@ export default function ExamModify(){
 
             if(questionsModel.questions.length > 0){
                 setQuestions(questionsModel.questions)
-            }else{
-                setWarning('Nincsenek megjeleníthető kérdések.')
             }
+
             setStatus(status)
             if(points > questionsModel.points){
                 socket.emit('examPoints-mislead', examCode.examName, questionsModel.points)
             }else{
                 setMaxPoints(questionsModel.points)
             }
-            setExamProps([examName, notes === 'null' ? '' : notes, status, points])
+            setExamProps([examName, notes === 'null' ? '' : notes, status, Math.round(points*100)])
         })
 
         return () => socket.disconnect()
@@ -63,7 +63,7 @@ export default function ExamModify(){
         event.preventDefault()
         if(examProps != null){
             API.post(`/exams/modify/${examCode.examName}`, 
-                {examName: examProps[0], notes: examProps[1], points: examProps[3]})
+                {examName: examProps[0], notes: examProps[1], points: (examProps[3]/100)})
             .then(response => {
                 if(response.data.updated){
                     socket.emit('exam-modified')
@@ -103,8 +103,8 @@ export default function ExamModify(){
                 setExamProps(list)
                 break
             case 'examMinPoints':
-                if(event.target.value > maxPoints){
-                    list[3] = maxPoints
+                if(event.target.value > 100){
+                    list[3] = 100
                 }else if(event.target.value < 0){
                     list[3] = 0
                 }else{
@@ -156,11 +156,11 @@ export default function ExamModify(){
                         <input type='number' name='examMinPoints' value={examProps[3] || ''} onChange={handleChange} required/>
                         <label htmlFor="examMinPoints" className="label-name">
                             <span className="content-name">
-                                A vizsga elvégzéséhez szükséges pontszám, de maximum {maxPoints}
+                                A vizsga elvégzéséhez szükséges százalék
                             </span>
                         </label>
                     </div>
-
+                    <p>A jelenlegi maximális pontszám {maxPoints}, az elvégzéshez pedig {Math.round(maxPoints*(examProps[3]/100))} pont szükséges</p>
                     <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
                 </form>
 
@@ -179,7 +179,7 @@ export default function ExamModify(){
                 </form>
             </div>
 
-            {questions.length === 0 ? warning: <ListManager socket={socket} list={questions} />}
+            {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}
 
             <div className="container text-center rounded w-75 shadow bg-light p-3 mb-3">
                 <h3><p>Általános műveletek</p></h3>

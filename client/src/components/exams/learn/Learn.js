@@ -14,12 +14,11 @@ export default function Learn() {
     const [exams, setExams] = useState([])
 
     useEffect(() => {
+        socket.open()
 
         socket.emit('exams-get-signal')
 
-        return () => {
-            socket.disconnect()
-        }
+        return () => socket.disconnect()
         // eslint-disable-next-line
     },[])
 

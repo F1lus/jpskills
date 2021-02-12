@@ -132,10 +132,14 @@ class Connection {
                             .andWhere('exam_id', exam.exam_id).first()
                             .then(skill => {
                                 if(skill){
-                                    resolve([
-                                        exam.exam_name, exam.points_required, 
-                                        skill.points, skill.time, skill.completed
-                                    ])
+                                    this.countExamMaxPoints(exam.exam_id).then(points => {
+                                        if(points){
+                                            resolve([
+                                                exam.exam_name, exam.points_required,
+                                                skill.points, skill.time, skill.completed, points
+                                            ])
+                                        }
+                                    })
                                 }else{
                                     resolve([])
                                 }
@@ -149,34 +153,58 @@ class Connection {
         })
     }
 
+    countExamMaxPoints = (examId) => {
+        return new Promise((resolve, reject) => {
+            let maxPoints = 0
+            this.con('questions').select(['question_id', 'points']).where('exam_id', [examId])
+            .then(questions => {
+                if(questions){
+                    questions.forEach((question, index) => {
+                        this.con('exam_prepare').select('exam_prepare.results_id')
+                        .innerJoin(this.con.raw('results ON exam_prepare.results_id = results.results_id'))
+                        .where('question_id', [question.question_id]).andWhere('correct',1)
+                        .then(results => {
+                            if(results){
+                                maxPoints += question.points*results.length
+                            }
+                            if(index === questions.length-1){
+                                resolve(maxPoints)
+                            }
+                        }).catch(err => reject(err))
+                    })
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
     processAnswers = (answers, examCode, cardNum, time) => {
         return new Promise((resolve, reject) => {
             if(answers.length === 0){
                 resolve(false)
             }else{
+                let maxQuestionPoints = 0
                 let totalPoints = 0
                 answers.forEach((answerObj, index) => {
                     this.con('results').select('results.results_id')
                     .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
                     .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
                     .then(result => {
-                        if(answerObj.answers.length > 0){
-                            let isCorrect = false
-                            if(result){
-                                isCorrect = answerObj.answers
-                                .every(answer => result.findIndex(id => id.results_id === answer) > -1) && answerObj.answers.length === result.length
-                            }
-
+                        if(result){
                             this.con('questions').select(['question_id', 'points'])
                             .where(this.con.raw('question_id = ?', [answerObj.id])).first()
                             .then(question => {
                                 if(question){
-                                    if(isCorrect){
-                                        totalPoints += question.points
-                                    }
-                                    this.uploadPartialResults(cardNum, question.question_id, question.points, isCorrect).then(() => {
+                                    maxQuestionPoints += question.points*result.length
+                                    let questionPoints = 0
+                                    answerObj.answers.forEach((answer) => {
+                                        if(result.findIndex(value => value.results_id === answer) > -1 && answerObj.answers.length > 0 && answerObj.answers.length <= result.length){
+                                            totalPoints += question.points
+                                            questionPoints += question.points
+                                        }
+                                    })
+                                    this.uploadPartialResults(cardNum, question.question_id, questionPoints).then(() => {
                                         if(index === answers.length-1){
-                                            this.uploadResults(examCode, cardNum, totalPoints, time)
+                                            this.uploadResults(examCode, cardNum, totalPoints, time, maxQuestionPoints)
                                             .then(response => resolve(response))
                                             .catch(err => reject(err))
                                         }
@@ -185,21 +213,21 @@ class Connection {
                                 }
                             }).catch(err => reject(err))
                         }else{
-                            this.con('questions').select('question_id')
+                            /*this.con('questions').select('question_id')
                             .where(this.con.raw('question_id = ?', [answerObj.id])).first()
                             .then(question => {
                                 if(question){
-                                    this.uploadPartialResults(cardNum, question.question_id, 0, false)
+                                    this.uploadPartialResults(cardNum, question.question_id, 0)
                                     .then(() => {
                                         if(index === answers.length-1){
-                                            this.uploadResults(examCode, cardNum, totalPoints, time)
+                                            this.uploadResults(examCode, cardNum, totalPoints, time, )
                                             .then(response => resolve(response))
                                             .catch(err => reject(err))
                                         }
                                     })
                                     .catch(err => reject(err))
                                 }
-                            })
+                            })*/
                         }
                         
 
@@ -209,7 +237,7 @@ class Connection {
         })
     }
 
-    uploadResults = (examCode, cardNum, totalPoints, time) => {
+    uploadResults = (examCode, cardNum, totalPoints, time, maxPoints) => {
         return new Promise((resolve, reject) => {
             this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [cardNum]))
             .first().then(worker => { 
@@ -218,7 +246,7 @@ class Connection {
                     .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
                     .then(exam => {
                         if(exam){
-                            const completed = totalPoints >= exam.points_required ? 1 : 0
+                            const completed = totalPoints >= Math.round(exam.points_required*maxPoints) ? 1 : 0
                             this.con('skills').insert({
                                 worker_id: worker.worker_id,
                                 exam_id: exam.exam_id,
@@ -237,7 +265,7 @@ class Connection {
         })
     }
 
-    uploadPartialResults = (cardNum, questionId, points, isCorrect) => {
+    uploadPartialResults = (cardNum, questionId, points) => {
         return new Promise((resolve, reject) => {
             this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [cardNum]))
             .first().then(worker => {
@@ -245,7 +273,7 @@ class Connection {
                     this.con('exam_result').insert({
                         worker_id: worker.worker_id,
                         question_id: questionId,
-                        points: isCorrect ? points : 0
+                        points: points
                     }).then(response => resolve(response != null))
                     .catch(err => reject(err))
                 }else{

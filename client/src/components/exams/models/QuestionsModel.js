@@ -7,15 +7,17 @@ export default (rawQuestions) => {
             let answers = []
             if(question.answers){
                 question.answers.forEach(answer => {
+                    if(answer.correct){
+                        examPoints += question.points
+                    }
                     answers.push([answer.id, answer.text, answer.correct])
                 })
                 answers.sort((a, b) => a[0] - b[0])
             }
-            examPoints += question.points
 
             list.push([question.id, question.name, question.points, question.pic, answers])
         })
-
+        
         list.sort((a, b) => a[0] - b[0])
     }
 

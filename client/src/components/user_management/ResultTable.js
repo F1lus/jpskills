@@ -58,7 +58,7 @@ export default function ResultTable(props) {
                 : Math.floor(result.time/60)+":"+(result.time%60).toString()
             return (
                 <tr key={index} className={result.completed ? "table-success" : "table-danger"}>
-                    <td>{result.worker}</td>
+                    <td>{result.worker || props.user}</td>
                     <td>{result.score}</td>
                     <td>{timeFormat}</td>
                     <td>{result.completed ? 'Átment' : 'Megbukott'}</td>
@@ -86,9 +86,9 @@ export default function ResultTable(props) {
                         <thead>
                             <tr>
                                 <th>Vizsgázó neve</th>
-                                <th>Eredmény</th>
+                                <th>Pontszám</th>
                                 <th>Idő</th>
-                                <th>Konklúzió</th>
+                                <th>Eredmény</th>
                             </tr>
                         </thead>
 

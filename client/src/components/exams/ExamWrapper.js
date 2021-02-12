@@ -10,15 +10,13 @@ export default function ExamWrapper(props){
     const socket = new manager().socket
 
     useEffect(() => {
+        socket.open()
         if(props.permission === 'admin'){
             socket.emit('get-products')
         }
         socket.emit('exams-get-signal')
 
-        return () => {
-            socket.disconnect()
-        }
-
+        return () => socket.disconnect()
         // eslint-disable-next-line
     },[])
 
