@@ -34,11 +34,11 @@ export default function ExamResults(){
     })
 
     return (
-        <div className="container bg-white text-center rounded shadow">
+        <div className="container bg-white text-center rounded shadow p-3">
             {redirect ? <Redirect to='/exams'/> : null}
 
             <h2><p>Vizsga: {result.examName}</p></h2>
-            <hr/>
+            <hr className="w-75"/>
             <h1>Vizsgaidő: {result.time}</h1>
             <br/>
             <h2><b>A sikeres vizsga feltétele minimum {Math.floor(result.maxPoints*result.minPercent)} pont ({result.minPercent*100}%)</b></h2>
@@ -46,7 +46,7 @@ export default function ExamResults(){
             <h2><b>Az Ön eredménye: <span className={result.completed ? 'text-success':'text-danger'}>
                 {result.userScore}/{result.maxPoints}
             </span></b></h2>
-            <hr/>
+            <hr className="w-75"/>
             <h1>A vizsga ezáltal {
                 result.completed ? 
                     <span className='text-success'>SIKERES</span>
