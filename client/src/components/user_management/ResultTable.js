@@ -72,7 +72,7 @@ export default function ResultTable(props) {
             <br/>
             <h1><p>Vizsgánkénti statisztika</p></h1>
 
-            <select onChange={handleChange} className="mb-3">
+            <select onChange={handleChange} className="mb-3" id="tableselect">
                 <option value={null}>Vizsga kiválasztása</option>
                 {exams.length > 0 ? exams.map((exam, index) => {
                     return <option key={index} value={exam.value}>{exam.key}</option>

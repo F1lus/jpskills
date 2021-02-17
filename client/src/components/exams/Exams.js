@@ -35,6 +35,7 @@ export default function Exams(props){
                                     </NavLink>
                                     <p className="card-text">{exam[2] != null ? `Megjegyzés: ${exam[2]}` : ''}</p>
                                     <p className="card-text">Készült: {exam[4]}</p>
+                                    <p className="card-text">Cikkszám: {exam[1]}</p>
                                 </div>
                             </div>
                         )

@@ -117,7 +117,7 @@ export default function CreateTest(props){
                         <option defaultValue={-1}>A vizsga terméke</option>
                         {items.length === 0 ? <></> : items.map((elem, index) =>{
                             return(
-                                <option key={index} value={elem[1]}>{elem[0]}</option>
+                                <option key={index} value={elem[1]}>{elem[0]} // {elem[1]}</option>
                             )
                         })}
                     </select>

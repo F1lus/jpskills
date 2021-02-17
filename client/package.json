@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
+    "pdfjs-dist": "^2.5.207",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-modal": "^3.12.1",

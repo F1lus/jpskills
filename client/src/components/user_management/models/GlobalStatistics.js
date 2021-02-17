@@ -35,7 +35,7 @@ export default (rawSkillMatrix) => {
         avgScore: Math.round(avgScore),
         avgTime:{
             avgMins: Math.floor(avgTime / 60),
-            avgSecs: avgTime % 60
+            avgSecs: Math.round(avgTime % 60)
         },
         completedRate: completedCount.toString().substring(0,5)
     }

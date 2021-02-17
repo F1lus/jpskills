@@ -10,6 +10,8 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import { ArrowLeftIcon, ArrowRightIcon } from '@primer/octicons-react';
 import { NavLink } from 'react-router-dom';
 
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
+
 export default function ExamDocument(props){
 
     const exam = useParams()
@@ -19,7 +21,7 @@ export default function ExamDocument(props){
     const [currentPage, setCurrentPage] = useState(1);
     const [learnt, setLearnt] = useState(true)
 
-    pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
+    pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
     function onDocumentLoadSuccess(numPages) {
         setPageNum(numPages)
