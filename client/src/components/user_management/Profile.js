@@ -83,7 +83,7 @@ export default function Profile(props) {
                     </div>
                 :
                     <div>
-                        <div className="container shadow rounded text-center bg-light mb-5">
+                        <div className="container shadow rounded text-center bg-light mb-3">
                             <Learn />
                         </div>
                         <div className="container shadow rounded text-center bg-light mb-3">

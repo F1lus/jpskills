@@ -16,7 +16,7 @@ export default function Exams(props){
     })
 
     return(
-        <div className="container shadow rounded text-center p-3 mt-5 mb-3 bg-light">
+        <div className="container shadow rounded text-center p-3 mt-3 mb-3 bg-light">
             {props.permission === 'admin'? <h1><p>Az Ön által készített vizsgák:</p></h1>
             : <h1><p>Elérhető vizsgák:</p></h1>
             }
