@@ -75,7 +75,7 @@ export default function ResultTable(props) {
             <select onChange={handleChange} className="mb-3" id="tableselect">
                 <option value={null}>Vizsga kiválasztása</option>
                 {exams.length > 0 ? exams.map((exam, index) => {
-                    return <option key={index} value={exam.value}>{exam.key}</option>
+                    return <option key={index} value={exam.value}>{exam.key}{props.permission === 'admin' ? " || "+exam.value : null}</option>
                 }) : null}
             </select>
 

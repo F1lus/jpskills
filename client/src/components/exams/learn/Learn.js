@@ -16,14 +16,14 @@ export default function Learn() {
     useEffect(() => {
         socket.open()
 
-        socket.emit('exams-get-signal')
+        socket.emit('exams-learn-signal')
 
         return () => socket.disconnect()
         // eslint-disable-next-line
     },[])
 
     useEffect(() => {
-        socket.on('exams-get-emitter', (dbExams) => {
+        socket.on('exams-learn-emitter', (dbExams) => {
             setExams(model(dbExams))
         })
     })

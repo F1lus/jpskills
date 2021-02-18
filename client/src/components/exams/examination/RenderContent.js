@@ -59,7 +59,7 @@ export default function RenderContent(props){
     return (
         <div>
                 {list.map((question, qId) => {
-                    return <ul className="container bg-white rounded shadow py-3 mb-3 text-center">
+                    return <ul key={qId}className="container bg-white rounded shadow py-3 mb-3 text-center">
                         {question.map((content, innerIndex) => {
                         if(innerIndex === 1){
                             return (

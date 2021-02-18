@@ -26,8 +26,8 @@ module.exports = (socket) => {
             results.forEach(result => {
                 examResult.push([result.examName, 
                     result.itemCode, 
-                    result.comment, 
-                    result.status, 
+                    result.comment,
+                    result.status,
                     dateFormat((''+result.created))
                 ])
             })
@@ -36,5 +36,23 @@ module.exports = (socket) => {
         .catch(err => console.log(err))
     }
 
-    socket.on('exams-get-signal', () => getExams())
+    socket.on('exams-get-signal', getExams)
+
+    const learnExams = () => {
+        dbconnect.selectLearnExams(socket.handshake.session.cardNum, socket.handshake.session.perm === 'admin')
+        .then(results => {
+            let examResult = []
+            results.forEach(result => {
+                examResult.push([result.examName, 
+                    result.itemCode, 
+                    result.comment, 
+                    dateFormat((''+result.created))
+                ])
+            })
+            socket.emit('exams-learn-emitter', examResult)
+        })
+        .catch(err => console.log(err))
+    }
+
+    socket.on('exams-learn-signal', learnExams)
 }
