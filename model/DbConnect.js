@@ -1025,8 +1025,7 @@ class Connection {
     findUser = (cardNum) => {
         return new Promise((resolve, reject) => {
             this.con('workers')
-                .innerJoin(this.con.raw('admin_login ON workers.worker_cardcode = admin_login.cardcode'))
-                .where(this.con.raw('workers.worker_cardcode = ?', [cardNum])).first()
+                .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
                 .then((result) => {
                     if (result) {
                         resolve([result.worker_name, result.worker_usergroup])
@@ -1037,12 +1036,40 @@ class Connection {
         })
     }
 
+    registerUser = (cardNum, password) => {
+        return new Promise((resolve, reject) => {
+            this.con('admin_login').where('cardcode', [cardNum]).first()
+            .then(result => {
+                if(result){
+                    resolve('user_exists')
+                }else{
+                    this.con('admin_login').insert({
+                        cardcode: cardNum,
+                        password: password,
+                        latest_login: this.con.fn.now()
+                    }).then(response => {
+                        resolve(response != null)
+                    }).catch(err => reject(err))
+                }
+            }).catch(err => reject(err))
+        })
+    }
+
+    userLogout = (cardNum) => {
+        this.con('admin_login').update({
+            latest_logout: this.con.fn.now()
+        }).where('cardcode', [cardNum]).catch(err => console.log(err))
+    }
+
     userExists = (cardNum, password) => {
         return new Promise((resolve, reject) => {
             this.con('admin_login').where(this.con.raw('cardcode = ?', [cardNum]))
                 .first()
                 .then((result) => {
                     if (result) {
+                        this.con('admin_login').update({
+                            latest_login: this.con.fn.now()
+                        }).where('cardcode', [cardNum]).catch(err => reject(err))
                         resolve(result.password === password)
                     } else {
                         resolve(false)

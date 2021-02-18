@@ -6,32 +6,56 @@ export default function Login(){
 
     const [cardNum, setCardNum] = useState(null)
     const [password, setPassword] = useState(null)
+    const [password2, setPassword2] = useState(null)
     const [alert, setAlert] = useState(null)
     const [register, setRegister] = useState(false)
 
     function handleSubmit(event){
         event.preventDefault()
-        if(cardNum == null || password == null){
-            setAlert('A kártyaszám, vagy jelszó mező hiányos!')
-            return
-        }
+        let data = null
+        if(register){
+            if(cardNum == null || password == null || password2 == null){
+                setAlert('Valamelyik mező hiányos!')
+                return
+            }
 
-        const data = {
-            cardNum: cardNum,
-            password: password
-        }
+            if(password.length < 8 || password.length > 16){
+                setAlert('A jelszó legalább 8, legfeljebb 16 karakter hosszúnak kell lennie!')
+                return
+            }
 
+            if(password !== password2){
+                setAlert('A jelszavak nem egyeznek!')
+                return
+            }
+
+            data = {
+                cardNum: cardNum,
+                password: password,
+                newUser: true
+            }
+        }else{
+            if(cardNum == null || password == null){
+                setAlert('A kártyaszám, vagy jelszó mező hiányos!')
+                return
+            }
+    
+            data = {
+                cardNum: cardNum,
+                password: password
+            }
+        }
         API.post('/login', data)
-            .then(result => {
-                if(result.data.access){
-                    window.location.reload()
-                }else{
-                    setAlert('A megadott adatok egyike hibás!')
-                }
-            }).catch(err =>{
-                setAlert('Hiba történt! Próbálja újra!')
-                console.log(err)
-            })
+                .then(result => {
+                    if(result.data.access){
+                        window.location.reload()
+                    }else{
+                        setAlert('A megadott adatok egyike hibás!')
+                    }
+                }).catch(err =>{
+                    setAlert('Hiba történt! Próbálja újra!')
+                    console.log(err)
+                })
     }
 
     function handleChange(event){
@@ -41,6 +65,9 @@ export default function Login(){
                 break
             case 'password':
                 setPassword(event.target.value)
+                break
+            case 'password2':
+                setPassword2(event.target.value)
                 break
             default:
                 return
@@ -84,7 +111,7 @@ export default function Login(){
                     { register ?
                     <div>
                         <div className="form-group m-auto">
-                            <input type="password" name="password" autoComplete="off" value={password || ''} onChange={handleChange} required/>
+                            <input type="password" name="password2" autoComplete="off" value={password2 || ''} onChange={handleChange} required/>
                             <label htmlFor="password" className="label-name">
                                 <span className="content-name">
                                     Jelszó újra
@@ -104,7 +131,7 @@ export default function Login(){
                 </form>
                 <div className="container mt-3">
                     <input type="checkbox" name="regisztráció" onChange={e => newUser(e)}/>
-                    <label htmlFor="regisztráció" className="m-1"> Első bejelentkezés?</label>
+                    <label htmlFor="regisztráció" className="m-1"> Pipálja be, ha még nincs fiókja!</label>
                 </div>
             </div>
         </div>
