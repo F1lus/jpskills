@@ -30,7 +30,8 @@ class Connection {
                 host: 'localhost',
                 user: 'root',
                 password: '',
-                database: 'jpskills'
+                database: 'jpskills',
+                multipleStatements: true
             },
             pool: { min: 0, max: 7 }
         })
