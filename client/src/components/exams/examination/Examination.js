@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react'
-import {Redirect, useParams} from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Redirect, useParams } from 'react-router-dom'
 
 import RenderContent from './RenderContent'
 import model from '../models/QuestionsModel'
 
 import manager from '../../GlobalSocket'
 
-export default function Examination(){
+export default function Examination() {
 
     const socket = new manager().socket
     const exam = useParams().examCode
@@ -33,7 +33,7 @@ export default function Examination(){
         socket.on('exam-processed', () => {
             setFinished(true)
         })
-        
+
         socket.on('exam-content', (questionList) => {
             setQuestions(model(questionList).questions)
         })
@@ -49,7 +49,7 @@ export default function Examination(){
             <div>
                 <h2 className='container bg-white rounded shadow py-3 mb-3'><p className="text-center">Vizsga: {examProps[0]}</p></h2>
             </div>
-            <RenderContent socket={socket} list={questions} exam={exam}/>
+            <RenderContent socket={socket} list={questions} exam={exam} />
         </div>
     )
 }

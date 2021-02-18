@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react'
-import {useParams} from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
-import {Document, Page, pdfjs} from 'react-pdf'
+import { Document, Page, pdfjs } from 'react-pdf'
 
-import {io} from 'socket.io-client'
+import { io } from 'socket.io-client'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
@@ -12,10 +12,10 @@ import { NavLink } from 'react-router-dom';
 
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
 
-export default function ExamDocument(props){
+export default function ExamDocument(props) {
 
     const exam = useParams()
-    
+
     const [examDoc, setExamDoc] = useState('/')
     const [pageNum, setPageNum] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,39 +29,39 @@ export default function ExamDocument(props){
         setPageNum(numPages)
     }
 
-    function nextPage(event){
+    function nextPage(event) {
         event.preventDefault()
-        if(pageNum){
+        if (pageNum) {
             setCurrentPage(page => {
-                if(page+1 > pageNum){
+                if (page + 1 > pageNum) {
                     return page
-                }else{
-                    return page+1
+                } else {
+                    return page + 1
                 }
             })
         }
     }
-    function prevPage(event){
+    function prevPage(event) {
         event.preventDefault()
-        if(pageNum){
+        if (pageNum) {
             setCurrentPage(page => {
-                if(page-1 < 1){
+                if (page - 1 < 1) {
                     return page
-                }else{
-                    return page-1
+                } else {
+                    return page - 1
                 }
             })
         }
     }
 
     useEffect(() => {
-        const socket = io('http://localhost:5000', {withCredentials:true})
+        const socket = io('http://localhost:5000', { withCredentials: true })
 
         socket.emit('examDoc-signal', exam.examCode)
         socket.emit('exams-get-signal')
 
         socket.on('examDoc-emitter', document => {
-            if(document){
+            if (document) {
                 setExamDoc(document)
             }
         })
@@ -71,10 +71,10 @@ export default function ExamDocument(props){
         })
 
         return () => socket.disconnect()
-    },[exam.examCode])
+    }, [exam.examCode])
 
     useEffect(() => {
-        if(currentPage === pageNum){
+        if (currentPage === pageNum) {
             setLearnt(false)
         }
     }, [currentPage, pageNum])
@@ -83,9 +83,9 @@ export default function ExamDocument(props){
         <div className="container text-center bg-light rounded shadow mb-3">
             <Document
                 loading='A virtuális dokumentum betöltése...'
-                file={{data: examDoc}} 
+                file={{ data: examDoc }}
                 onLoadSuccess={page => onDocumentLoadSuccess(page.numPages)}
-             >
+            >
                 <Page pageNumber={currentPage} />
             </Document>
 
@@ -93,7 +93,7 @@ export default function ExamDocument(props){
 
             <button className="btn btn-outline-blue m-2" onClick={prevPage}>
                 <i>
-                    <ArrowLeftIcon/>
+                    <ArrowLeftIcon />
                 </i>
             </button>
 
@@ -104,7 +104,7 @@ export default function ExamDocument(props){
             </NavLink>
 
             <NavLink to={`/exams/${exam.examCode}`}>
-                <button disabled={ 
+                <button disabled={
                     status ? props.permission === 'admin' ? true : learnt : true
                 } className="btn btn-outline-blue m-2">
                     Levizsgázom!
@@ -113,9 +113,9 @@ export default function ExamDocument(props){
 
             <button className="btn btn-outline-blue m-2" onClick={nextPage}>
                 <i>
-                    <ArrowRightIcon/>
+                    <ArrowRightIcon />
                 </i>
             </button>
         </div>
-      );
+    );
 }

@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react'
-import {Redirect} from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Redirect } from 'react-router-dom'
 
 import API from '../../BackendAPI'
 
-export default function CreateTest(props){
+export default function CreateTest(props) {
 
     const permission = props.permission
     const socket = props.socket
@@ -18,20 +18,20 @@ export default function CreateTest(props){
 
     useEffect(() => {
         socket.on('products-emitter', products => {
-            if(products){
+            if (products) {
                 setItems(products)
-            }else{
+            } else {
                 setItems([])
             }
         })
     })
 
-    function handleChange(event){
-        switch(event.target.name){
+    function handleChange(event) {
+        switch (event.target.name) {
             case 'item':
-                if(event.target.value === 'A vizsga terméke'){
+                if (event.target.value === 'A vizsga terméke') {
                     break
-                }else{
+                } else {
                     setItem(event.target.value)
                     break
                 }
@@ -50,19 +50,19 @@ export default function CreateTest(props){
         }
     }
 
-    function handleSubmit(event){
+    function handleSubmit(event) {
         event.preventDefault()
 
-        if(permission !== 'admin'){
+        if (permission !== 'admin') {
             setResult('Parancs megtagadva! Nincs megfelelő jogosultsága!')
             return
         }
 
-        if(examDoc == null){
+        if (examDoc == null) {
             setResult('A fájl feltöltése kötelező!')
             return
         }
-        if(item == null || examName == null){
+        if (item == null || examName == null) {
             setResult('Legalább egy kötelező mező üresen maradt!')
             return
         }
@@ -74,9 +74,9 @@ export default function CreateTest(props){
         data.append('examDoc', examDoc)
 
         setResult(null)
-        API.post('/exams/upload', data, {headers: {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}})
+        API.post('/exams/upload', data, { headers: { 'Content-Type': `multipart/form-data; boundary=${data._boundary}` } })
             .then(res => {
-                switch(res.data.result){
+                switch (res.data.result) {
                     case 'invalid_file_type':
                         setResult('A fájl kiterjesztése nem PDF!')
                         break
@@ -115,16 +115,16 @@ export default function CreateTest(props){
                 <div className="container text-center mb-2">
                     <select name="item" className="pl-2 w-50 rounded" onChange={handleChange}>
                         <option defaultValue={-1}>A vizsga terméke</option>
-                        {items.length === 0 ? <></> : items.map((elem, index) =>{
-                            return(
+                        {items.length === 0 ? <></> : items.map((elem, index) => {
+                            return (
                                 <option key={index} value={elem[1]}>{elem[0]} || {elem[1]}</option>
                             )
                         })}
                     </select>
                 </div>
-                
+
                 <div className="form-group m-auto w-75">
-                    <input type="text" name="examName" onChange={handleChange} value={examName || ''} required autoComplete="off"/>
+                    <input type="text" name="examName" onChange={handleChange} value={examName || ''} required autoComplete="off" />
                     <label htmlFor="examName" className="label-name">
                         <span className="content-name">
                             A vizsga megnevezése:
@@ -132,7 +132,7 @@ export default function CreateTest(props){
                     </label>
                 </div>
                 <div className="form-group m-auto w-75">
-                    <input type="text" name="comment" onChange={handleChange} value={comment || ''} autoComplete="off"/>
+                    <input type="text" name="comment" onChange={handleChange} value={comment || ''} autoComplete="off" />
                     <label htmlFor="comment" className="label-name">
                         <span className="content-name">
                             Megjegyzés:
@@ -140,7 +140,7 @@ export default function CreateTest(props){
                     </label>
                 </div>
                 <div className="container">
-                    <input type="file" onChange={handleChange} name="examDoc"/>
+                    <input type="file" onChange={handleChange} name="examDoc" />
                 </div>
                 <div className="container text-center">
                     <button type="submit" className="btn btn-warning mt-3" value="Létrehozás">Feltöltés!</button>
@@ -149,5 +149,5 @@ export default function CreateTest(props){
             {result ? <h3 className="alert alert-secondary mt-3 text-center" role="alert">{result}</h3> : <></>}
         </div>
     )
-    
+
 }
