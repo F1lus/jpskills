@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 
 import examStats from './models/ExamStatistics'
 
@@ -9,11 +9,11 @@ export default function ResultTable(props) {
     const [results, setResults] = useState([])
 
     useEffect(() => {
-        if(props.results){
+        if (props.results) {
             const array = []
             props.results.forEach(skill => {
-                if(array.findIndex(value => value.key === skill.examName && value.value === skill.examCode) === -1){
-                    array.push({key: skill.examName, value: skill.examCode})
+                if (array.findIndex(value => value.key === skill.examName && value.value === skill.examCode) === -1) {
+                    array.push({ key: skill.examName, value: skill.examCode })
                 }
             })
             setExams(array)
@@ -21,41 +21,41 @@ export default function ResultTable(props) {
     }, [props.results])
 
     useEffect(() => {
-        if(props.results && examCode){
+        if (props.results && examCode) {
             let filteredArray = props.results.filter(skill => skill.examCode === examCode)
             filteredArray.sort((a, b) => b.score - a.score)
             setResults(filteredArray)
-        }else{
+        } else {
             setResults([])
         }
     }, [examCode, props.results])
 
-    function handleChange(event){
-        if(!event.target.value || event.target.value === 'Vizsga kiválasztása'){
+    function handleChange(event) {
+        if (!event.target.value || event.target.value === 'Vizsga kiválasztása') {
             setExamCode(null)
-        }else{
+        } else {
             setExamCode(event.target.value)
         }
     }
 
-    function examStatistics(){
-        if(examCode && props.permission === 'admin' && results.length > 0){
+    function examStatistics() {
+        if (examCode && props.permission === 'admin' && results.length > 0) {
             const stats = examStats(results)
             return (
                 <div>
-                    <p>Átlagos teljesítési idő: {stats.avgTime.avgMins+" perc "+stats.avgTime.avgSecs+" másodperc"}</p>
+                    <p>Átlagos teljesítési idő: {stats.avgTime.avgMins + " perc " + stats.avgTime.avgSecs + " másodperc"}</p>
                     <p>Átlagosan elért pontszám: {stats.avgScore}</p>
-                    <p>Sikerességi arány: {stats.completionRate+"%"}</p>
+                    <p>Sikerességi arány: {stats.completionRate + "%"}</p>
                 </div>
             )
         }
     }
 
-    function renderRows(){
+    function renderRows() {
         return results.map((result, index) => {
-            const timeFormat = (result.time%60).toString().length < 2 ? 
-                Math.floor(result.time/60)+":0"+(result.time%60).toString() 
-                : Math.floor(result.time/60)+":"+(result.time%60).toString()
+            const timeFormat = (result.time % 60).toString().length < 2 ?
+                Math.floor(result.time / 60) + ":0" + (result.time % 60).toString()
+                : Math.floor(result.time / 60) + ":" + (result.time % 60).toString()
             return (
                 <tr key={index} className={result.completed ? "table-success" : "table-danger"}>
                     <td>{result.worker || props.user}</td>
@@ -69,13 +69,13 @@ export default function ResultTable(props) {
 
     return (
         <div className="container text-center">
-            <br/>
+            <br />
             <h1><p>Vizsgánkénti statisztika</p></h1>
 
             <select onChange={handleChange} className="mb-3" id="tableselect">
                 <option value={null}>Vizsga kiválasztása</option>
                 {exams.length > 0 ? exams.map((exam, index) => {
-                    return <option key={index} value={exam.value}>{exam.key}</option>
+                    return <option key={index} value={exam.value}>{exam.key}{props.permission === 'admin' ? " || " + exam.value : null}</option>
                 }) : null}
             </select>
 
@@ -98,7 +98,7 @@ export default function ResultTable(props) {
                     </table>
                 </div> : null
             }
-            <br/>
+            <br />
         </div>
     )
 }

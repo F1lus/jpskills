@@ -23,10 +23,10 @@ class Connection {
      * @property con -> connection rövidítése, ez felel a közvetlen kapcsolatért az adatbázissal
      */
 
-    constructor(){
+    constructor() {
         this.con = require('knex')({
             client: 'mysql',
-            connection:{
+            connection: {
                 host: 'localhost',
                 user: 'root',
                 password: '',
@@ -40,27 +40,27 @@ class Connection {
         return new Promise((resolve, reject) => {
             const results = []
             this.con('exams')
-            .select(['exams.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed', 'worker_id'])
-            .innerJoin(this.con.raw('skills ON exams.exam_id = skills.exam_id')).where('exam_creator', cardNum)
-            .then(exams => {
-                if(exams){
-                    exams.forEach((exam, index) => {
-                        this.con('workers').select('worker_name')
-                        .where('worker_id', [exam.worker_id]).first()
-                        .then(worker => {
-                            if(worker){
-                                results.push([
-                                    exam.exam_name, exam.exam_itemcode, exam.points_required, 
-                                    exam.points, exam.time, exam.completed === 1, worker.worker_name
-                                ])
-                            }
-                            if(index === exams.length-1){
-                                resolve(results)
-                            }
-                        }).catch(err => reject(err))
-                    })
-                }
-            }).catch(err => reject(err))
+                .select(['exams.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed', 'worker_id'])
+                .innerJoin(this.con.raw('skills ON exams.exam_id = skills.exam_id')).where('exam_creator', cardNum)
+                .then(exams => {
+                    if (exams) {
+                        exams.forEach((exam, index) => {
+                            this.con('workers').select('worker_name')
+                                .where('worker_id', [exam.worker_id]).first()
+                                .then(worker => {
+                                    if (worker) {
+                                        results.push([
+                                            exam.exam_name, exam.exam_itemcode, exam.points_required,
+                                            exam.points, exam.time, exam.completed === 1, worker.worker_name
+                                        ])
+                                    }
+                                    if (index === exams.length - 1) {
+                                        resolve(results)
+                                    }
+                                }).catch(err => reject(err))
+                        })
+                    }
+                }).catch(err => reject(err))
         })
     }
 
@@ -68,34 +68,34 @@ class Connection {
         return new Promise((resolve, reject) => {
             const results = []
             this.con('workers').select('worker_id').where('worker_cardcode', [cardNum]).first()
-            .then(worker => {
-                if(worker){
-                    this.con('skills').select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
-                    .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
-                    .where('worker_id', [worker.worker_id])
-                    .then(skills => {
-                        if(skills){
-                            skills.forEach((skill, index) => {
-                                results.push([
-                                    skill.exam_name, skill.exam_itemcode, skill.points_required, 
-                                    skill.points, skill.time, skill.completed === 1
-                                ])
-                                if(index === skills.length-1){
+                .then(worker => {
+                    if (worker) {
+                        this.con('skills').select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
+                            .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
+                            .where('worker_id', [worker.worker_id])
+                            .then(skills => {
+                                if (skills) {
+                                    skills.forEach((skill, index) => {
+                                        results.push([
+                                            skill.exam_name, skill.exam_itemcode, skill.points_required,
+                                            skill.points, skill.time, skill.completed === 1
+                                        ])
+                                        if (index === skills.length - 1) {
+                                            resolve(results)
+                                        }
+                                    })
+                                } else {
                                     resolve(results)
                                 }
-                            })
-                        }else{
-                            resolve(results)
-                        }
-                    }).catch(err => reject(err))
-                }else{
-                    resolve(results)
-                }
-            }).catch(err => reject(err))
+                            }).catch(err => reject(err))
+                    } else {
+                        resolve(results)
+                    }
+                }).catch(err => reject(err))
         })
     }
 
-    
+
 
     /*selectUserAnswers = (examCode, cardNum) => {
         return new Promise((resolve, reject) => {
@@ -121,35 +121,35 @@ class Connection {
     selectSkill = (examCode, cardNum) => {
         return new Promise((resolve, reject) => {
             this.con('exams').select(['exam_id', 'exam_name', 'points_required'])
-            .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-            .then(exam => {
-                if(exam){
-                    this.con('workers').select('worker_id')
-                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
-                    .then(worker => {
-                        if(worker){
-                            this.con('skills').where('worker_id', [worker.worker_id])
-                            .andWhere('exam_id', exam.exam_id).first()
-                            .then(skill => {
-                                if(skill){
-                                    this.countExamMaxPoints(exam.exam_id).then(points => {
-                                        if(points){
-                                            resolve([
-                                                exam.exam_name, exam.points_required,
-                                                skill.points, skill.time, skill.completed, points
-                                            ])
-                                        }
-                                    })
-                                }else{
-                                    resolve([])
+                .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+                .then(exam => {
+                    if (exam) {
+                        this.con('workers').select('worker_id')
+                            .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
+                            .then(worker => {
+                                if (worker) {
+                                    this.con('skills').where('worker_id', [worker.worker_id])
+                                        .andWhere('exam_id', exam.exam_id).first()
+                                        .then(skill => {
+                                            if (skill) {
+                                                this.countExamMaxPoints(exam.exam_id).then(points => {
+                                                    if (points) {
+                                                        resolve([
+                                                            exam.exam_name, exam.points_required,
+                                                            skill.points, skill.time, skill.completed, points
+                                                        ])
+                                                    }
+                                                })
+                                            } else {
+                                                resolve([])
+                                            }
+                                        }).catch(err => reject(err))
                                 }
                             }).catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
-                }else{
-                    resolve([])
-                }
-            }).catch(err => reject(err))
+                    } else {
+                        resolve([])
+                    }
+                }).catch(err => reject(err))
         })
     }
 
@@ -157,63 +157,63 @@ class Connection {
         return new Promise((resolve, reject) => {
             let maxPoints = 0
             this.con('questions').select(['question_id', 'points']).where('exam_id', [examId])
-            .then(questions => {
-                if(questions){
-                    questions.forEach((question, index) => {
-                        this.con('exam_prepare').select('exam_prepare.results_id')
-                        .innerJoin(this.con.raw('results ON exam_prepare.results_id = results.results_id'))
-                        .where('question_id', [question.question_id]).andWhere('correct',1)
-                        .then(results => {
-                            if(results){
-                                maxPoints += question.points*results.length
-                            }
-                            if(index === questions.length-1){
-                                resolve(maxPoints)
-                            }
-                        }).catch(err => reject(err))
-                    })
-                }
-            }).catch(err => reject(err))
+                .then(questions => {
+                    if (questions) {
+                        questions.forEach((question, index) => {
+                            this.con('exam_prepare').select('exam_prepare.results_id')
+                                .innerJoin(this.con.raw('results ON exam_prepare.results_id = results.results_id'))
+                                .where('question_id', [question.question_id]).andWhere('correct', 1)
+                                .then(results => {
+                                    if (results) {
+                                        maxPoints += question.points * results.length
+                                    }
+                                    if (index === questions.length - 1) {
+                                        resolve(maxPoints)
+                                    }
+                                }).catch(err => reject(err))
+                        })
+                    }
+                }).catch(err => reject(err))
         })
     }
 
     processAnswers = (answers, examCode, cardNum, time) => {
         return new Promise((resolve, reject) => {
-            if(answers.length === 0){
+            if (answers.length === 0) {
                 resolve(false)
-            }else{
+            } else {
                 let maxQuestionPoints = 0
                 let totalPoints = 0
                 answers.forEach((answerObj, index) => {
                     this.con('results').select('results.results_id')
-                    .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
-                    .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
-                    .then(result => {
-                        if(result){
-                            this.con('questions').select(['question_id', 'points'])
-                            .where(this.con.raw('question_id = ?', [answerObj.id])).first()
-                            .then(question => {
-                                if(question){
-                                    maxQuestionPoints += question.points*result.length
-                                    let questionPoints = 0
-                                    answerObj.answers.forEach((answer) => {
-                                        if(result.findIndex(value => value.results_id === answer) > -1 && answerObj.answers.length > 0 && answerObj.answers.length <= result.length){
-                                            totalPoints += question.points
-                                            questionPoints += question.points
+                        .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
+                        .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
+                        .then(result => {
+                            if (result) {
+                                this.con('questions').select(['question_id', 'points'])
+                                    .where(this.con.raw('question_id = ?', [answerObj.id])).first()
+                                    .then(question => {
+                                        if (question) {
+                                            maxQuestionPoints += question.points * result.length
+                                            let questionPoints = 0
+                                            answerObj.answers.forEach((answer) => {
+                                                if (result.findIndex(value => value.results_id === answer) > -1 && answerObj.answers.length > 0 && answerObj.answers.length <= result.length) {
+                                                    totalPoints += question.points
+                                                    questionPoints += question.points
+                                                }
+                                            })
+                                            this.uploadPartialResults(cardNum, question.question_id, questionPoints).then(() => {
+                                                if (index === answers.length - 1) {
+                                                    this.uploadResults(examCode, cardNum, totalPoints, time, maxQuestionPoints)
+                                                        .then(response => resolve(response))
+                                                        .catch(err => reject(err))
+                                                }
+                                            })
+                                                .catch(err => reject(err))
                                         }
-                                    })
-                                    this.uploadPartialResults(cardNum, question.question_id, questionPoints).then(() => {
-                                        if(index === answers.length-1){
-                                            this.uploadResults(examCode, cardNum, totalPoints, time, maxQuestionPoints)
-                                            .then(response => resolve(response))
-                                            .catch(err => reject(err))
-                                        }
-                                    })
-                                    .catch(err => reject(err))
-                                }
-                            }).catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
+                                    }).catch(err => reject(err))
+                            }
+                        }).catch(err => reject(err))
                 })
             }
         })
@@ -222,46 +222,46 @@ class Connection {
     uploadResults = (examCode, cardNum, totalPoints, time, maxPoints) => {
         return new Promise((resolve, reject) => {
             this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [cardNum]))
-            .first().then(worker => { 
-                if(worker){
-                    this.con('exams').select(['exam_id', 'points_required'])
-                    .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-                    .then(exam => {
-                        if(exam){
-                            const completed = totalPoints >= Math.round(exam.points_required*maxPoints) ? 1 : 0
-                            this.con('skills').insert({
-                                worker_id: worker.worker_id,
-                                exam_id: exam.exam_id,
-                                points: totalPoints,
-                                time: time,
-                                completed: completed
-                            }).then(response => resolve(response != null)).catch(err => reject(err))
-                        }else{
-                            resolve(false)
-                        }
-                    }).catch(err => reject(err))
-                }else{
-                    resolve(false)
-                }
-            }).catch(err => reject(err))
+                .first().then(worker => {
+                    if (worker) {
+                        this.con('exams').select(['exam_id', 'points_required'])
+                            .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+                            .then(exam => {
+                                if (exam) {
+                                    const completed = totalPoints >= Math.round(exam.points_required * maxPoints) ? 1 : 0
+                                    this.con('skills').insert({
+                                        worker_id: worker.worker_id,
+                                        exam_id: exam.exam_id,
+                                        points: totalPoints,
+                                        time: time,
+                                        completed: completed
+                                    }).then(response => resolve(response != null)).catch(err => reject(err))
+                                } else {
+                                    resolve(false)
+                                }
+                            }).catch(err => reject(err))
+                    } else {
+                        resolve(false)
+                    }
+                }).catch(err => reject(err))
         })
     }
 
     uploadPartialResults = (cardNum, questionId, points) => {
         return new Promise((resolve, reject) => {
             this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [cardNum]))
-            .first().then(worker => {
-                if(worker){
-                    this.con('exam_result').insert({
-                        worker_id: worker.worker_id,
-                        question_id: questionId,
-                        points: points
-                    }).then(response => resolve(response != null))
-                    .catch(err => reject(err))
-                }else{
-                    resolve(false)
-                }
-            }).catch(err => reject(err))
+                .first().then(worker => {
+                    if (worker) {
+                        this.con('exam_result').insert({
+                            worker_id: worker.worker_id,
+                            question_id: questionId,
+                            points: points
+                        }).then(response => resolve(response != null))
+                            .catch(err => reject(err))
+                    } else {
+                        resolve(false)
+                    }
+                }).catch(err => reject(err))
         })
     }
 
@@ -286,18 +286,18 @@ class Connection {
     removeTest = (user, examCode) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
-                if(result){
+                if (result) {
                     this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-                    .then(exam => {
-                        if(exam){
-                            this.removeMultipleQuestions(exam.exam_id, user, examCode).then(() => {
-                                this.con('exams').delete()
-                                .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
-                                    resolve(response != null)
+                        .then(exam => {
+                            if (exam) {
+                                this.removeMultipleQuestions(exam.exam_id, user, examCode).then(() => {
+                                    this.con('exams').delete()
+                                        .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
+                                            resolve(response != null)
+                                        }).catch(err => reject(err))
                                 }).catch(err => reject(err))
-                            }).catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
+                            }
+                        }).catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
@@ -317,19 +317,19 @@ class Connection {
     removeMultipleQuestions = (examId, user, examCode) => {
         return new Promise((resolve, reject) => {
             this.con('questions').where(this.con.raw('exam_id = ?', [examId]))
-            .then(questionIds => {
-                if(questionIds.length === 0){
-                    resolve(false)
-                }else{
-                    questionIds.forEach((id, index) => {
-                        this.removeQuestion(user, id.question_id, examCode).then(() => {
-                            if(index === questionIds.length-1){
-                                resolve(true)
-                            }
-                        }).catch(err => reject(err))
-                    })
-                }
-            }).catch(err => reject(err))
+                .then(questionIds => {
+                    if (questionIds.length === 0) {
+                        resolve(false)
+                    } else {
+                        questionIds.forEach((id, index) => {
+                            this.removeQuestion(user, id.question_id, examCode).then(() => {
+                                if (index === questionIds.length - 1) {
+                                    resolve(true)
+                                }
+                            }).catch(err => reject(err))
+                        })
+                    }
+                }).catch(err => reject(err))
         })
     }
 
@@ -346,34 +346,34 @@ class Connection {
     removeQuestion = (user, questionId, examCode) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
-                if(result){
+                if (result) {
                     this.con('exam_prepare').where(this.con.raw('question_id = ?', [questionId]))
-                    .then(resultIds => {
-                        if(resultIds){
-                            this.con('exam_prepare').delete().where(this.con.raw('question_id = ?', [questionId]))
-                            .then(response => {
-                                if(response){
-                                    this.removeMultipleAnswers(resultIds)
-                                    .then(() => {
-                                        this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
-                                        .then(() => {
-                                            this.updateExamModify(user, examCode)
-                                            .then(res => resolve(res != null))
-                                            .catch(err => reject(err))
-                                        }).catch(err => reject(err))
-                                        
+                        .then(resultIds => {
+                            if (resultIds) {
+                                this.con('exam_prepare').delete().where(this.con.raw('question_id = ?', [questionId]))
+                                    .then(response => {
+                                        if (response) {
+                                            this.removeMultipleAnswers(resultIds)
+                                                .then(() => {
+                                                    this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
+                                                        .then(() => {
+                                                            this.updateExamModify(user, examCode)
+                                                                .then(res => resolve(res != null))
+                                                                .catch(err => reject(err))
+                                                        }).catch(err => reject(err))
+
+                                                }).catch(err => reject(err))
+                                        } else {
+                                            this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
+                                                .then(() => {
+                                                    this.updateExamModify(user, examCode)
+                                                        .then(res => resolve(res != null))
+                                                        .catch(err => reject(err))
+                                                }).catch(err => reject(err))
+                                        }
                                     }).catch(err => reject(err))
-                                }else{
-                                    this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
-                                    .then(() => {
-                                        this.updateExamModify(user, examCode)
-                                        .then(res => resolve(res != null))
-                                        .catch(err => reject(err))
-                                    }).catch(err => reject(err))
-                                }
-                            }).catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
+                            }
+                        }).catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
@@ -391,11 +391,11 @@ class Connection {
         return new Promise((resolve, reject) => {
             resultIds.forEach((id, index) => {
                 this.con('results').delete().where(this.con.raw('results_id = ?', [id.results_id]))
-                .then(() => {
-                    if(resultIds.length-1 === index){
-                        resolve(true)
-                    }
-                }).catch(err => reject(err))
+                    .then(() => {
+                        if (resultIds.length - 1 === index) {
+                            resolve(true)
+                        }
+                    }).catch(err => reject(err))
             })
         })
     }
@@ -413,24 +413,24 @@ class Connection {
     removeAnswer = (user, answerId, examCode) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
-                if(result){
+                if (result) {
                     this.con('exam_prepare').delete().where(this.con.raw('results_id = ?', [answerId]))
-                    .then(response => {
-                        if(response){
-                            this.con('results').delete().where(this.con.raw('results_id = ?', [answerId]))
-                            .then(res => {
-                                if(res){
-                                    this.updateExamModify(user, examCode)
-                                    .then(res => resolve(res != null))
-                                    .catch(err => reject(err))
-                                }else{
-                                    resolve(false)
-                                }
-                            }).catch(err => reject(err))
-                        }else{
-                            resolve(false)
-                        }
-                    }).catch(err => reject(err))
+                        .then(response => {
+                            if (response) {
+                                this.con('results').delete().where(this.con.raw('results_id = ?', [answerId]))
+                                    .then(res => {
+                                        if (res) {
+                                            this.updateExamModify(user, examCode)
+                                                .then(res => resolve(res != null))
+                                                .catch(err => reject(err))
+                                        } else {
+                                            resolve(false)
+                                        }
+                                    }).catch(err => reject(err))
+                            } else {
+                                resolve(false)
+                            }
+                        }).catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
@@ -457,24 +457,24 @@ class Connection {
     insertQuestion = (user, examCode, text, points, picture) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
-                if(result){
+                if (result) {
                     this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-                    .then(exam => {
-                        if(exam){
-                            this.con('questions').insert({
-                                exam_id: exam.exam_id,
-                                question_name: text,
-                                points: points,
-                                picture: picture
-                            }).then(response => {
-                                if(response){
-                                    this.updateExamModify(user, examCode)
-                                    .then(res => resolve(res != null))
-                                    .catch(err => reject(err))
-                                }
-                            }).catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
+                        .then(exam => {
+                            if (exam) {
+                                this.con('questions').insert({
+                                    exam_id: exam.exam_id,
+                                    question_name: text,
+                                    points: points,
+                                    picture: picture
+                                }).then(response => {
+                                    if (response) {
+                                        this.updateExamModify(user, examCode)
+                                            .then(res => resolve(res != null))
+                                            .catch(err => reject(err))
+                                    }
+                                }).catch(err => reject(err))
+                            }
+                        }).catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
@@ -495,34 +495,34 @@ class Connection {
     insertAnswer = (user, examCode, questionId, answerText, value) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
-                if(result){
+                if (result) {
                     this.con('questions').select('question_id').where(this.con.raw('question_id = ?', [questionId]))
-                    .first().then(result => {
-                        if(result){
-                            let arr = [answerText, value]
-                            this.con.raw('INSERT INTO results (result_text, correct) VALUES(?)', [arr])
-                            .then(response => {
-                                if(response){
-                                    let arr2 = [questionId, response[0].insertId]
-                                    this.con.raw('INSERT INTO exam_prepare (question_id, results_id) VALUES(?)',[arr2])
-                                    .then(res => {
-                                        if(res){
-                                            this.updateExamModify(user, examCode)
-                                            .then(res => resolve(res != null))
-                                            .catch(err => reject(err))
+                        .first().then(result => {
+                            if (result) {
+                                let arr = [answerText, value]
+                                this.con.raw('INSERT INTO results (result_text, correct) VALUES(?)', [arr])
+                                    .then(response => {
+                                        if (response) {
+                                            let arr2 = [questionId, response[0].insertId]
+                                            this.con.raw('INSERT INTO exam_prepare (question_id, results_id) VALUES(?)', [arr2])
+                                                .then(res => {
+                                                    if (res) {
+                                                        this.updateExamModify(user, examCode)
+                                                            .then(res => resolve(res != null))
+                                                            .catch(err => reject(err))
+                                                    }
+                                                }).catch(err => reject(err))
                                         }
                                     }).catch(err => reject(err))
-                                }
-                            }).catch(err => reject(err))
-                        }else{
-                            resolve(false)
-                        }
-                    }).catch(err => reject(err))
+                            } else {
+                                resolve(false)
+                            }
+                        }).catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
     }
-    
+
     /*
     ---------------------------------------------------------------------------
     Már létező vizsga tulajdonságok módosítása
@@ -532,38 +532,38 @@ class Connection {
     updateExamStatus = (user, examCode, status) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(response => {
-                if(response){
+                if (response) {
                     this.con('exams').update({
                         exam_status: status,
                         exam_modifier: user,
                         exam_modified_time: this.con.fn.now()
                     }).where(this.con.raw('exam_itemcode = ?', [examCode]))
-                    .then(res => resolve(res != null))
-                    .catch(err => reject(err))
+                        .then(res => resolve(res != null))
+                        .catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
     }
 
     updateExamPoints = (user, examCode, points) => {
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(response => {
-                if(response){
+                if (response) {
                     this.con('exams').select('points_required')
-                    .where(this.con.raw('exam_itemcode = ?', [examCode]))
-                    .then(result => {
-                        if(result){
-                            resolve(false)
-                        }else{
-                            this.con('exams').update({
-                                points_required: points,
-                                exam_modifier: user,
-                                exam_modified_time: this.con.fn.now()
-                            }).where(this.con.raw('exam_itemcode = ?', [examCode]))
-                            .then(res => resolve(res != null))
-                            .catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
+                        .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                        .then(result => {
+                            if (result) {
+                                resolve(false)
+                            } else {
+                                this.con('exams').update({
+                                    points_required: points,
+                                    exam_modifier: user,
+                                    exam_modified_time: this.con.fn.now()
+                                }).where(this.con.raw('exam_itemcode = ?', [examCode]))
+                                    .then(res => resolve(res != null))
+                                    .catch(err => reject(err))
+                            }
+                        }).catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
@@ -581,23 +581,23 @@ class Connection {
      * 
      */
 
-   updateQuestionPic = (user, examCode, questionId, picture) => {
+    updateQuestionPic = (user, examCode, questionId, picture) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(response => {
-                if(response){
+                if (response) {
                     this.con('questions').update({
                         picture: picture
                     }).where(this.con.raw('question_id = ?', [questionId]))
-                    .then(response => {
-                        if(response){
-                            this.updateExamModify(user, examCode)
-                                .then(res => resolve(res != null))
-                                .catch(err => reject(err))
-                        }else{
-                            resolve(false)
-                        }
-                    }).catch(err => reject(err))
-                }else{
+                        .then(response => {
+                            if (response) {
+                                this.updateExamModify(user, examCode)
+                                    .then(res => resolve(res != null))
+                                    .catch(err => reject(err))
+                            } else {
+                                resolve(false)
+                            }
+                        }).catch(err => reject(err))
+                } else {
                     resolve(false)
                 }
             }).catch(err => reject(err))
@@ -619,47 +619,47 @@ class Connection {
     updateAnswer = (user, examCode, answerId, value, isBoolean) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
-                if(result){
+                if (result) {
                     this.con('results').where(this.con.raw('results_id = ?', [answerId]))
-                    .first().then(result => {
-                        if(result){
-                            if(!isBoolean){
-                                if(result.result_text === value){
-                                    resolve(false)
-                                }else{
-                                    this.con('results').update({
-                                        result_text: value
-                                    }).where(this.con.raw('results_id = ?', [answerId]))
-                                    .then(response => {
-                                        if(response){
-                                            this.updateExamModify(user, examCode)
-                                            .then(res => resolve(res != null))
-                                            .catch(err => reject(err))
-                                        }
-                                    }).catch(err => reject(err))
+                        .first().then(result => {
+                            if (result) {
+                                if (!isBoolean) {
+                                    if (result.result_text === value) {
+                                        resolve(false)
+                                    } else {
+                                        this.con('results').update({
+                                            result_text: value
+                                        }).where(this.con.raw('results_id = ?', [answerId]))
+                                            .then(response => {
+                                                if (response) {
+                                                    this.updateExamModify(user, examCode)
+                                                        .then(res => resolve(res != null))
+                                                        .catch(err => reject(err))
+                                                }
+                                            }).catch(err => reject(err))
+                                    }
+                                } else {
+                                    if (result.correct === value) {
+                                        resolve(false)
+                                    } else {
+                                        this.con('results').update({
+                                            correct: value
+                                        }).where(this.con.raw('results_id = ?', [answerId]))
+                                            .then(response => {
+                                                if (response) {
+                                                    this.updateExamModify(user, examCode)
+                                                        .then(res => resolve(res != null))
+                                                        .catch(err => reject(err))
+                                                }
+                                            }).catch(err => reject(err))
+                                    }
                                 }
-                            }else{
-                                if(result.correct === value){
-                                    resolve(false)
-                                }else{
-                                    this.con('results').update({
-                                        correct: value
-                                    }).where(this.con.raw('results_id = ?', [answerId]))
-                                    .then(response => {
-                                        if(response){
-                                            this.updateExamModify(user, examCode)
-                                            .then(res => resolve(res != null))
-                                            .catch(err => reject(err))
-                                        }
-                                    }).catch(err => reject(err))
-                                }
-                            }        
-                        }else{
-                            resolve(false)
-                        }
-                    }).catch(err => reject(err))
+                            } else {
+                                resolve(false)
+                            }
+                        }).catch(err => reject(err))
                 }
-            }).catch(err => reject(err)) 
+            }).catch(err => reject(err))
         })
     }
 
@@ -678,49 +678,49 @@ class Connection {
     updateQuestion = (user, examCode, questionId, value, isNumber) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode).then(result => {
-                if(result){
+                if (result) {
                     this.con('questions').select(['question_name', 'points', 'question_id'])
                         .where(this.con.raw('question_id = ?', [questionId]))
                         .first().then(result => {
-                            if(result){
-                                if(!isNumber){
-                                    if(result.question_name === value){
+                            if (result) {
+                                if (!isNumber) {
+                                    if (result.question_name === value) {
                                         resolve(false)
-                                    }else{
+                                    } else {
                                         this.con('questions').update({
                                             question_name: value
                                         }).where(this.con.raw('question_id = ?', [questionId]))
-                                        .then(response => {
-                                            if(response){
-                                                this.updateExamModify(user, examCode)
-                                                .then(res => resolve(res != null))
-                                                .catch(err => reject(err))
-                                            }
-                                        }).catch(err => reject(err))
+                                            .then(response => {
+                                                if (response) {
+                                                    this.updateExamModify(user, examCode)
+                                                        .then(res => resolve(res != null))
+                                                        .catch(err => reject(err))
+                                                }
+                                            }).catch(err => reject(err))
                                     }
-                                }else{
-                                    if(result.points == value){
+                                } else {
+                                    if (result.points == value) {
                                         resolve(false)
-                                    }else{
+                                    } else {
                                         this.con('questions').update({
                                             points: value
                                         }).where(this.con.raw('question_id = ?', [questionId]))
-                                        .then(response => {
-                                            if(response){
-                                                this.updateExamModify(user, examCode)
-                                                .then(res => resolve(res != null))
-                                                .catch(err => reject(err))
-                                            }
-                                        }).catch(err => reject(err))
+                                            .then(response => {
+                                                if (response) {
+                                                    this.updateExamModify(user, examCode)
+                                                        .then(res => resolve(res != null))
+                                                        .catch(err => reject(err))
+                                                }
+                                            }).catch(err => reject(err))
                                     }
                                 }
-                                
-                            }else{
+
+                            } else {
                                 resolve(false)
                             }
                         }).catch(err => reject(err))
                 }
-            }).catch(err => reject(err)) 
+            }).catch(err => reject(err))
         })
     }
 
@@ -740,24 +740,24 @@ class Connection {
     updateExam = (user, examName, examCode, notes, points) => {
         return new Promise((resolve, reject) => {
             this.checkExamCreator(user, examCode)
-            .then(result => {
-                if(result){
-                    this.con('exams').update({
-                        exam_name: examName,
-                        exam_notes: notes,
-                        points_required: points,
-                        exam_modifier: user,
-                        exam_modified_time: this.con.fn.now()
-                    })
-                    .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
-                        if(response){
-                            resolve(true)
-                        }else{
-                            resolve(false)
-                        }
-                    }).catch(err => reject(err))
-                }
-            }).catch(err => reject(err))
+                .then(result => {
+                    if (result) {
+                        this.con('exams').update({
+                            exam_name: examName,
+                            exam_notes: notes,
+                            points_required: points,
+                            exam_modifier: user,
+                            exam_modified_time: this.con.fn.now()
+                        })
+                            .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
+                                if (response) {
+                                    resolve(true)
+                                } else {
+                                    resolve(false)
+                                }
+                            }).catch(err => reject(err))
+                    }
+                }).catch(err => reject(err))
         })
     }
 
@@ -779,14 +779,14 @@ class Connection {
     checkExamCreator = (user, examCode) => {
         return new Promise((resolve, reject) => {
             this.con('exams').select(['exam_name', 'exam_creator'])
-            .where(this.con.raw('exam_itemcode = ?', [examCode]))
-            .first().then(result => {
-                if(result){
-                    resolve(result.exam_creator == user)
-                }else{
-                    reject('no_exam')
-                }
-            }).catch(err => reject(err))
+                .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                .first().then(result => {
+                    if (result) {
+                        resolve(result.exam_creator == user)
+                    } else {
+                        reject('no_exam')
+                    }
+                }).catch(err => reject(err))
         })
     }
 
@@ -805,14 +805,14 @@ class Connection {
                 exam_modifier: user,
                 exam_modified_time: this.con.fn.now()
             })
-            .where(this.con.raw('exam_itemcode = ?', [examCode]))
-            .then(response => {
-                if(response){
-                    resolve(true)
-                }else{
-                    reject('exams_no_update')
-                }
-            }).catch(err => reject(err))
+                .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                .then(response => {
+                    if (response) {
+                        resolve(true)
+                    } else {
+                        reject('exams_no_update')
+                    }
+                }).catch(err => reject(err))
         })
     }
 
@@ -825,79 +825,108 @@ class Connection {
     selectProducts = () => { //Lehetséges termékek kiválasztása a vizsgákhoz
         return new Promise((resolve, reject) => {
             this.con('items').select(['ProductName', 'Itemcode'])
-            .leftJoin(this.con.raw('exams ON items.Itemcode = exams.exam_itemcode'))
-            .where(this.con.raw('exams.exam_itemcode IS NULL'))
-            .then(result => {
-                let filteredResults = []
-                result.forEach(values => {
-                    filteredResults.push([values.ProductName, values.Itemcode])
-                })
-                if(filteredResults.length === result.length){
-                    resolve(filteredResults)
-                }
-            }).catch(err => reject(err))
+                .leftJoin(this.con.raw('exams ON items.Itemcode = exams.exam_itemcode'))
+                .where(this.con.raw('exams.exam_itemcode IS NULL'))
+                .then(result => {
+                    let filteredResults = []
+                    result.forEach(values => {
+                        filteredResults.push([values.ProductName, values.Itemcode])
+                    })
+                    if (filteredResults.length === result.length) {
+                        resolve(filteredResults)
+                    }
+                }).catch(err => reject(err))
         })
     }
 
     selectExamDoc = (exam_itemcode) => { //A vizsga tananyagának kiválasztása
         return new Promise((resolve, reject) => {
             this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
-            .then(result => {
-                resolve(result.exam_docs)
-            }).catch(err => {
-                reject(err)
-            })
+                .then(result => {
+                    resolve(result.exam_docs)
+                }).catch(err => {
+                    reject(err)
+                })
         })
     }
 
-    selectExams = (user, userIsAdmin) =>{ //Általános vizsgainfók kiválasztása
+    selectLearnExams = (user, userIsAdmin) => {
         return new Promise((resolve, reject) => {
-            this.con('workers').select(['worker_id'])
-            if(userIsAdmin){
-                this.con('exams')
-                .select(['exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
-                .where('exam_creator', [user]).then(results => {
-                    let exams = []
-                    results.forEach((result) => {
-                        const examData = {
-                            examName: result.exam_name,
-                            itemCode: result.exam_itemcode,
-                            comment: result.exam_notes,
-                            status: result.exam_status,
-                            created: result.exam_creation_time
-                        }
-                        exams.push(examData)
-                    })
-                    resolve(exams)
-                }).catch(err => reject(err))
-            }else{
+            if (userIsAdmin) {
+                resolve(null)
+            } else {
                 this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [user])).first()
-                .then(worker => {
-                    if(worker){
-                        this.con('exams')
-                        .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
-                        .then(results => {
-                            this.con('skills').select('exam_id').where('worker_id', worker.worker_id).then(skills => {
-                                if(skills){
+                    .then(worker => {
+                        if (worker) {
+                            this.con('exams')
+                                .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_creation_time'])
+                                .then(results => {
                                     let exams = []
                                     results.forEach((result) => {
-                                        if(skills.findIndex(value => value.exam_id === result.exam_id) == -1){
-                                            const examData = {
-                                                examName: result.exam_name,
-                                                itemCode: result.exam_itemcode,
-                                                comment: result.exam_notes,
-                                                status: result.exam_status,
-                                                created: result.exam_creation_time
-                                            }
-                                            exams.push(examData)
+                                        const examData = {
+                                            examName: result.exam_name,
+                                            itemCode: result.exam_itemcode,
+                                            comment: result.exam_notes,
+                                            created: result.exam_creation_time
                                         }
+                                        exams.push(examData)
                                     })
                                     resolve(exams)
-                                }
-                            }).catch(err => reject(err))
-                        }).catch(err => reject(err))
-                    }
-                }).catch(err => reject(err))
+                                }).catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
+            }
+        })
+    }
+
+    selectExams = (user, userIsAdmin) => { //Általános vizsgainfók kiválasztása
+        return new Promise((resolve, reject) => {
+            this.con('workers').select(['worker_id'])
+            if (userIsAdmin) {
+                this.con('exams')
+                    .select(['exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
+                    .where('exam_creator', [user]).then(results => {
+                        let exams = []
+                        results.forEach((result) => {
+                            const examData = {
+                                examName: result.exam_name,
+                                itemCode: result.exam_itemcode,
+                                comment: result.exam_notes,
+                                status: result.exam_status,
+                                created: result.exam_creation_time
+                            }
+                            exams.push(examData)
+                        })
+                        resolve(exams)
+                    }).catch(err => reject(err))
+            } else {
+                this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [user])).first()
+                    .then(worker => {
+                        if (worker) {
+                            this.con('exams')
+                                .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
+                                .then(results => {
+                                    this.con('skills').select('exam_id').where('worker_id', worker.worker_id).then(skills => {
+                                        if (skills) {
+                                            let exams = []
+                                            results.forEach((result) => {
+                                                if (skills.findIndex(value => value.exam_id === result.exam_id) == -1) {
+                                                    const examData = {
+                                                        examName: result.exam_name,
+                                                        itemCode: result.exam_itemcode,
+                                                        comment: result.exam_notes,
+                                                        status: result.exam_status,
+                                                        created: result.exam_creation_time
+                                                    }
+                                                    exams.push(examData)
+                                                }
+                                            })
+                                            resolve(exams)
+                                        }
+                                    }).catch(err => reject(err))
+                                }).catch(err => reject(err))
+                        }
+                    }).catch(err => reject(err))
             }
         })
     }
@@ -911,79 +940,79 @@ class Connection {
     selectTest = (questions) => { //Kérdés + Válasz párosítás
         return new Promise((resolve, reject) => {
             let questionList = new Array()
-            questions.forEach( (question) => {
+            questions.forEach((question) => {
                 this.con('exam_prepare')
-                .where(this.con.raw('question_id = ?', [question.question_id])).then(answersIdList =>{
-                    this.selectResults(answersIdList).then(result => {
-                        questionList.push({
-                            id: question.question_id,
-                            exam_id: question.exam_id,
-                            name: question.question_name,
-                            points: question.points,
-                            pic: question.picture,
-                            answers: result
+                    .where(this.con.raw('question_id = ?', [question.question_id])).then(answersIdList => {
+                        this.selectResults(answersIdList).then(result => {
+                            questionList.push({
+                                id: question.question_id,
+                                exam_id: question.exam_id,
+                                name: question.question_name,
+                                points: question.points,
+                                pic: question.picture,
+                                answers: result
+                            })
+                            if (questionList.length === questions.length) {
+                                resolve(questionList)
+                            }
                         })
-                        if(questionList.length === questions.length){
-                            resolve(questionList)
-                        }
-                    })
-                }).catch(err => reject(err))
+                    }).catch(err => reject(err))
             })
         })
     }
 
-    selectResults = (answersIdList) =>{ //Válaszok keresése a kérdéshez
-        return new Promise((resolve, reject) =>{
+    selectResults = (answersIdList) => { //Válaszok keresése a kérdéshez
+        return new Promise((resolve, reject) => {
             let result = new Array()
-            if(answersIdList.length === 0){
+            if (answersIdList.length === 0) {
                 resolve([])
             }
-            answersIdList.forEach((answerId, index) =>{
+            answersIdList.forEach((answerId, index) => {
                 this.con('results').where(this.con.raw('results_id = ?', [answerId.results_id])).first()
-                .then(answer => {
-                    result.push({
-                        id: answer.results_id,
-                        text: answer.result_text,
-                        correct: answer.correct == 1 ? true : false
-                    })
-                    if(index === answersIdList.length-1){
-                        resolve(result)
-                    }
-                }).catch(err => reject(err))
+                    .then(answer => {
+                        result.push({
+                            id: answer.results_id,
+                            text: answer.result_text,
+                            correct: answer.correct == 1 ? true : false
+                        })
+                        if (index === answersIdList.length - 1) {
+                            resolve(result)
+                        }
+                    }).catch(err => reject(err))
             })
         })
     }
 
-    selectExamContent = (exam_itemcode) =>{ //Az adatok összesítése és tovább küldése
+    selectExamContent = (exam_itemcode) => { //Az adatok összesítése és tovább küldése
         return new Promise((resolve, reject) => {
             this.con('exams').select('exam_id')
-            .where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
-            .then(exam => {
-                this.con('questions').where('exam_id', [exam.exam_id])
-                .then(questions => {
-                    if(questions.length !== 0){
-                        this.selectTest(questions).then(questionList => {
-                            resolve(questionList)
-                        })
-                    }else{
-                        resolve([])
-                    }
+                .where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+                .then(exam => {
+                    this.con('questions').where('exam_id', [exam.exam_id])
+                        .then(questions => {
+                            if (questions.length !== 0) {
+                                this.selectTest(questions).then(questionList => {
+                                    resolve(questionList)
+                                })
+                            } else {
+                                resolve([])
+                            }
+                        }).catch(err => reject(err))
                 }).catch(err => reject(err))
-            }).catch(err => reject(err))
         })
     }
 
     selectExamProps = (exam_itemcode) => {
         return new Promise((resolve, reject) => {
             this.con('exams').select(['exam_name', 'exam_notes', 'exam_status', 'points_required'])
-            .where('exam_itemcode', [exam_itemcode]).first()
-            .then(exam => {
-                if(exam){
-                    resolve([exam.exam_name, exam.exam_notes, exam.exam_status, exam.points_required])
-                }else{
-                    resolve([])
-                }
-            }).catch(err => reject(err))
+                .where('exam_itemcode', [exam_itemcode]).first()
+                .then(exam => {
+                    if (exam) {
+                        resolve([exam.exam_name, exam.exam_notes, exam.exam_status, exam.points_required])
+                    } else {
+                        resolve([])
+                    }
+                }).catch(err => reject(err))
         })
     }
 
@@ -993,32 +1022,32 @@ class Connection {
     --------------------------------------------------------------------------
     */
 
-    findUser = (cardNum) =>{
+    findUser = (cardNum) => {
         return new Promise((resolve, reject) => {
             this.con('workers')
                 .innerJoin(this.con.raw('admin_login ON workers.worker_cardcode = admin_login.cardcode'))
                 .where(this.con.raw('workers.worker_cardcode = ?', [cardNum])).first()
-                .then((result) =>{
-                    if(result){
+                .then((result) => {
+                    if (result) {
                         resolve([result.worker_name, result.worker_usergroup])
-                    }else{
+                    } else {
                         resolve('no_user')
                     }
                 }).catch(err => reject(err))
         })
     }
 
-    userExists = (cardNum, password) =>{
+    userExists = (cardNum, password) => {
         return new Promise((resolve, reject) => {
             this.con('admin_login').where(this.con.raw('cardcode = ?', [cardNum]))
-            .first()
-            .then((result) =>{
-                if(result){
-                    resolve(result.password === password)
-                }else{
-                    resolve(false)
-                }
-            }).catch((err) => reject(err))
+                .first()
+                .then((result) => {
+                    if (result) {
+                        resolve(result.password === password)
+                    } else {
+                        resolve(false)
+                    }
+                }).catch((err) => reject(err))
         })
     }
 
@@ -1026,67 +1055,67 @@ class Connection {
     ----------------------------------------------------------------------
     Vizsga feltöltés rendszere
     ----------------------------------------------------------------------
-    */ 
+    */
 
     itemCodeTest = (itemcode) => { //true -> létezik ilyen, false -> nem létezik ilyen
-        return new Promise((resolve, reject) =>{
+        return new Promise((resolve, reject) => {
             this.con('items').count('Itemcode AS count')
-            .where(this.con.raw('Itemcode = ?', [itemcode])).first().then(itemCode => {
-                resolve(itemCode == null || itemCode.count == 0)
-            }).catch(err => reject(err))
+                .where(this.con.raw('Itemcode = ?', [itemcode])).first().then(itemCode => {
+                    resolve(itemCode == null || itemCode.count == 0)
+                }).catch(err => reject(err))
         })
     }
 
     examCodeTest = (itemcode) => {
         return new Promise((resolve, reject) => {
             this.con('exams').count('exam_itemcode AS count')
-            .where(this.con.raw('exam_itemcode = ?', [itemcode])).first().then(examItem => {
-                resolve(examItem != null && examItem.count > 0)
-            }).catch(err => reject(err))
+                .where(this.con.raw('exam_itemcode = ?', [itemcode])).first().then(examItem => {
+                    resolve(examItem != null && examItem.count > 0)
+                }).catch(err => reject(err))
         })
     }
 
     examNameTest = (examName) => {
         return new Promise((resolve, reject) => {
             this.con('exams').count('exam_id AS count')
-            .where(this.con.raw('exam_name = ?', [examName])).first().then(nameCount => {
-                resolve(nameCount != null && nameCount.count > 0)
-            }).catch(err => reject(err))
+                .where(this.con.raw('exam_name = ?', [examName])).first().then(nameCount => {
+                    resolve(nameCount != null && nameCount.count > 0)
+                }).catch(err => reject(err))
         })
     }
 
-    insertExam = (arr) =>{
+    insertExam = (arr) => {
         return new Promise((resolve, reject) => {
             this.itemCodeTest(arr[0]).then(result => {
-                if(result){
+                if (result) {
                     resolve('mysql_invalid_itemcode')
-                }else{
-                    this.examCodeTest(arr[0]).then(result =>{
-                        if(result){
+                } else {
+                    this.examCodeTest(arr[0]).then(result => {
+                        if (result) {
                             resolve('mysql_item_exists_error')
-                        }else{
+                        } else {
                             this.examNameTest(arr[1]).then(result => {
-                                if(result){
+                                if (result) {
                                     resolve('mysql_name_exists_error')
-                                }else{
+                                } else {
                                     this.con.raw(
-                                        'INSERT INTO exams (exam_itemcode, exam_name, '+
-                                        'exam_notes, exam_docs, exam_creator, exam_modifier) '+
+                                        'INSERT INTO exams (exam_itemcode, exam_name, ' +
+                                        'exam_notes, exam_docs, exam_creator, exam_modifier) ' +
                                         'VALUES (?)',
-                                    [arr]).then(() =>{
-                                        resolve(200)
-                                    }).catch((err) =>{
-                                        reject(err)
-                                    })
+                                        [arr]).then(() => {
+                                            resolve(200)
+                                        }).catch((err) => {
+                                            reject(err)
+                                        })
                                 }
                             }).catch(err => reject(err))
                         }
-                    }).catch(err => reject(err))    
+                    }).catch(err => reject(err))
                 }
             }).catch(err => reject(err))
         })
     }
-    
+
 }
 
 module.exports = new Connection()
