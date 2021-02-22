@@ -19,7 +19,6 @@ export default function ExamDocument(props) {
     const [examDoc, setExamDoc] = useState('/')
     const [pageNum, setPageNum] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [learnt, setLearnt] = useState(true)
     const [status, setStatus] = useState(false)
 
     pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
@@ -67,17 +66,11 @@ export default function ExamDocument(props) {
         })
 
         socket.on('exams-get-emitter', (dbExams) => {
-            setStatus(dbExams[3] === 0)
+            setStatus(dbExams[0][3] === 0)
         })
 
         return () => socket.disconnect()
     }, [exam.examCode])
-
-    useEffect(() => {
-        if (currentPage === pageNum) {
-            setLearnt(false)
-        }
-    }, [currentPage, pageNum])
 
     return (
         <div className="container text-center bg-light rounded shadow mb-3">
@@ -105,7 +98,7 @@ export default function ExamDocument(props) {
 
             <NavLink to={`/exams/${exam.examCode}`}>
                 <button disabled={
-                    status ? props.permission === 'admin' ? true : learnt : true
+                    (props.permission === 'admin' ? true : status)
                 } className="btn btn-outline-blue m-2">
                     Levizsgázom!
                 </button>

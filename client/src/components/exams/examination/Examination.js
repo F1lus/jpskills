@@ -22,7 +22,6 @@ export default function Examination() {
         socket.emit('begin-timer')
 
         return () => {
-            socket.emit('cancel-timer')
             socket.disconnect()
         }
 

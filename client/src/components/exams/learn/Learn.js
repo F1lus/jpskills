@@ -43,7 +43,7 @@ export default function Learn() {
                                     <NavLink to={`/exams/learn/${exam[1]}`}>
                                         <button type="button" className="btn btn-outline-blue card-link">
                                             Megtanulom!
-                                    </button>
+                                        </button>
                                     </NavLink>
                                 </div>
                             </div>

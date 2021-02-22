@@ -180,43 +180,46 @@ class Connection {
 
     processAnswers = (answers, examCode, cardNum, time) => {
         return new Promise((resolve, reject) => {
-            if (answers.length === 0) {
-                resolve(false)
-            } else {
-                let maxQuestionPoints = 0
-                let totalPoints = 0
-                answers.forEach((answerObj, index) => {
-                    this.con('results').select('results.results_id')
-                        .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
-                        .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
-                        .then(result => {
-                            if (result) {
-                                this.con('questions').select(['question_id', 'points'])
-                                    .where(this.con.raw('question_id = ?', [answerObj.id])).first()
-                                    .then(question => {
-                                        if (question) {
-                                            maxQuestionPoints += question.points * result.length
-                                            let questionPoints = 0
-                                            answerObj.answers.forEach((answer) => {
-                                                if (result.findIndex(value => value.results_id === answer) > -1 && answerObj.answers.length > 0 && answerObj.answers.length <= result.length) {
-                                                    totalPoints += question.points
-                                                    questionPoints += question.points
-                                                }
-                                            })
-                                            this.uploadPartialResults(cardNum, question.question_id, questionPoints).then(() => {
-                                                if (index === answers.length - 1) {
-                                                    this.uploadResults(examCode, cardNum, totalPoints, time, maxQuestionPoints)
-                                                        .then(response => resolve(response))
+            this.con('exams').select('exam_status').where('exam_itemcode', [examCode]).first()
+                .then(exam => {
+                    if (exam.exam_status === 1) {
+                        let maxQuestionPoints = 0
+                        let totalPoints = 0
+                        answers.forEach((answerObj, index) => {
+                            this.con('results').select('results.results_id')
+                                .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
+                                .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
+                                .then(result => {
+                                    if (result) {
+                                        this.con('questions').select(['question_id', 'points'])
+                                            .where(this.con.raw('question_id = ?', [answerObj.id])).first()
+                                            .then(question => {
+                                                if (question) {
+                                                    maxQuestionPoints += question.points * result.length
+                                                    let questionPoints = 0
+                                                    answerObj.answers.forEach((answer) => {
+                                                        if (result.findIndex(value => value.results_id === answer) > -1 && answerObj.answers.length > 0 && answerObj.answers.length <= result.length) {
+                                                            totalPoints += question.points
+                                                            questionPoints += question.points
+                                                        }
+                                                    })
+                                                    this.uploadPartialResults(cardNum, question.question_id, questionPoints).then(() => {
+                                                        if (index === answers.length - 1) {
+                                                            this.uploadResults(examCode, cardNum, totalPoints, time, maxQuestionPoints)
+                                                                .then(response => resolve(response))
+                                                                .catch(err => reject(err))
+                                                        }
+                                                    })
                                                         .catch(err => reject(err))
                                                 }
-                                            })
-                                                .catch(err => reject(err))
-                                        }
-                                    }).catch(err => reject(err))
-                            }
-                        }).catch(err => reject(err))
-                })
-            }
+                                            }).catch(err => reject(err))
+                                    }
+                                }).catch(err => reject(err))
+                        })
+                    }
+                }
+
+                )
         })
     }
 
@@ -1040,19 +1043,19 @@ class Connection {
     registerUser = (cardNum, password) => {
         return new Promise((resolve, reject) => {
             this.con('admin_login').where('cardcode', [cardNum]).first()
-            .then(result => {
-                if(result){
-                    resolve('user_exists')
-                }else{
-                    this.con('admin_login').insert({
-                        cardcode: cardNum,
-                        password: password,
-                        latest_login: this.con.fn.now()
-                    }).then(response => {
-                        resolve(response != null)
-                    }).catch(err => reject(err))
-                }
-            }).catch(err => reject(err))
+                .then(result => {
+                    if (result) {
+                        resolve('user_exists')
+                    } else {
+                        this.con('admin_login').insert({
+                            cardcode: cardNum,
+                            password: password,
+                            latest_login: this.con.fn.now()
+                        }).then(response => {
+                            resolve(response != null)
+                        }).catch(err => reject(err))
+                    }
+                }).catch(err => reject(err))
         })
     }
 

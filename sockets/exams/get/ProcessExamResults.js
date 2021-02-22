@@ -18,6 +18,7 @@ module.exports = (socket) => {
     }
 
     const process = (answers, examCode) => {
+        
         const session = socket.handshake.session
 
         const time = removeFile()

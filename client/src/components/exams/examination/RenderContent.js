@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Prompt } from 'react-router-dom'
 
 export default function RenderContent(props) {
 
@@ -37,12 +38,8 @@ export default function RenderContent(props) {
 
     function handleSubmit(event) {
         event.preventDefault()
-        if (answers.length === 0) {
-            alert('Még nem jelölt meg egy választ sem! Kérjük adjon meg legalább egyet!')
-        } else {
-            socket.emit('exam-finished', answers, props.exam)
-            setDisable(true)
-        }
+        socket.emit('exam-finished', answers, props.exam)
+        setDisable(true)
     }
 
     useEffect(() => {
@@ -52,9 +49,27 @@ export default function RenderContent(props) {
             temp.push(answerObj)
         })
         setAnswers(temp)
-
         // eslint-disable-next-line
     }, [list])
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', warnUser)
+        window.addEventListener('unload', submitExam)
+        return () => {
+            window.removeEventListener('beforeunload', warnUser)
+            window.removeEventListener('unload', submitExam)
+        }
+    })
+
+    const warnUser = (event) => {
+        event.preventDefault()
+        const msg = 'Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva.'
+        event.returnValue = msg
+    }
+
+    const submitExam = async (event) => {
+        await socket.emit('exam-finished', answers, props.exam)
+    }
 
     return (
         <div>
@@ -95,6 +110,18 @@ export default function RenderContent(props) {
             <div className="container text-center rounded bg-light shadow p-3">
                 <button className="btn btn-warning" onClick={handleSubmit} disabled={disable}>Leadás</button>
             </div>
+
+            <React.Fragment>
+                <Prompt message={async() => {
+                    const confirm = window.confirm('Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva.')
+                    if (confirm) {
+                        await submitExam('a')
+                    }
+                    return confirm
+                }}/>
+                
+            </React.Fragment>
+            
         </div>
     )
 }
