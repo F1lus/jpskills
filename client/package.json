@@ -9,15 +9,16 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
-    "datatables.net-dt": "^1.10.23",
     "pdfjs-dist": "^2.5.207",
     "react": "^16.13.1",
+    "react-data-table-component": "^7.0.0-alpha-7",
     "react-dom": "^16.13.1",
     "react-modal": "^3.12.1",
     "react-pdf": "^5.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.4",
-    "socket.io-client": "^3.0.5"
+    "socket.io-client": "^3.0.5",
+    "styled-components": "^5.2.1"
   },
   "scripts": {
     "start": "react-scripts start",

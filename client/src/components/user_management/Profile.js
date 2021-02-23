@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import Learn from '../exams/learn/Learn'
-import ResultTable from './ResultTable'
+import DetailTable from './DataTable'
 
 import globalStats from './models/GlobalStatistics'
 
@@ -78,8 +78,8 @@ export default function Profile(props) {
 
             <div>
                 {csoport === 'admin' ? 
-                    <div className="container shadow rounded text-center bg-light mb-3">
-                        <ResultTable permission={csoport} results={renderStatsObject('skills')} /> 
+                    <div className="container shadow rounded text-center bg-light mb-3 py-3">
+                        <DetailTable/>
                     </div>
                 :
                     <div>
@@ -87,7 +87,7 @@ export default function Profile(props) {
                             <Learn />
                         </div>
                         <div className="container shadow rounded text-center bg-light mb-3">
-                            <ResultTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
+
                         </div>
                     </div>
                 }
