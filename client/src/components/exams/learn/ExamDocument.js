@@ -75,9 +75,10 @@ export default function ExamDocument(props) {
     return (
         <div className="container text-center bg-light rounded shadow mb-3">
             <Document
-                loading='A virtuális dokumentum betöltése...'
+                loading='A virtuális tananyag betöltése...'
                 file={{ data: examDoc }}
                 onLoadSuccess={page => onDocumentLoadSuccess(page.numPages)}
+                error='A virtuális tananyag betöltése nem sikerült. Kérjük próbálja újra!'
             >
                 <Page pageNumber={currentPage} />
             </Document>
