@@ -55,6 +55,8 @@ export default class DetailTable extends Component{
                 <DataTable 
                     columns={columns}
                     data={data}
+                    pagination={true}
+                    fixedHeader={true}
                 />
             </div>
         )
