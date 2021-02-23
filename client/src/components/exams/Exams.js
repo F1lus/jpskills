@@ -10,7 +10,7 @@ export default function Exams(props){
     const [exams, setExams] = useState([])
 
     useEffect(() => {
-        
+        setExams([])
         socket.on('exams-get-emitter', (dbExams) => {
             setExams(model(dbExams))
         })

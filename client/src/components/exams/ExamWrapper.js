@@ -11,9 +11,11 @@ export default function ExamWrapper(props){
 
     useEffect(() => {
         socket.open()
+
         if(props.permission === 'admin'){
             socket.emit('get-products')
         }
+        
         socket.emit('exams-get-signal')
 
         return () => socket.disconnect()

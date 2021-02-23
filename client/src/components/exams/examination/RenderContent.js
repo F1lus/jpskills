@@ -63,8 +63,7 @@ export default function RenderContent(props) {
 
     const warnUser = (event) => {
         event.preventDefault()
-        const msg = 'Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva.'
-        event.returnValue = msg
+        event.returnValue = 'Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva.'
     }
 
     const submitExam = async (event) => {
@@ -112,10 +111,11 @@ export default function RenderContent(props) {
             </div>
 
             <React.Fragment>
-                <Prompt message={async() => {
-                    const confirm = window.confirm('Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva.')
+
+                <Prompt message={async () => {
+                    const confirm = window.confirm('Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva, és ez a művelet visszafordíthatatlan!.')
                     if (confirm) {
-                        await submitExam('a')
+                        await submitExam(null)
                     }
                     return confirm
                 }}/>
