@@ -18,7 +18,7 @@ export default (exams) => {
     return {
         avgTime:{
             avgMins: Math.floor(avgTime / 60),
-            avgSecs: avgTime % 60
+            avgSecs: Math.round(avgTime % 60)
         },
         avgScore: Math.round(avgScore),
         completionRate: rate.toString().substring(0,5)

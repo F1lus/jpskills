@@ -79,7 +79,7 @@ export default function Profile(props) {
             <div>
                 {csoport === 'admin' ? 
                     <div className="container shadow rounded text-center bg-light mb-3 py-3">
-                        <DetailTable/>
+                        <DetailTable permission={csoport} results={renderStatsObject('skills')}/>
                     </div>
                 :
                     <div>
