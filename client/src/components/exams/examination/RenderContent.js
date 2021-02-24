@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Prompt } from 'react-router-dom'
+import { Redirect, Prompt } from 'react-router-dom'
 
 export default function RenderContent(props) {
 
@@ -8,6 +8,7 @@ export default function RenderContent(props) {
 
     const [answers, setAnswers] = useState([])
     const [disable, setDisable] = useState(false)
+    const [finished, setFinished] = useState(false)
 
     function createImage(picture) {
         const arrayBufferView = new Uint8Array(picture)
@@ -55,6 +56,13 @@ export default function RenderContent(props) {
     useEffect(() => {
         window.addEventListener('beforeunload', warnUser)
         window.addEventListener('unload', submitExam)
+
+        if(disable){
+            socket.on('exam-processed', () => {
+                setFinished(true)
+            })
+        }
+
         return () => {
             window.removeEventListener('beforeunload', warnUser)
             window.removeEventListener('unload', submitExam)
@@ -66,12 +74,15 @@ export default function RenderContent(props) {
         event.returnValue = 'Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva.'
     }
 
-    const submitExam = async (event) => {
-        await socket.emit('exam-finished', answers, props.exam)
+    const submitExam = () => {
+        if(!disable){
+            socket.emit('exam-finished', answers, props.exam)
+        }
     }
 
     return (
         <div>
+            {finished ? <Redirect to={`/exams/result/${props.exam}`} /> : null}
             {list.map((question, qId) => {
                 return <ul key={qId} className="container bg-white rounded shadow py-3 mb-3 text-center">
                     {question.map((content, innerIndex) => {
@@ -112,10 +123,12 @@ export default function RenderContent(props) {
 
             <React.Fragment>
 
-                <Prompt message={async () => {
-                    const confirm = window.confirm('Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva, és ez a művelet visszafordíthatatlan!.')
+                <Prompt message={() => {
+                    const confirm = window.confirm('Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva, és ez a művelet visszafordíthatatlan!')
                     if (confirm) {
-                        await submitExam(null)
+                        submitExam()
+                    }else{
+                        setDisable(false)
                     }
                     return confirm
                 }}/>

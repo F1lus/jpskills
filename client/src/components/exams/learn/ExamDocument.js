@@ -58,14 +58,11 @@ export default function ExamDocument(props) {
 
         socket.emit('examDoc-signal', exam.examCode)
 
-        socket.on('examDoc-emitter', document => {
+        socket.on('examDoc-emitter', (status, document) => {
             if (document) {
                 setExamDoc(document)
+                setStatus(status === 0)
             }
-        })
-
-        socket.on('exams-get-emitter', (dbExams) => {
-            setStatus(dbExams.length > 0 ? dbExams[0][3] === 0 : true)
         })
 
         return () => socket.disconnect()

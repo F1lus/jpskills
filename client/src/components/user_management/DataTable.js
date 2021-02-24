@@ -10,6 +10,7 @@ export default function DetailTable(props) {
     const [examCode, setExamCode] = useState(null)
     const [workingList, setWorkingList] = useState([])
     const [results, setResults] = useState([])
+    const [displayList, setDisplayList] = useState([])
 
     const columns = [
         {
@@ -17,25 +18,49 @@ export default function DetailTable(props) {
             selector: row => row.worker,
             sortable: true
         },
-    
+
         {
             name: "Pontszám",
             selector: row => row.score,
             sortable: true
         },
-    
+
         {
             name: "Idő",
             selector: row => row.time,
             sortable: true
         },
-    
+
         {
             name: "Eredmény",
             selector: row => row.completed,
-            sortable: false
+            sortable: true
         }
     ]
+
+    function filterByExam() {
+        let filteredArray = []
+        if (props.results && examCode) {
+            props.results.forEach((value, index) => {
+                if (value.examCode === examCode) {
+                    const timeFormat = (value.time % 60).toString().length < 2 ?
+                        Math.floor(value.time / 60) + ":0" + (value.time % 60).toString()
+                        : Math.floor(value.time / 60) + ":" + (value.time % 60).toString()
+
+                    filteredArray.push(
+                        {
+                            id: index + 1,
+                            worker: value.worker,
+                            score: value.score,
+                            time: timeFormat,
+                            completed: value.completed ? 'Átment' : 'Megbukott'
+                        }
+                    )
+                }
+            })
+        }
+        return filteredArray
+    }
 
     useEffect(() => {
         if (props.results) {
@@ -51,29 +76,15 @@ export default function DetailTable(props) {
 
     useEffect(() => {
         if (props.results && examCode) {
-            let filteredArray = []
-            props.results.forEach((value, index) => {
-                if (value.examCode === examCode) {
-                    const timeFormat = (value.time % 60).toString().length < 2 ?
-                        Math.floor(value.time / 60) + ":0" + (value.time % 60).toString()
-                        : Math.floor(value.time / 60) + ":" + (value.time % 60).toString()
-                    
-                    filteredArray.push(
-                        {
-                            id: index + 1,
-                            worker: value.worker,
-                            score: value.score,
-                            time: timeFormat,
-                            completed: value.completed ? 'Átment' : 'Megbukott'
-                        }
-                    )
-                }
-            })
-            setResults(filteredArray)
+            const list = filterByExam()
+            setResults(list)
+            setDisplayList(list)
             setWorkingList(props.results.filter(skill => skill.examCode === examCode))
         } else {
             setResults([])
+            setDisplayList([])
         }
+        // eslint-disable-next-line
     }, [examCode, props.results])
 
     function handleChange(event) {
@@ -97,23 +108,38 @@ export default function DetailTable(props) {
         }
     }
 
+    function search(event) {
+        if (examCode && props.permission === 'admin' && results.length > 0) {
+            const filterBySearch = results.filter(exam => exam.worker.toLowerCase().includes(event.target.value.toLowerCase()) )
+            setDisplayList(filterBySearch)
+        }
+    }
+
     const conditionalRowStyles = [
         {
             when: row => row.completed === "Átment",
-            style: row => ({
+            style: () => ({
                 backgroundColor: "#b1dfbb",
                 color: "green"
             })
-            
+
         },
         {
             when: row => row.completed === "Megbukott",
-            style: row => ({
+            style: () => ({
                 backgroundColor: "#f1b0b7",
                 color: "red"
             })
         }
     ]
+
+    const customText={ 
+        rowsPerPageText: 'Sorok száma oldalanként:', 
+        rangeSeparatorText: '/', 
+        noRowsPerPage: false, 
+        selectAllRowsItem: false, 
+        selectAllRowsItemText: 'Összes' 
+    }
 
     return (
         <div className="container">
@@ -130,10 +156,10 @@ export default function DetailTable(props) {
 
             <form className="mb-3 w-25">
                 <div className="form-group m-auto">
-                    <input type="text" name="search" autoComplete="off"/>
+                    <input type="text" name="search" onChange={search} autoComplete="off" />
                     <label htmlFor="search" className="label-name">
                         <span className="content-name">
-                            Keresés
+                            Vizsgázó keresése
                         </span>
                     </label>
                 </div>
@@ -141,11 +167,12 @@ export default function DetailTable(props) {
 
             <DataTable
                 columns={columns}
-                data={results}
+                data={displayList}
                 pagination={true}
                 fixedHeader={true}
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}
                 conditionalRowStyles={conditionalRowStyles}
+                paginationComponentOptions={customText}
             />
         </div>
     )

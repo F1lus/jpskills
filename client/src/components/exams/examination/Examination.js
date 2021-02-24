@@ -12,7 +12,6 @@ export default function Examination() {
     const exam = useParams().examCode
 
     const [examProps, setExamProps] = useState([])
-    const [finished, setFinished] = useState(false)
     const [questions, setQuestions] = useState([])
 
     useEffect(() => {
@@ -29,10 +28,6 @@ export default function Examination() {
     }, [])
 
     useEffect(() => {
-        socket.on('exam-processed', () => {
-            setFinished(true)
-        })
-
         socket.on('exam-content', (questionList) => {
             setQuestions(model(questionList).questions)
         })
@@ -44,9 +39,14 @@ export default function Examination() {
 
     return (
         <div>
-            {finished ? <Redirect to={`/exams/result/${exam}`} /> : null}
-            <div>
-                <h2 className='container bg-white rounded shadow py-3 mb-3'><p className="text-center">Vizsga: {examProps[0]}</p></h2>
+            {examProps[2] === 0 ? <Redirect to='/exams' /> : null}
+            <div className='container bg-white rounded shadow py-3 mb-3 text-center'>
+                <h2>
+                    <p>Vizsga: {examProps[0]}</p>
+                </h2>
+                <h3>
+                    <p>Megjegyzés: {examProps[1] === 'null' ? 'Nincs' : examProps[1]}</p>
+                </h3>
             </div>
             <RenderContent socket={socket} list={questions} exam={exam} />
         </div>
