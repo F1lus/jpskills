@@ -97,6 +97,24 @@ export default function DetailTable(props) {
         }
     }
 
+    const conditionalRowStyles = [
+        {
+            when: row => row.completed === "Átment",
+            style: row => ({
+                backgroundColor: "#b1dfbb",
+                color: "green"
+            })
+            
+        },
+        {
+            when: row => row.completed === "Megbukott",
+            style: row => ({
+                backgroundColor: "#f1b0b7",
+                color: "red"
+            })
+        }
+    ]
+
     return (
         <div className="container">
             <h1><p>Vizsgánkénti statisztika</p></h1>
@@ -116,6 +134,7 @@ export default function DetailTable(props) {
                 pagination={true}
                 fixedHeader={true}
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}
+                conditionalRowStyles={conditionalRowStyles}
             />
         </div>
     )
