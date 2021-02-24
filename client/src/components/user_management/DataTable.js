@@ -97,11 +97,29 @@ export default function DetailTable(props) {
         }
     }
 
+    const conditionalRowStyles = [
+        {
+            when: row => row.completed === "Átment",
+            style: row => ({
+                backgroundColor: "#b1dfbb",
+                color: "green"
+            })
+            
+        },
+        {
+            when: row => row.completed === "Megbukott",
+            style: row => ({
+                backgroundColor: "#f1b0b7",
+                color: "red"
+            })
+        }
+    ]
+
     return (
         <div className="container">
             <h1><p>Vizsgánkénti statisztika</p></h1>
 
-            <select onChange={handleChange} className="mb-3" id="tableselect">
+            <select onChange={handleChange} className="mb-3 rounded" id="tableselect">
                 <option value={null}>Vizsga kiválasztása</option>
                 {exams.length > 0 ? exams.map((exam, index) => {
                     return <option key={index} value={exam.value}>{exam.key} {props.permission === 'admin' ? " || " + exam.value : null}</option>
@@ -110,12 +128,24 @@ export default function DetailTable(props) {
 
             {workingList.length > 0 ? examStatistics() : null}
 
+            <form className="mb-3 w-25">
+                <div className="form-group m-auto">
+                    <input type="text" name="search" autoComplete="off"/>
+                    <label htmlFor="search" className="label-name">
+                        <span className="content-name">
+                            Keresés
+                        </span>
+                    </label>
+                </div>
+            </form>
+
             <DataTable
                 columns={columns}
                 data={results}
                 pagination={true}
                 fixedHeader={true}
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}
+                conditionalRowStyles={conditionalRowStyles}
             />
         </div>
     )

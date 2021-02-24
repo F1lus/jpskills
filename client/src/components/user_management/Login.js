@@ -130,8 +130,10 @@ export default function Login(){
                     }
                 </form>
                 <div className="container mt-3">
-                    <input type="checkbox" name="regisztráció" onChange={e => newUser(e)}/>
-                    <label htmlFor="regisztráció" className="m-1"> Pipálja be, ha még nincs fiókja!</label>
+                    <label className="checkbox-label"> 
+                        <input type="checkbox" name="regisztráció" onChange={e => newUser(e)} className="m-2"/>
+                        Pipálja be, ha még nincs fiókja!
+                    </label>
                 </div>
             </div>
         </div>

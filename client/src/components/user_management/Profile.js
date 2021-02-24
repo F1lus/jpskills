@@ -50,7 +50,7 @@ export default function Profile(props) {
     function renderGlobalStats(){
         if(stats != null){
             return (
-                <div className="alert alert-primary my-2">
+                <div className="alert alert-success my-2 w-75 mx-auto">
                     <p>Az eddigi vizsgáihoz szükséges átlag idő: {renderStatsObject('time') || 'Nincs adat'}</p>
                     <p>Az eddigi vizsgáin az átlagos pont: {renderStatsObject('score') || 'Nincs adat'}</p>
                     <p>A vizsgák sikerességi aránya: {renderStatsObject('completion') || 'Nincs adat'}</p>
