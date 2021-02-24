@@ -57,7 +57,6 @@ export default function ExamDocument(props) {
         const socket = io('http://localhost:5000', { withCredentials: true })
 
         socket.emit('examDoc-signal', exam.examCode)
-        socket.emit('exams-get-signal')
 
         socket.on('examDoc-emitter', document => {
             if (document) {
