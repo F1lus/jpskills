@@ -4,24 +4,9 @@ const path = require('path')
 
 module.exports = (socket) => {
 
-    const getExamContent = (examCode) => {
+    const getExamContent = async (examCode) => socket.emit('exam-content', await dbconnect.selectExamContent(examCode))
 
-        dbconnect.selectExamContent(examCode)
-            .then(results => {
-                if (results) {
-                    socket.emit('exam-content', results)
-                }
-            }).catch(err => console.log(err))
-    }
-
-    const getExamProps = (examCode) => {
-        dbconnect.selectExamProps(examCode)
-            .then(results => {
-                if (results) {
-                    socket.emit('exam-props', results)
-                }
-            }).catch(err => console.log(err))
-    }
+    const getExamProps = async (examCode) => socket.emit('exam-props', await dbconnect.selectExamProps(examCode))
 
     const beginTimer = () => {
         if (socket.handshake.session.perm !== 'admin') {

@@ -1,9 +1,6 @@
 const upload = require('express').Router()
 
 const dbconnect = require('../../../model/DbConnect')
-const session = require('../../../model/SessionSetup')
-
-upload.use(session)
 
 upload.post('/exams/upload', async (req, res) =>{
     if(req.session.perm !== 'admin'){
@@ -22,11 +19,7 @@ upload.post('/exams/upload', async (req, res) =>{
             req.body.comment, req.files.examDoc.data, req.session.cardNum,
             req.session.cardNum
         )
-        dbconnect.insertExam(arrayOfData)
-        .then(response =>{
-            res.send({result: response})
-        })
-        .catch(err => console.log(err))
+        res.send({result: await dbconnect.insertExam(arrayOfData)})
     }
 })
 

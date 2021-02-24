@@ -19,21 +19,20 @@ function dateFormat(rawDate) {
 
 module.exports = (socket) => {
 
-    const getExams = () => {
-        dbconnect.selectExams(socket.handshake.session.cardNum, socket.handshake.session.perm === 'admin')
-            .then(results => {
-                let examResult = []
-                results.forEach(result => {
-                    examResult.push([result.examName,
-                    result.itemCode,
-                    result.comment,
-                    result.status,
-                    dateFormat(('' + result.created))
-                    ])
-                })
-                socket.emit('exams-get-emitter', examResult)
-            })
-            .catch(err => console.log(err))
+    const getExams = async () => {
+        const exams = await dbconnect.selectExams(socket.handshake.session.cardNum, socket.handshake.session.perm === 'admin')
+        
+        let examResult = []
+        
+        exams.forEach(result => {
+            examResult.push([result.examName,
+            result.itemCode,
+            result.comment,
+            result.status,
+            dateFormat(('' + result.created))
+            ])
+        })
+        socket.emit('exams-get-emitter', examResult)
     }
 
     socket.on('exams-get-signal', getExams)
