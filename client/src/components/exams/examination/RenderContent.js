@@ -92,10 +92,10 @@ export default function RenderContent(props) {
                                     {content.map((text, index) => {
                                         return (
                                             <div className="my-2" key={index}>
-                                                <input type="checkbox" name={index} onChange={e => {
-                                                    handleChange(e, question[0], text[0])
-                                                }} />
-                                                <label htmlFor={index} className="pl-1"> {text[1]}</label>
+                                                <label htmlFor={index} className="checkbox-label"> 
+                                                    <input type="checkbox" className="m-2" name={index} onChange={e => {handleChange(e, question[0], text[0])}} />
+                                                    {text[1]}
+                                                </label>
                                             </div>
                                         )
                                     })}

@@ -127,9 +127,10 @@ export default function DetailTable(props) {
             </select>
 
             {workingList.length > 0 ? examStatistics() : null}
+
             <form className="mb-3 w-25">
                 <div className="form-group m-auto">
-                    <input type="text" name="search"/>
+                    <input type="text" name="search" autoComplete="off"/>
                     <label htmlFor="search" className="label-name">
                         <span className="content-name">
                             Keresés
@@ -137,7 +138,6 @@ export default function DetailTable(props) {
                     </label>
                 </div>
             </form>
-            
 
             <DataTable
                 columns={columns}
