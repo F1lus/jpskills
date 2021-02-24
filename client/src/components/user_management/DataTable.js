@@ -110,7 +110,7 @@ export default function DetailTable(props) {
 
     function search(event) {
         if (examCode && props.permission === 'admin' && results.length > 0) {
-            const filterBySearch = results.filter(exam => exam.worker.toLowerCase().includes(event.target.value.toLowerCase()) )
+            const filterBySearch = results.filter(exam => exam.worker.toLowerCase().includes(event.target.value.toLowerCase().trim()) )
             setDisplayList(filterBySearch)
         }
     }
