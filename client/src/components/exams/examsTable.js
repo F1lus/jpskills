@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import DataTable, { createTheme } from 'react-data-table-component'
 
-export default function ExamsTable() {
+export default function ExamsTable(props) {
 
     const columns = [
         {
@@ -21,7 +21,7 @@ export default function ExamsTable() {
         },
         {
             name: "Állapot",
-            selector: row => row.state,
+            selector: row => row.status,
             sortable: true
         }
     ]
@@ -42,7 +42,7 @@ export default function ExamsTable() {
 
     const conditionalRowStyles = [
         {
-            when: row => row.state === "Aktív",
+            when: row => row.status === "Aktív",
             style: () => ({
                 backgroundColor: "#b1dfbb",
                 color: "green"
@@ -50,7 +50,7 @@ export default function ExamsTable() {
 
         },
         {
-            when: row => row.state === "Inaktív",
+            when: row => row.status === "Inaktív",
             style: () => ({
                 backgroundColor: "#f1b0b7",
                 color: "red"
@@ -61,6 +61,7 @@ export default function ExamsTable() {
     return (
         <DataTable
             columns={columns}
+            data={props.exams}
             pagination={true}
             fixedHeader={true}
             noDataComponent={'Nincsenek megjeleníthető vizsgák.'}

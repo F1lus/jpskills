@@ -28,7 +28,7 @@ export default function Exams(props){
             {props.permission === 'admin'? <h1><p>Az Ön által készített vizsgák:</p></h1>
             : <h1><p>Elérhető vizsgák:</p></h1>
             }
-            <ExamsTable/>
+            <ExamsTable exams={exams}/>
             {/*<div className="container">
                 <div className="row">
                     {exams.length === 0 ? 

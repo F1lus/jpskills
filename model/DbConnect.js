@@ -741,28 +741,31 @@ class Connection {
      * Használt táblák: exams
      */
 
-    updateExam = (user, examName, examCode, notes, points) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode)
-                .then(result => {
-                    if (result) {
-                        this.con('exams').update({
-                            exam_name: examName,
-                            exam_notes: notes,
-                            points_required: points,
-                            exam_modifier: user,
-                            exam_modified_time: this.con.fn.now()
-                        })
-                            .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
-                                if (response) {
-                                    resolve(true)
-                                } else {
-                                    resolve(false)
-                                }
-                            }).catch(err => reject(err))
+    updateExam = async (user, examName, examCode, notes, points) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = await this.checkExamCreator(user, examCode)
+
+                if(validUser){
+                    const update = await this.con('exams').update({
+                        exam_name: examName,
+                        exam_notes: notes,
+                        points_required: points,
+                        exam_modifier: user,
+                        exam_modified_time: this.con.fn.now()
+                    })
+                        .where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+                    
+                    if(update){
+                        success = true
                     }
-                }).catch(err => reject(err))
-        })
+                }
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /*
@@ -780,18 +783,18 @@ class Connection {
      * Használt táblák: exams
      */
 
-    checkExamCreator = (user, examCode) => {
-        return new Promise((resolve, reject) => {
-            this.con('exams').select(['exam_name', 'exam_creator'])
-                .where(this.con.raw('exam_itemcode = ?', [examCode]))
-                .first().then(result => {
-                    if (result) {
-                        resolve(result.exam_creator == user)
-                    } else {
-                        reject('no_exam')
-                    }
-                }).catch(err => reject(err))
-        })
+    checkExamCreator = async (user, examCode) => {
+        let isValid = false
+        try {
+            const exam = await this.con('exams').select(['exam_creator'])
+            .where(this.con.raw('exam_itemcode = ?', [examCode]))
+            .first()
+
+            isValid = exam.exam_creator === user
+        } catch (error) {
+            console.log(error.message)
+        }
+        return isValid
     }
 
     /**
@@ -803,21 +806,24 @@ class Connection {
      * Használt táblák: exams
      */
 
-    updateExamModify = (user, examCode) => {
-        return new Promise((resolve, reject) => {
-            this.con('exams').update({
-                exam_modifier: user,
-                exam_modified_time: this.con.fn.now()
+    updateExamModify = async (user, examCode) => {
+        let updated = false
+        try {
+            await this.con.transaction(async trx => {
+                const updater = await this.con('exams').update({
+                    exam_modifier: user,
+                    exam_modified_time: this.con.fn.now()
+                })
+                    .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                    .transacting(trx)
+                if(updater){
+                    updated = true
+                }
             })
-                .where(this.con.raw('exam_itemcode = ?', [examCode]))
-                .then(response => {
-                    if (response) {
-                        resolve(true)
-                    } else {
-                        reject('exams_no_update')
-                    }
-                }).catch(err => reject(err))
-        })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return updated
     }
 
     /*
