@@ -70,7 +70,7 @@ export default function DetailTable(props) {
                             id: index + 1,
                             examName: value.examName,
                             itemcode: value.examCode,
-                            worker: props.user,
+                            worker: value.examName,
                             score: value.score,
                             time: timeFormat,
                             completed: value.completed ? 'Átment' : 'Megbukott'
