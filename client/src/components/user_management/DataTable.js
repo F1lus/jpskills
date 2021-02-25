@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import DataTable from 'react-data-table-component'
+import DataTable,{ createTheme } from 'react-data-table-component'
 
 import examStats from './models/ExamStatistics'
 
@@ -37,6 +37,12 @@ export default function DetailTable(props) {
             sortable: true
         }
     ]
+
+    createTheme("ownStyle", {
+        background: {
+            default: "#f8f9fa"
+        }
+    })
 
     function filterByExam() {
         let filteredArray = []
@@ -173,6 +179,7 @@ export default function DetailTable(props) {
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}
                 conditionalRowStyles={conditionalRowStyles}
                 paginationComponentOptions={customText}
+                theme="ownStyle"
             />
         </div>
     )
