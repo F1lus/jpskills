@@ -2,10 +2,9 @@ const dbconnect = require('../../../model/DbConnect')
 
 module.exports = (socket) => {
 
-    const updatePoints = (examCode, points) => {
+    const updatePoints = async (examCode, points) => {
         if(socket.handshake.session.user){
-            dbconnect.updateExamPoints(socket.handshake.session.cardNum, examCode, points)
-            .catch(err => console.log(err))
+            await dbconnect.updateExamPoints(socket.handshake.session.cardNum, examCode, points)
         }
     }
 

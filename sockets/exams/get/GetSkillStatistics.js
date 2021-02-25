@@ -2,21 +2,11 @@ const dbconnect = require('../../../model/DbConnect')
 
 module.exports = (socket) => {
 
-    const statistics = () => {
+    const statistics = async () => {
         if(socket.handshake.session.perm === 'admin'){
-            dbconnect.globalStatisticsForAdmin(socket.handshake.session.cardNum)
-            .then(stats => {
-                if(stats){
-                    socket.emit('sending-statistics', stats)
-                }
-            }).catch(err => console.log(err))
+            socket.emit('sending-statistics', await dbconnect.globalStatisticsForAdmin(socket.handshake.session.cardNum))
         }else{
-            dbconnect.globalStatisticsForUser(socket.handshake.session.cardNum)
-            .then(stats => {
-                if(stats){
-                    socket.emit('sending-statistics', stats)
-                }
-            }).catch(err => console.log(err))
+            socket.emit('sending-statistics', await dbconnect.globalStatisticsForUser(socket.handshake.session.cardNum))
         }
     }
 

@@ -2,14 +2,12 @@ const dbconnect = require('../../../model/DbConnect')
 
 module.exports = (socket) => {
     
-    const removeTest = (examCode) => {
+    const removeTest = async (examCode) => {
         if(socket.handshake.session.user && examCode){
-            dbconnect.removeTest(socket.handshake.session.cardNum, examCode)
-            .then(response => {
-                if(response){
-                    socket.emit('removed-exam')
-                }
-            })
+            const removed = await dbconnect.removeTest(socket.handshake.session.cardNum, examCode)
+            if(removed){
+                socket.emit('removed-exam')
+            }
         }
     }
 

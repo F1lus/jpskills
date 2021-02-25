@@ -17,18 +17,17 @@ module.exports = (socket) => {
         return 0
     }
 
-    const process = (answers, examCode) => {
+    const process = async (answers, examCode) => {
         
         const session = socket.handshake.session
 
         const time = removeFile()
 
-        dbconnect.processAnswers(answers, examCode, session.cardNum, time)
-        .then(result => {
-            if(result){
-                socket.emit('exam-processed')
-            }
-        })
+        const processed = await dbconnect.processAnswers(answers, examCode, session.cardNum, time)
+        
+        if(processed){
+            socket.emit('exam-processed')
+        }
     }
 
     socket.on('cancel-timer', () => {

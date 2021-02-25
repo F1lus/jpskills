@@ -2,25 +2,21 @@ const dbconnect = require('../../../model/DbConnect')
 
 module.exports = (socket) => {
 
-    const removeAnswer = (answerId, examCode) => {
+    const removeAnswer = async (answerId, examCode) => {
         if(examCode && answerId){
-            dbconnect.removeAnswer(socket.handshake.session.cardNum, answerId, examCode)
-            .then(result => {
-                if(result){
-                    socket.emit('server-accept')
-                }
-            }).catch(err => console.log(err))
+            const removed = await dbconnect.removeAnswer(socket.handshake.session.cardNum, answerId, examCode)
+            if(removed){
+                socket.emit('server-accept')
+            }
         }
     }
 
-    const removeQuestion = (questionId, examCode) => {
+    const removeQuestion = async (questionId, examCode) => {
         if(examCode && questionId){
-            dbconnect.removeQuestion(socket.handshake.session.cardNum, questionId, examCode)
-            .then(result => {
-                if(result){
-                    socket.emit('server-accept')
-                }
-            }).catch(err => console.log(err))
+            const removed = await dbconnect.removeQuestion(socket.handshake.session.cardNum, questionId, examCode)
+            if(removed){
+                socket.emit('server-accept')
+            }
         }
     }
 

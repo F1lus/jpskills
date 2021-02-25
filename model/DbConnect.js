@@ -37,63 +37,47 @@ class Connection {
         })
     }
 
-    globalStatisticsForAdmin = (cardNum) => {
-        return new Promise((resolve, reject) => {
-            const results = []
-            this.con('exams')
+    globalStatisticsForAdmin = async (cardNum) => {
+        const stats = []
+        try {
+            const exams = await this.con('exams')
                 .select(['exams.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed', 'worker_id'])
                 .innerJoin(this.con.raw('skills ON exams.exam_id = skills.exam_id')).where('exam_creator', cardNum)
-                .then(exams => {
-                    if (exams) {
-                        exams.forEach((exam, index) => {
-                            this.con('workers').select('worker_name')
-                                .where('worker_id', [exam.worker_id]).first()
-                                .then(worker => {
-                                    if (worker) {
-                                        results.push([
-                                            exam.exam_name, exam.exam_itemcode, exam.points_required,
-                                            exam.points, exam.time, exam.completed === 1, worker.worker_name
-                                        ])
-                                    }
-                                    if (index === exams.length - 1) {
-                                        resolve(results)
-                                    }
-                                }).catch(err => reject(err))
-                        })
-                    }
-                }).catch(err => reject(err))
-        })
+
+            for (const exam of exams) {
+                const worker = await this.con('workers').select('worker_name')
+                    .where('worker_id', [exam.worker_id]).first()
+
+                if (worker) {
+                    stats.push([exam.exam_name, exam.exam_itemcode, exam.points_required,
+                    exam.points, exam.time, exam.completed === 1, worker.worker_name])
+                }
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+        return stats
     }
 
-    globalStatisticsForUser = (cardNum) => {
-        return new Promise((resolve, reject) => {
-            const results = []
-            this.con('workers').select('worker_id').where('worker_cardcode', [cardNum]).first()
-                .then(worker => {
-                    if (worker) {
-                        this.con('skills').select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
-                            .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
-                            .where('worker_id', [worker.worker_id])
-                            .then(skills => {
-                                if (skills) {
-                                    skills.forEach((skill, index) => {
-                                        results.push([
-                                            skill.exam_name, skill.exam_itemcode, skill.points_required,
-                                            skill.points, skill.time, skill.completed === 1
-                                        ])
-                                        if (index === skills.length - 1) {
-                                            resolve(results)
-                                        }
-                                    })
-                                } else {
-                                    resolve(results)
-                                }
-                            }).catch(err => reject(err))
-                    } else {
-                        resolve(results)
-                    }
-                }).catch(err => reject(err))
-        })
+    globalStatisticsForUser = async (cardNum) => {
+        const stats = []
+        try {
+            const worker = await this.con('workers').select('worker_id').where('worker_cardcode', [cardNum]).first()
+
+            if (worker) {
+                const skills = await this.con('skills').select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
+                    .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
+                    .where('worker_id', [worker.worker_id])
+
+                skills.forEach(skill => {
+                    stats.push([skill.exam_name, skill.exam_itemcode, skill.points_required,
+                    skill.points, skill.time, skill.completed === 1])
+                })
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+        return stats
     }
 
 
@@ -119,154 +103,150 @@ class Connection {
         })
     }*/
 
-    selectSkill = (examCode, cardNum) => {
-        return new Promise((resolve, reject) => {
-            this.con('exams').select(['exam_id', 'exam_name', 'points_required'])
+    selectSkill = async (examCode, cardNum) => {
+        const skill = []
+        try {
+            const exam = await this.con('exams').select(['exam_id', 'exam_name', 'points_required'])
                 .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-                .then(exam => {
-                    if (exam) {
-                        this.con('workers').select('worker_id')
-                            .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
-                            .then(worker => {
-                                if (worker) {
-                                    this.con('skills').where('worker_id', [worker.worker_id])
-                                        .andWhere('exam_id', exam.exam_id).first()
-                                        .then(skill => {
-                                            if (skill) {
-                                                this.countExamMaxPoints(exam.exam_id).then(points => {
-                                                    if (points) {
-                                                        resolve([
-                                                            exam.exam_name, exam.points_required,
-                                                            skill.points, skill.time, skill.completed, points
-                                                        ])
-                                                    }
-                                                })
-                                            } else {
-                                                resolve([])
-                                            }
-                                        }).catch(err => reject(err))
-                                }
-                            }).catch(err => reject(err))
-                    } else {
-                        resolve([])
+
+            if (exam) {
+                const worker = await this.con('workers').select('worker_id')
+                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
+
+                if (worker) {
+                    const skillResult = await this.con('skills').where('worker_id', [worker.worker_id])
+                        .andWhere('exam_id', exam.exam_id).first()
+
+                    const maxPoints = await this.countExamMaxPoints(exam.exam_id)
+
+                    if (skillResult && maxPoints) {
+                        skill.push([exam.exam_name, exam.points_required,
+                        skillResult.points, skillResult.time, skillResult.completed, points])
                     }
-                }).catch(err => reject(err))
-        })
+                }
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+        return skill
     }
 
-    countExamMaxPoints = (examId) => {
-        return new Promise((resolve, reject) => {
-            let maxPoints = 0
-            this.con('questions').select(['question_id', 'points']).where('exam_id', [examId])
-                .then(questions => {
-                    if (questions) {
-                        questions.forEach((question, index) => {
-                            this.con('exam_prepare').select('exam_prepare.results_id')
-                                .innerJoin(this.con.raw('results ON exam_prepare.results_id = results.results_id'))
-                                .where('question_id', [question.question_id]).andWhere('correct', 1)
-                                .then(results => {
-                                    if (results) {
-                                        maxPoints += question.points * results.length
-                                    }
-                                    if (index === questions.length - 1) {
-                                        resolve(maxPoints)
-                                    }
-                                }).catch(err => reject(err))
-                        })
-                    }
-                }).catch(err => reject(err))
-        })
+    countExamMaxPoints = async (examId) => {
+        let maxPoints = 0
+        try {
+            const questions = await this.con('questions').select(['question_id', 'points']).where('exam_id', [examId])
+
+            for (const question of questions) {
+
+                const answers = await this.con('exam_prepare').select('exam_prepare.results_id')
+                    .innerJoin(this.con.raw('results ON exam_prepare.results_id = results.results_id'))
+                    .where('question_id', [question.question_id]).andWhere('correct', 1)
+
+                if (answers.length > 0) {
+                    maxPoints += question.points * results.length
+                }
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+        return maxPoints
     }
 
-    processAnswers = (answers, examCode, cardNum, time) => {
-        return new Promise((resolve, reject) => {
-            this.con('exams').select('exam_status').where('exam_itemcode', [examCode]).first()
-                .then(exam => {
-                    if (exam.exam_status === 1) {
-                        let maxQuestionPoints = 0
-                        let totalPoints = 0
-                        answers.forEach((answerObj, index) => {
-                            this.con('results').select('results.results_id')
-                                .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
-                                .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
-                                .then(result => {
-                                    if (result) {
-                                        this.con('questions').select(['question_id', 'points'])
-                                            .where(this.con.raw('question_id = ?', [answerObj.id])).first()
-                                            .then(question => {
-                                                if (question) {
-                                                    maxQuestionPoints += question.points * result.length
-                                                    let questionPoints = 0
-                                                    answerObj.answers.forEach((answer) => {
-                                                        if (result.findIndex(value => value.results_id === answer) > -1 && answerObj.answers.length > 0 && answerObj.answers.length <= result.length) {
-                                                            totalPoints += question.points
-                                                            questionPoints += question.points
-                                                        }
-                                                    })
-                                                    this.uploadPartialResults(cardNum, question.question_id, questionPoints).then(() => {
-                                                        if (index === answers.length - 1) {
-                                                            this.uploadResults(examCode, cardNum, totalPoints, time, maxQuestionPoints)
-                                                                .then(response => resolve(response))
-                                                                .catch(err => reject(err))
-                                                        }
-                                                    })
-                                                        .catch(err => reject(err))
-                                                }
-                                            }).catch(err => reject(err))
-                                    }
-                                }).catch(err => reject(err))
-                        })
+    processAnswers = async (answers, examCode, cardNum, time) => {
+        let success = false
+        try {
+            const exam = await this.con('exams').select('exam_status').where('exam_itemcode', [examCode]).first()
+            if (exam.exam_status === 1) {
+                let maxQuestionPoints = 0
+                let totalPoints = 0
+                for (const answerObj of answers) {
+                    const results = await this.con('results').select('results.results_id')
+                        .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
+                        .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
+
+                    const question = await this.con('questions').select(['question_id', 'points'])
+                        .where(this.con.raw('question_id = ?', [answerObj.id])).first()
+
+                    if (results.length > 0 && question) {
+                        maxQuestionPoints += question.points * results.length
+                        let questionPoints = 0
+
+                        for (const answer of answerObj.answers) {
+                            if (result.findIndex(value => value.results_id === answer) > -1 && answerObj.answers.length > 0 && answerObj.answers.length <= result.length) {
+                                totalPoints += question.points
+                                questionPoints += question.points
+                            }
+                        }
+
+                        await this.uploadPartialResults(cardNum, question.question_id, questionPoints)
                     }
                 }
 
-                )
-        })
+                success = await this.uploadResults(examCode, cardNum, totalPoints, time, maxQuestionPoints)
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
-    uploadResults = (examCode, cardNum, totalPoints, time, maxPoints) => {
-        return new Promise((resolve, reject) => {
-            this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [cardNum]))
-                .first().then(worker => {
-                    if (worker) {
-                        this.con('exams').select(['exam_id', 'points_required'])
-                            .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-                            .then(exam => {
-                                if (exam) {
-                                    const completed = totalPoints >= Math.round(exam.points_required * maxPoints) ? 1 : 0
-                                    this.con('skills').insert({
-                                        worker_id: worker.worker_id,
-                                        exam_id: exam.exam_id,
-                                        points: totalPoints,
-                                        time: time,
-                                        completed: completed
-                                    }).then(response => resolve(response != null)).catch(err => reject(err))
-                                } else {
-                                    resolve(false)
-                                }
-                            }).catch(err => reject(err))
-                    } else {
-                        resolve(false)
-                    }
-                }).catch(err => reject(err))
-        })
-    }
+    uploadResults = async (examCode, cardNum, totalPoints, time, maxPoints) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const worker = await this.con('workers').select('worker_id')
+                    .where('worker_cardcode', [cardNum])
+                    .first().transacting(trx)
 
-    uploadPartialResults = (cardNum, questionId, points) => {
-        return new Promise((resolve, reject) => {
-            this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [cardNum]))
-                .first().then(worker => {
-                    if (worker) {
-                        this.con('exam_result').insert({
+                if (worker) {
+                    const exam = await this.con('exams').select(['exam_id', 'points_required'])
+                        .where(this.con.raw('exam_itemcode = ?', [examCode])).first().transacting(trx)
+
+                    if (exam) {
+                        const completed = totalPoints >= Math.round(exam.points_required * maxPoints) ? 1 : 0
+                        const insert = await this.con('skills').insert({
                             worker_id: worker.worker_id,
-                            question_id: questionId,
-                            points: points
-                        }).then(response => resolve(response != null))
-                            .catch(err => reject(err))
-                    } else {
-                        resolve(false)
+                            exam_id: exam.exam_id,
+                            points: totalPoints,
+                            time: time,
+                            completed: completed
+                        }).transacting(trx)
+
+                        if (insert) {
+                            success = insert[0].insertId !== 0
+                        }
                     }
-                }).catch(err => reject(err))
-        })
+                }
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
+    }
+
+    uploadPartialResults = async (cardNum, questionId, points) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const worker = await this.con('workers').select('worker_id')
+                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).transacting(trx)
+
+                if (worker) {
+                    const insert = await this.con('exam_result').insert({
+                        worker_id: worker.worker_id,
+                        question_id: questionId,
+                        points: points
+                    }).transacting(trx)
+
+                    if (insert) {
+                        success = insert[0].insertId !== 0
+                    }
+                }
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /*
@@ -287,24 +267,31 @@ class Connection {
      * Használt táblák: exams, questions, results, exam_prepare
      */
 
-    removeTest = (user, examCode) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(result => {
-                if (result) {
-                    this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-                        .then(exam => {
-                            if (exam) {
-                                this.removeMultipleQuestions(exam.exam_id, user, examCode).then(() => {
-                                    this.con('exams').delete()
-                                        .where(this.con.raw('exam_itemcode = ?', [examCode])).then(response => {
-                                            resolve(response != null)
-                                        }).catch(err => reject(err))
-                                }).catch(err => reject(err))
-                            }
-                        }).catch(err => reject(err))
+    removeTest = async (user, examCode) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = await this.checkExamCreator(user, examCode)
+                if (validUser) {
+                    const exam = await this.con('exams')
+                        .where(this.con.raw('exam_itemcode = ?', [examCode])).first().transacting(trx)
+
+                    if (exam) {
+                        await this.removeMultipleQuestions(exam.exam_id, user, examCode)
+
+                        const del = await this.con('exams').delete()
+                            .where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+
+                        if (del) {
+                            success = true
+                        }
+                    }
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /**
@@ -318,23 +305,17 @@ class Connection {
      * Használt táblák: questions, results, exam_prepare
      */
 
-    removeMultipleQuestions = (examId, user, examCode) => {
-        return new Promise((resolve, reject) => {
-            this.con('questions').where(this.con.raw('exam_id = ?', [examId]))
-                .then(questionIds => {
-                    if (questionIds.length === 0) {
-                        resolve(false)
-                    } else {
-                        questionIds.forEach((id, index) => {
-                            this.removeQuestion(user, id.question_id, examCode).then(() => {
-                                if (index === questionIds.length - 1) {
-                                    resolve(true)
-                                }
-                            }).catch(err => reject(err))
-                        })
-                    }
-                }).catch(err => reject(err))
-        })
+    removeMultipleQuestions = async (examId, user, examCode) => {
+        try {
+            const questions = await this.con('questions').where(this.con.raw('exam_id = ?', [examId]))
+            if (questions.length !== 0) {
+                for (const question of questions) {
+                    await this.removeQuestion(user, question.question_id, examCode)
+                }
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
     }
 
     /**
@@ -347,40 +328,29 @@ class Connection {
      * Használt táblák: questions, results, exam_prepare
      */
 
-    removeQuestion = (user, questionId, examCode) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(result => {
-                if (result) {
-                    this.con('exam_prepare').where(this.con.raw('question_id = ?', [questionId]))
-                        .then(resultIds => {
-                            if (resultIds) {
-                                this.con('exam_prepare').delete().where(this.con.raw('question_id = ?', [questionId]))
-                                    .then(response => {
-                                        if (response) {
-                                            this.removeMultipleAnswers(resultIds)
-                                                .then(() => {
-                                                    this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
-                                                        .then(() => {
-                                                            this.updateExamModify(user, examCode)
-                                                                .then(res => resolve(res != null))
-                                                                .catch(err => reject(err))
-                                                        }).catch(err => reject(err))
+    removeQuestion = async (user, questionId, examCode) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = await this.checkExamCreator(user, examCode)
+                if (validUser) {
 
-                                                }).catch(err => reject(err))
-                                        } else {
-                                            this.con('questions').delete().where(this.con.raw('question_id = ?', [questionId]))
-                                                .then(() => {
-                                                    this.updateExamModify(user, examCode)
-                                                        .then(res => resolve(res != null))
-                                                        .catch(err => reject(err))
-                                                }).catch(err => reject(err))
-                                        }
-                                    }).catch(err => reject(err))
-                            }
-                        }).catch(err => reject(err))
+                    const resultIds = await this.con('exam_prepare')
+                        .where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+
+                    if (resultIds) {
+                        await this.removeMultipleAnswers(resultIds)
+                    }
+                    await this.con('questions').delete()
+                        .where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+
+                    success = await this.updateExamModify(user, examCode)
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /**
@@ -391,17 +361,17 @@ class Connection {
      * Használt táblák: results
      */
 
-    removeMultipleAnswers = (resultIds) => {
-        return new Promise((resolve, reject) => {
-            resultIds.forEach((id, index) => {
-                this.con('results').delete().where(this.con.raw('results_id = ?', [id.results_id]))
-                    .then(() => {
-                        if (resultIds.length - 1 === index) {
-                            resolve(true)
-                        }
-                    }).catch(err => reject(err))
+    removeMultipleAnswers = async (resultIds) => {
+        try {
+            await this.con.transaction(async trx => {
+                for (const id of resultIds) {
+                    await this.con('results').delete()
+                        .where(this.con.raw('results_id = ?', [id.results_id])).transacting(trx)
+                }
             })
-        })
+        } catch (error) {
+            console.log(error.message)
+        }
     }
 
     /**
@@ -414,30 +384,26 @@ class Connection {
      * Használt táblák: results, exam_prepare
      */
 
-    removeAnswer = (user, answerId, examCode) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(result => {
-                if (result) {
-                    this.con('exam_prepare').delete().where(this.con.raw('results_id = ?', [answerId]))
-                        .then(response => {
-                            if (response) {
-                                this.con('results').delete().where(this.con.raw('results_id = ?', [answerId]))
-                                    .then(res => {
-                                        if (res) {
-                                            this.updateExamModify(user, examCode)
-                                                .then(res => resolve(res != null))
-                                                .catch(err => reject(err))
-                                        } else {
-                                            resolve(false)
-                                        }
-                                    }).catch(err => reject(err))
-                            } else {
-                                resolve(false)
-                            }
-                        }).catch(err => reject(err))
+    removeAnswer = async (user, answerId, examCode) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = this.checkExamCreator(user, examCode)
+
+                if (validUser) {
+                    //this.con('exam_prepare').delete().where(this.con.raw('results_id = ?', [answerId]))
+                    const del = await this.con('results').delete()
+                        .where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
+
+                    if (del) {
+                        success = await this.updateExamModify(user, examCode)
+                    }
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /*
