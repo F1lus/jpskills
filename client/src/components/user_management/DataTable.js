@@ -14,8 +14,8 @@ export default function DetailTable(props) {
 
     const columns = [
         {
-            name: "Vizsgázó neve",
-            selector: row => row.worker,
+            name: props.permission === 'admin' ? 'Vizsgázó neve' : 'Vizsga neve',
+            selector: row => props.permission === 'admin' ? row.worker : row.examName,
             sortable: true
         },
 
@@ -69,8 +69,6 @@ export default function DetailTable(props) {
                         {
                             id: index + 1,
                             examName: value.examName,
-                            itemcode: value.examCode,
-                            worker: value.examName,
                             score: value.score,
                             time: timeFormat,
                             completed: value.completed ? 'Átment' : 'Megbukott'
