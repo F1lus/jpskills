@@ -1,4 +1,4 @@
-import React  from 'react'
+import React, {useState, useEffect}  from 'react'
 
 import DataTable, { createTheme } from 'react-data-table-component'
 
@@ -6,7 +6,12 @@ import { NavLink } from 'react-router-dom'
 
 export default function ExamsTable(props) {
 
-    const data = toLink()
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        setData(toLink())
+        // eslint-disable-next-line
+    },[props.exams])
 
     function toLink() {
         let data = []
@@ -15,14 +20,14 @@ export default function ExamsTable(props) {
                 {
                     id: index+1,
                     name: 
-                        <NavLink to={data.permission === "admin" ? `/exams/modify/${data[1]}`:`/exams/${data[1]}`}>
-                            <button disabled={data.permission !== 'admin' ? data[3] === 0 : false} className="btn btn-outline-blue m-2">
+                        <NavLink to={props.permission === "admin" ? `/exams/modify/${value.itemcode}`:`/exams/${value.itemcode}`}>
+                            <button disabled={props.permission !== 'admin' ? value.status === 'Inaktív' : false} className="btn btn-outline-blue m-2">
                                 {value.name}
                             </button>
                         </NavLink>,
                     date: value.date,
                     itemcode: value.itemcode,
-                    status: value.status ? 'Aktív' : 'Inaktív'
+                    status: value.status
                 }
             )
         });
