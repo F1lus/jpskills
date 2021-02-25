@@ -39,6 +39,7 @@ export default function CreateTest(props) {
         switch (event.target.name) {
             case 'type':
                 if(event.target.value === 'A termék gyártója'){
+                    setItems([])
                     break
                 }else{
                     socket.emit('get-products', event.target.value)
