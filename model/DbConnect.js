@@ -458,30 +458,34 @@ class Connection {
      * Használt táblák: exams, questions
      */
 
-    insertQuestion = (user, examCode, text, points, picture) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(result => {
-                if (result) {
-                    this.con('exams').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-                        .then(exam => {
-                            if (exam) {
-                                this.con('questions').insert({
-                                    exam_id: exam.exam_id,
-                                    question_name: text,
-                                    points: points,
-                                    picture: picture
-                                }).then(response => {
-                                    if (response) {
-                                        this.updateExamModify(user, examCode)
-                                            .then(res => resolve(res != null))
-                                            .catch(err => reject(err))
-                                    }
-                                }).catch(err => reject(err))
-                            }
-                        }).catch(err => reject(err))
+    insertQuestion = async (user, examCode, text, points, picture) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = await this.checkExamCreator(user, examCode)
+
+                if (validUser) {
+                    const exam = await this.con('exams')
+                        .where(this.con.raw('exam_itemcode = ?', [examCode])).first().transacting(trx)
+
+                    if (exam) {
+                        const insert = await this.con('questions').insert({
+                            exam_id: exam.exam_id,
+                            question_name: text,
+                            points: points,
+                            picture: picture
+                        }).transacting(trx)
+
+                        if (insert[0].insertId !== 0) {
+                            success = await this.updateExamModify(user, examCode)
+                        }
+                    }
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /**
@@ -496,35 +500,38 @@ class Connection {
      * Használt táblák: questions, results, exam_prepare
      */
 
-    insertAnswer = (user, examCode, questionId, answerText, value) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(result => {
-                if (result) {
-                    this.con('questions').select('question_id').where(this.con.raw('question_id = ?', [questionId]))
-                        .first().then(result => {
-                            if (result) {
-                                let arr = [answerText, value]
-                                this.con.raw('INSERT INTO results (result_text, correct) VALUES(?)', [arr])
-                                    .then(response => {
-                                        if (response) {
-                                            let arr2 = [questionId, response[0].insertId]
-                                            this.con.raw('INSERT INTO exam_prepare (question_id, results_id) VALUES(?)', [arr2])
-                                                .then(res => {
-                                                    if (res) {
-                                                        this.updateExamModify(user, examCode)
-                                                            .then(res => resolve(res != null))
-                                                            .catch(err => reject(err))
-                                                    }
-                                                }).catch(err => reject(err))
-                                        }
-                                    }).catch(err => reject(err))
-                            } else {
-                                resolve(false)
+    insertAnswer = async (user, examCode, questionId, answerText, value) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = await this.checkExamCreator(user, examCode)
+
+                if (validUser) {
+                    const question = await this.con('questions').select('question_id')
+                        .where(this.con.raw('question_id = ?', [questionId]))
+                        .first().transacting(trx)
+
+                    if (question) {
+                        let answerArray = [answerText, value]
+                        const insertAnswer = await this.con.raw('INSERT INTO results (result_text, correct) VALUES(?)', [answerArray]).transacting(trx)
+
+                        if (insertAnswer[0].insertId !== 0) {
+                            const insertLink = await this.con('exam_prepare').insert({
+                                question_id: question.question_id,
+                                results_id: insertAnswer[0].insertId
+                            }).transacting(trx)
+
+                            if (insertLink[0].insertId !== 0) {
+                                success = await this.updateExamModify(user, examCode)
                             }
-                        }).catch(err => reject(err))
+                        }
+                    }
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /*
@@ -533,44 +540,57 @@ class Connection {
     ---------------------------------------------------------------------------
     */
 
-    updateExamStatus = (user, examCode, status) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(response => {
-                if (response) {
-                    this.con('exams').update({
+    updateExamStatus = async (user, examCode, status) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = await this.checkExamCreator(user, examCode)
+
+                if (validUser) {
+                    const update = await this.con('exams').update({
                         exam_status: status,
                         exam_modifier: user,
                         exam_modified_time: this.con.fn.now()
-                    }).where(this.con.raw('exam_itemcode = ?', [examCode]))
-                        .then(res => resolve(res != null))
-                        .catch(err => reject(err))
+                    }).where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+
+                    if (update) {
+                        success = true
+                    }
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
-    updateExamPoints = (user, examCode, points) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(response => {
-                if (response) {
-                    this.con('exams').select('points_required')
-                        .where(this.con.raw('exam_itemcode = ?', [examCode]))
-                        .then(result => {
-                            if (result) {
-                                resolve(false)
-                            } else {
-                                this.con('exams').update({
-                                    points_required: points,
-                                    exam_modifier: user,
-                                    exam_modified_time: this.con.fn.now()
-                                }).where(this.con.raw('exam_itemcode = ?', [examCode]))
-                                    .then(res => resolve(res != null))
-                                    .catch(err => reject(err))
-                            }
-                        }).catch(err => reject(err))
+    updateExamPoints = async (user, examCode, points) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = this.checkExamCreator(user, examCode)
+
+                if (validUser) {
+                    const exam = await this.con('exams').select('exam_id')
+                        .where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+
+                    if (exam.length !== 0) {
+                        const update = await this.con('exams').update({
+                            points_required: points,
+                            exam_modifier: user,
+                            exam_modified_time: this.con.fn.now()
+                        }).where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+
+                        if (update) {
+                            success = true
+                        }
+                    }
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /**
@@ -585,27 +605,26 @@ class Connection {
      * 
      */
 
-    updateQuestionPic = (user, examCode, questionId, picture) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(response => {
-                if (response) {
-                    this.con('questions').update({
+    updateQuestionPic = async (user, examCode, questionId, picture) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = await this.checkExamCreator(user, examCode)
+
+                if (validUser) {
+                    const update = await this.con('questions').update({
                         picture: picture
-                    }).where(this.con.raw('question_id = ?', [questionId]))
-                        .then(response => {
-                            if (response) {
-                                this.updateExamModify(user, examCode)
-                                    .then(res => resolve(res != null))
-                                    .catch(err => reject(err))
-                            } else {
-                                resolve(false)
-                            }
-                        }).catch(err => reject(err))
-                } else {
-                    resolve(false)
+                    }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+
+                    if (update) {
+                        success = await this.updateExamModify(user, examCode)
+                    }
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /**
@@ -620,51 +639,41 @@ class Connection {
      * Használt táblák: results
      */
 
-    updateAnswer = (user, examCode, answerId, value, isBoolean) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(result => {
-                if (result) {
-                    this.con('results').where(this.con.raw('results_id = ?', [answerId]))
-                        .first().then(result => {
-                            if (result) {
-                                if (!isBoolean) {
-                                    if (result.result_text === value) {
-                                        resolve(false)
-                                    } else {
-                                        this.con('results').update({
-                                            result_text: value
-                                        }).where(this.con.raw('results_id = ?', [answerId]))
-                                            .then(response => {
-                                                if (response) {
-                                                    this.updateExamModify(user, examCode)
-                                                        .then(res => resolve(res != null))
-                                                        .catch(err => reject(err))
-                                                }
-                                            }).catch(err => reject(err))
-                                    }
-                                } else {
-                                    if (result.correct === value) {
-                                        resolve(false)
-                                    } else {
-                                        this.con('results').update({
-                                            correct: value
-                                        }).where(this.con.raw('results_id = ?', [answerId]))
-                                            .then(response => {
-                                                if (response) {
-                                                    this.updateExamModify(user, examCode)
-                                                        .then(res => resolve(res != null))
-                                                        .catch(err => reject(err))
-                                                }
-                                            }).catch(err => reject(err))
-                                    }
-                                }
-                            } else {
-                                resolve(false)
-                            }
-                        }).catch(err => reject(err))
+    updateAnswer = async (user, examCode, answerId, value, isBoolean) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = await this.checkExamCreator(user, examCode)
+
+                if (validUser) {
+                    const result = await this.con('results')
+                        .where(this.con.raw('results_id = ?', [answerId]))
+                        .first().transacting(trx)
+
+                    let update = null
+                    if (result && !isBoolean) {
+                        if (result.result_text !== value) {
+                            update = await this.con('results').update({
+                                result_text: value
+                            }).where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
+                        }
+                    } else if (result && isBoolean) {
+                        if (result.correct !== value) {
+                            update = await this.con('results').update({
+                                correct: value
+                            }).where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
+                        }
+                    }
+
+                    if (update) {
+                        success = await this.updateExamModify(user, examCode)
+                    }
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /**
@@ -679,53 +688,41 @@ class Connection {
      * Használt táblák: questions
      */
 
-    updateQuestion = (user, examCode, questionId, value, isNumber) => {
-        return new Promise((resolve, reject) => {
-            this.checkExamCreator(user, examCode).then(result => {
-                if (result) {
-                    this.con('questions').select(['question_name', 'points', 'question_id'])
+    updateQuestion = async (user, examCode, questionId, value, isNumber) => {
+        let success = false
+        try {
+            await this.con.transaction(async trx => {
+                const validUser = await this.checkExamCreator(user, examCode)
+                if (validUser) {
+                    const question = await this.con('questions')
+                        .select(['question_name', 'points', 'question_id'])
                         .where(this.con.raw('question_id = ?', [questionId]))
-                        .first().then(result => {
-                            if (result) {
-                                if (!isNumber) {
-                                    if (result.question_name === value) {
-                                        resolve(false)
-                                    } else {
-                                        this.con('questions').update({
-                                            question_name: value
-                                        }).where(this.con.raw('question_id = ?', [questionId]))
-                                            .then(response => {
-                                                if (response) {
-                                                    this.updateExamModify(user, examCode)
-                                                        .then(res => resolve(res != null))
-                                                        .catch(err => reject(err))
-                                                }
-                                            }).catch(err => reject(err))
-                                    }
-                                } else {
-                                    if (result.points == value) {
-                                        resolve(false)
-                                    } else {
-                                        this.con('questions').update({
-                                            points: value
-                                        }).where(this.con.raw('question_id = ?', [questionId]))
-                                            .then(response => {
-                                                if (response) {
-                                                    this.updateExamModify(user, examCode)
-                                                        .then(res => resolve(res != null))
-                                                        .catch(err => reject(err))
-                                                }
-                                            }).catch(err => reject(err))
-                                    }
-                                }
+                        .first().transacting(trx)
 
-                            } else {
-                                resolve(false)
-                            }
-                        }).catch(err => reject(err))
+                    let update = null
+                    if (question && !isNumber) {
+                        if (question.question_name !== value) {
+                            update = await this.con('questions').update({
+                                question_name: value
+                            }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+                        }
+                    } else if (question && isNumber) {
+                        if (question.points !== value) {
+                            update = await this.con('questions').update({
+                                points: value
+                            }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+                        }
+                    }
+
+                    if (update) {
+                        success = await this.updateExamModify(user, examCode)
+                    }
                 }
-            }).catch(err => reject(err))
-        })
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return success
     }
 
     /**
@@ -735,7 +732,6 @@ class Connection {
      * @param {string} examName
      * @param {number | string} examCode 
      * @param {string} notes
-     * @param {[0,1]} status
      * @param {number} points
      * 
      * Használt táblák: exams
@@ -747,18 +743,23 @@ class Connection {
             await this.con.transaction(async trx => {
                 const validUser = await this.checkExamCreator(user, examCode)
 
-                if(validUser){
-                    const update = await this.con('exams').update({
-                        exam_name: examName,
-                        exam_notes: notes,
-                        points_required: points,
-                        exam_modifier: user,
-                        exam_modified_time: this.con.fn.now()
-                    })
-                        .where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
-                    
-                    if(update){
-                        success = true
+                if (validUser) {
+                    const examNameCheck = await this.con('exams')
+                        .where(this.con.raw('exam_name = ?', [examName]))
+                        .andWhere(this.con.raw('exam_itemcode <> ?', [examCode])).transacting(trx)
+                    if (examNameCheck.length === 0) {
+                        const update = await this.con('exams').update({
+                            exam_name: examName,
+                            exam_notes: notes,
+                            points_required: points,
+                            exam_modifier: user,
+                            exam_modified_time: this.con.fn.now()
+                        })
+                            .where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+
+                        if (update) {
+                            success = true
+                        }
                     }
                 }
             })
@@ -786,11 +787,11 @@ class Connection {
     checkExamCreator = async (user, examCode) => {
         let isValid = false
         try {
-            const exam = await this.con('exams').select(['exam_creator'])
-            .where(this.con.raw('exam_itemcode = ?', [examCode]))
-            .first()
+            const exam = await this.con('exams').select('exam_creator')
+                .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                .first()
 
-            isValid = exam.exam_creator === user
+            isValid = (exam.exam_creator == user)
         } catch (error) {
             console.log(error.message)
         }
@@ -816,7 +817,7 @@ class Connection {
                 })
                     .where(this.con.raw('exam_itemcode = ?', [examCode]))
                     .transacting(trx)
-                if(updater){
+                if (updater) {
                     updated = true
                 }
             })
