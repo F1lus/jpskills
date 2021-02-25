@@ -34,13 +34,11 @@ export default function Exams(props){
                         return(
                             <div key={index} className="card m-2 bg-light text-center shadow" style={{borderColor: exam[3] === 1 ? "green" : "red"}}>
                                 <div className="card-body">
-                                    {exam[3] === 0 && (<h4 className="card-title"><p>A vizsga inaktív!</p></h4>)}
                                     <NavLink to={props.permission === 'admin' ? `/exams/modify/${exam[1]}` : `/exams/${exam[1]}`}>
                                         <button disabled={props.permission !== 'admin' ? exam[3] === 0 : false} className="btn btn-outline-blue m-2">
                                             {exam[0]}
                                         </button>
                                     </NavLink>
-                                    <p className="card-text">{exam[2] != null ? `Megjegyzés: ${exam[2]}` : ''}</p>
                                     <p className="card-text">Készült: {exam[4]}</p>
                                     <p className="card-text">Cikkszám: {exam[1]}</p>
                                 </div>

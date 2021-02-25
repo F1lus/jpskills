@@ -843,50 +843,43 @@ class Connection {
         })
     }
 
-    selectExamDoc = (exam_itemcode, cardNum) => { //A vizsga tananyagának kiválasztása
-        return new Promise((resolve, reject) => {
-            this.con('workers').select('workers.worker_id')
-                .innerJoin('skills', 'workers.worker_id', 'skills.worker_id').where('worker_cardcode', [cardNum])
-                .then(worker => {
-                    this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
-                        .then(result => {
-                            resolve([worker.length !== 0 ? 0 : result.exam_status, result.exam_docs])
-                        }).catch(err => {
-                            reject(err)
-                        })
-                }).catch(err => {
-                    reject(err)
-                })
-        })
+    selectExamDoc = async (exam_itemcode, cardNum) => { //A vizsga tananyagának kiválasztása
+        let result = []
+        try {
+            const exam = await this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+            
+            const skill = await this.con('workers').select('workers.worker_id')
+            .innerJoin('skills', 'workers.worker_id', 'skills.worker_id').where('worker_cardcode', [cardNum])
+            .andWhere('exam_id', [exam.exam_id])
+
+            result.push(skill.length !== 0 ? 0 : exam.exam_status, exam.exam_docs)
+
+        } catch (error) {
+            console.log(error.message)
+        }
+        return result
     }
 
-    selectLearnExams = (user, userIsAdmin) => {
-        return new Promise((resolve, reject) => {
-            if (userIsAdmin) {
-                resolve(null)
-            } else {
-                this.con('workers').select('worker_id').where(this.con.raw('worker_cardcode = ?', [user])).first()
-                    .then(worker => {
-                        if (worker) {
-                            this.con('exams')
-                                .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_creation_time'])
-                                .then(results => {
-                                    let exams = []
-                                    results.forEach((result) => {
-                                        const examData = {
-                                            examName: result.exam_name,
-                                            itemCode: result.exam_itemcode,
-                                            comment: result.exam_notes,
-                                            created: result.exam_creation_time
-                                        }
-                                        exams.push(examData)
-                                    })
-                                    resolve(exams)
-                                }).catch(err => reject(err))
-                        }
-                    }).catch(err => reject(err))
+    selectLearnExams = async (userIsAdmin) => {
+        let exams = []
+        try {
+            if (!userIsAdmin) {
+                const examList = await this.con('exams')
+                    .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_creation_time'])
+
+                examList.forEach(result => {
+                    exams.push({
+                        examName: result.exam_name,
+                        itemCode: result.exam_itemcode,
+                        comment: result.exam_notes,
+                        created: result.exam_creation_time
+                    })
+                })
             }
-        })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return exams
     }
 
     selectExams = async (user, userIsAdmin) => { //Általános vizsgainfók kiválasztása
@@ -918,7 +911,7 @@ class Connection {
                     const skills = await this.con('skills').select('exam_id').where('worker_id', worker.worker_id)
 
                     examList.forEach(exam => {
-                        if (skills.findIndex(value => value.exam_id === result.exam_id) === -1) {
+                        if (skills.findIndex(value => value.exam_id === exam.exam_id) === -1) {
                             exams.push({
                                 examName: exam.exam_name,
                                 itemCode: exam.exam_itemcode,

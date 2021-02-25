@@ -21,9 +21,9 @@ module.exports = (socket) => {
 
     const getExams = async () => {
         const exams = await dbconnect.selectExams(socket.handshake.session.cardNum, socket.handshake.session.perm === 'admin')
-        
+
         let examResult = []
-        
+
         exams.forEach(result => {
             examResult.push([result.examName,
             result.itemCode,
@@ -37,20 +37,18 @@ module.exports = (socket) => {
 
     socket.on('exams-get-signal', getExams)
 
-    const learnExams = () => {
-        dbconnect.selectLearnExams(socket.handshake.session.cardNum, socket.handshake.session.perm === 'admin')
-            .then(results => {
-                let examResult = []
-                results.forEach(result => {
-                    examResult.push([result.examName,
-                    result.itemCode,
-                    result.comment,
-                    dateFormat(('' + result.created))
-                    ])
-                })
-                socket.emit('exams-learn-emitter', examResult)
-            })
-            .catch(err => console.log(err))
+    const learnExams = async () => {
+        const results = await dbconnect.selectLearnExams(socket.handshake.session.perm === 'admin')
+
+        let examResult = []
+        results.forEach(result => {
+            examResult.push([result.examName,
+            result.itemCode,
+            result.comment,
+            dateFormat(('' + result.created))
+            ])
+        })
+        socket.emit('exams-learn-emitter', examResult)
     }
 
     socket.on('exams-learn-signal', learnExams)
