@@ -37,11 +37,11 @@ export default function Learn() {
                         return (
                             <div className="card shadow bg-light m-2 text-center" key={index}>
                                 <div className="card-body text-center">
-                                    <h4 className="card-title"><p>{exam[0]}</p></h4>
-                                    <p className="card-text">Készült: {exam[3]}</p>
-                                    <NavLink to={`/exams/learn/${exam[1]}`}>
+                                    <h4 className="card-title"><p>{exam.name}</p></h4>
+                                    <p className="card-text">Készült: {exam.date}</p>
+                                    <NavLink to={`/exams/learn/${exam.itemcode}`}>
                                         <button type="button" className="btn btn-outline-blue card-link">
-                                            Megtanulom!
+                                            Megtekintés
                                         </button>
                                     </NavLink>
                                 </div>

@@ -52,7 +52,7 @@ export default function Profile(props) {
             return (
                 <div className="alert alert-success my-2 w-75 mx-auto">
                     <p>Az eddigi vizsgáihoz szükséges átlag idő: {renderStatsObject('time') || 'Nincs adat'}</p>
-                    <p>Az eddigi vizsgáin az átlagos pont: {renderStatsObject('score') || 'Nincs adat'}</p>
+                    <p>Az eddigi vizsgáin elért átlagos pontszám: {renderStatsObject('score') || 'Nincs adat'}</p>
                     <p>A vizsgák sikerességi aránya: {renderStatsObject('completion') || 'Nincs adat'}</p>
                 </div>
             )
@@ -85,6 +85,7 @@ export default function Profile(props) {
                     <div>
                         <div className="container shadow rounded text-center bg-light mb-3">
                             <Learn />
+                            <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')}/>
                         </div>
                         <div className="container shadow rounded text-center bg-light mb-3">
 

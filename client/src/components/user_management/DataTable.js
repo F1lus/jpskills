@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import DataTable,{ createTheme } from 'react-data-table-component'
+import DataTable, { createTheme } from 'react-data-table-component'
 
 import examStats from './models/ExamStatistics'
 
@@ -38,26 +38,47 @@ export default function DetailTable(props) {
         }
     ]
 
-    function filterByExam() {
+    function filterByExam(isAdmin) {
         let filteredArray = []
-        if (props.results && examCode) {
-            props.results.forEach((value, index) => {
-                if (value.examCode === examCode) {
+        if (isAdmin) {
+            if (props.results && examCode) {
+                props.results.forEach((value, index) => {
                     const timeFormat = (value.time % 60).toString().length < 2 ?
                         Math.floor(value.time / 60) + ":0" + (value.time % 60).toString()
                         : Math.floor(value.time / 60) + ":" + (value.time % 60).toString()
-
+                    if (value.examCode === examCode) {
+                        filteredArray.push(
+                            {
+                                id: index + 1,
+                                worker: value.worker,
+                                score: value.score,
+                                time: timeFormat,
+                                completed: value.completed ? 'Átment' : 'Megbukott'
+                            }
+                        )
+                    }
+                })
+            }
+        } else {
+            if (props.results) {
+                props.results.forEach((value, index) => {
+                    const timeFormat = (value.time % 60).toString().length < 2 ?
+                        Math.floor(value.time / 60) + ":0" + (value.time % 60).toString()
+                        : Math.floor(value.time / 60) + ":" + (value.time % 60).toString()
                     filteredArray.push(
                         {
                             id: index + 1,
-                            worker: value.worker,
+                            examName: value.examName,
+                            itemcode: value.examCode,
+                            worker: props.user,
                             score: value.score,
                             time: timeFormat,
                             completed: value.completed ? 'Átment' : 'Megbukott'
                         }
                     )
-                }
-            })
+                })
+
+            }
         }
         return filteredArray
     }
@@ -75,15 +96,17 @@ export default function DetailTable(props) {
     }, [props.results])
 
     useEffect(() => {
-        if (props.results && examCode) {
-            const list = filterByExam()
+        const list = filterByExam(props.permission === 'admin')
+        if (props.results) {
+            setResults(list)
+            setDisplayList(list)
+            setWorkingList(props.results)
+        } else if (props.results && examCode) {
             setResults(list)
             setDisplayList(list)
             setWorkingList(props.results.filter(skill => skill.examCode === examCode))
-        } else {
-            setResults([])
-            setDisplayList([])
         }
+
         // eslint-disable-next-line
     }, [examCode, props.results])
 
@@ -109,10 +132,13 @@ export default function DetailTable(props) {
     }
 
     function search(event) {
-        if (examCode && props.permission === 'admin' && results.length > 0) {
-            const filterBySearch = results.filter(exam => exam.worker.toLowerCase().includes(event.target.value.toLowerCase().trim()) )
-            setDisplayList(filterBySearch)
+        if (props.permission === 'admin') {
+            if (examCode && results.length > 0) {
+                const filterBySearch = results.filter(exam => exam.worker.toLowerCase().includes(event.target.value.toLowerCase().trim()))
+                setDisplayList(filterBySearch)
+            }
         }
+
     }
 
     const conditionalRowStyles = [
@@ -133,12 +159,12 @@ export default function DetailTable(props) {
         }
     ]
 
-    const customText={ 
-        rowsPerPageText: 'Sorok száma oldalanként:', 
-        rangeSeparatorText: '/', 
-        noRowsPerPage: false, 
-        selectAllRowsItem: false, 
-        selectAllRowsItemText: 'Összes' 
+    const customText = {
+        rowsPerPageText: 'Sorok száma oldalanként:',
+        rangeSeparatorText: '/',
+        noRowsPerPage: false,
+        selectAllRowsItem: false,
+        selectAllRowsItemText: 'Összes'
     }
 
     createTheme("ownTheme", {
@@ -149,27 +175,27 @@ export default function DetailTable(props) {
 
     return (
         <div className="container">
-            <h1><p>Vizsgánkénti statisztika</p></h1>
+            <h1><p>{props.permission === 'admin' ? 'Vizsgánkénti statisztika' : 'Vizsga eredmények'}</p></h1>
 
             <select onChange={handleChange} className="mb-3 rounded" id="tableselect">
                 <option value={null}>Vizsga kiválasztása</option>
                 {exams.length > 0 ? exams.map((exam, index) => {
-                    return <option key={index} value={exam.value}>{exam.key} {props.permission === 'admin' ? " || " + exam.value : null}</option>
+                    return <option key={index} value={exam.value}>{exam.key + " || " + exam.value}</option>
                 }) : null}
             </select>
 
             {workingList.length > 0 ? examStatistics() : null}
 
-            <form className="mb-3 w-25">
+            {props.permission === 'admin' ? <form className="mb-3 w-50">
                 <div className="form-group m-auto">
-                    <input type="text" name="search" onChange={search} autoComplete="off" required/>
+                    <input type="text" name="search" onChange={search} autoComplete="off" required />
                     <label htmlFor="search" className="label-name">
                         <span className="content-name">
                             Vizsgázó keresése
                         </span>
                     </label>
                 </div>
-            </form>
+            </form> : null}
 
             <DataTable
                 columns={columns}
