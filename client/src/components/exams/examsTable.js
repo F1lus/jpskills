@@ -6,10 +6,13 @@ import { NavLink } from 'react-router-dom'
 
 export default function ExamsTable(props) {
 
+    const [workData, setWorkData] = useState([])
     const [data, setData] = useState([])
 
     useEffect(() => {
-        setData(toLink())
+        const links = toLink()
+        setData(links)
+        setWorkData(links)
         // eslint-disable-next-line
     },[props.exams])
 
@@ -25,6 +28,7 @@ export default function ExamsTable(props) {
                                 {value.name}
                             </button>
                         </NavLink>,
+                    workName: value.name,
                     date: value.date,
                     itemcode: value.itemcode,
                     status: value.status
@@ -34,11 +38,21 @@ export default function ExamsTable(props) {
         return data
     }
 
+    function search(event) {
+        if (workData.length > 0) {
+            const filterBySearch = workData.filter(exam => {
+                const value = event.target.value.toLowerCase().trim()
+                return exam.workName.toLowerCase().includes(value) || exam.itemcode.includes(value) || exam.date.includes(value)
+            } )
+            setData(filterBySearch)
+        }
+    }
+
     const columns = [
         {
             name: "Vizsga",
             selector: row => row.name,
-            sortable: true
+            sortable: false
         },
         {
             name: "Készült",
@@ -89,15 +103,29 @@ export default function ExamsTable(props) {
     ]
 
     return (
-        <DataTable
-            columns={columns}
-            data={data}
-            pagination={true}
-            fixedHeader={true}
-            noDataComponent={'Nincsenek megjeleníthető vizsgák.'}
-            theme="ownTheme"
-            paginationComponentOptions={customText}
-            conditionalRowStyles={conditionalRowStyles}
-        />
+        <div>
+
+            <form className="mb-3 w-50">
+                <div className="form-group m-auto">
+                    <input type="text" name="search" onChange={search} autoComplete="off" required/>
+                    <label htmlFor="search" className="label-name">
+                        <span className="content-name">
+                            Keresés vizsganév, dátum, vagy cikkszám alapján
+                        </span>
+                    </label>
+                </div>
+            </form>
+
+            <DataTable
+                columns={columns}
+                data={data}
+                pagination={true}
+                fixedHeader={true}
+                noDataComponent={'Nincsenek megjeleníthető vizsgák.'}
+                theme="ownTheme"
+                paginationComponentOptions={customText}
+                conditionalRowStyles={conditionalRowStyles}
+            />
+        </div>
     )
 }

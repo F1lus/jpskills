@@ -162,7 +162,7 @@ export default function DetailTable(props) {
 
             <form className="mb-3 w-25">
                 <div className="form-group m-auto">
-                    <input type="text" name="search" onChange={search} autoComplete="off" />
+                    <input type="text" name="search" onChange={search} autoComplete="off" required/>
                     <label htmlFor="search" className="label-name">
                         <span className="content-name">
                             Vizsgázó keresése
