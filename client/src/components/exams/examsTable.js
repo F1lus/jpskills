@@ -1,8 +1,33 @@
-import React from 'react'
+import React  from 'react'
 
 import DataTable, { createTheme } from 'react-data-table-component'
 
+import { NavLink } from 'react-router-dom'
+
 export default function ExamsTable(props) {
+
+    const data = toLink()
+
+    function toLink() {
+        let data = []
+        props.exams.forEach((value, index) => {
+            data.push(
+                {
+                    id: index+1,
+                    name: 
+                        <NavLink to={data.permission === "admin" ? `/exams/modify/${data[1]}`:`/exams/${data[1]}`}>
+                            <button disabled={data.permission !== 'admin' ? data[3] === 0 : false} className="btn btn-outline-blue m-2">
+                                {value.name}
+                            </button>
+                        </NavLink>,
+                    date: value.date,
+                    itemcode: value.itemcode,
+                    status: value.status ? 'Aktív' : 'Inaktív'
+                }
+            )
+        });
+        return data
+    }
 
     const columns = [
         {
@@ -61,7 +86,7 @@ export default function ExamsTable(props) {
     return (
         <DataTable
             columns={columns}
-            data={props.exams}
+            data={data}
             pagination={true}
             fixedHeader={true}
             noDataComponent={'Nincsenek megjeleníthető vizsgák.'}

@@ -13,7 +13,7 @@ ul {
 .btn-outline-blue {
     color: rgb(33,12,185);
     border-color: rgb(33,12,185);
-    background-color: #f8f9fa;
+    background-color: inherit;
 }
 
 .btn-outline-blue:hover {
