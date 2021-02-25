@@ -826,31 +826,51 @@ class Connection {
     ---------------------------------------------------------------------------
     */
 
-    selectProducts = () => { //Lehetséges termékek kiválasztása a vizsgákhoz
-        return new Promise((resolve, reject) => {
-            this.con('items').select(['ProductName', 'Itemcode'])
-                .leftJoin(this.con.raw('exams ON items.Itemcode = exams.exam_itemcode'))
-                .where(this.con.raw('exams.exam_itemcode IS NULL'))
-                .then(result => {
-                    let filteredResults = []
-                    result.forEach(values => {
-                        filteredResults.push([values.ProductName, values.Itemcode])
-                    })
-                    if (filteredResults.length === result.length) {
-                        resolve(filteredResults)
-                    }
-                }).catch(err => reject(err))
-        })
+    selectProductTypes = async () => {
+        let types = []
+        try {
+            const typeList = await this.con('items').distinct('Types')
+
+            typeList.forEach(type => {
+                types.push(type.Types)
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return types
+    }
+
+    selectProducts = async (productType) => { //Lehetséges termékek kiválasztása a vizsgákhoz
+        let filteredResults = []
+        try {
+            let items = []
+            if (productType) {
+                items = await this.con('items').select(['ProductName', 'Itemcode'])
+                    .leftJoin('exams', 'items.Itemcode', 'exams.exam_itemcode')
+                    .where('exams.exam_itemcode', null).andWhere(this.con.raw('Types = ?', [productType]))
+            } else {
+                items = await this.con('items').select(['ProductName', 'Itemcode'])
+                    .leftJoin('exams', 'items.Itemcode', 'exams.exam_itemcode')
+                    .where('exams.exam_itemcode', null)
+            }
+
+            items.forEach(item => {
+                filteredResults.push([item.ProductName, item.Itemcode])
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+        return filteredResults
     }
 
     selectExamDoc = async (exam_itemcode, cardNum) => { //A vizsga tananyagának kiválasztása
         let result = []
         try {
             const exam = await this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
-            
+
             const skill = await this.con('workers').select('workers.worker_id')
-            .innerJoin('skills', 'workers.worker_id', 'skills.worker_id').where('worker_cardcode', [cardNum])
-            .andWhere('exam_id', [exam.exam_id])
+                .innerJoin('skills', 'workers.worker_id', 'skills.worker_id').where('worker_cardcode', [cardNum])
+                .andWhere('exam_id', [exam.exam_id])
 
             result.push(skill.length !== 0 ? 0 : exam.exam_status, exam.exam_docs)
 

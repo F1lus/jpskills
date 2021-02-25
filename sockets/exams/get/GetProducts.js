@@ -2,12 +2,10 @@ const dbconnect = require('../../../model/DbConnect')
 
 module.exports = (socket) => {
 
-    const getProducts = () => {
-        dbconnect.selectProducts().then(result => {
-            socket.emit('products-emitter', result)
-        }).catch(err => console.log(err))
-    }
+    const getProducts = async (producType) => socket.emit('products-emitter', await dbconnect.selectProducts(producType))
+
+    const getTypes = async () => socket.emit('types-emitter', await dbconnect.selectProductTypes())
 
     socket.on('get-products', getProducts)
-
+    socket.on('get-types', getTypes)
 }

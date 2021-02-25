@@ -14,13 +14,22 @@ export default function CreateTest(props) {
     const [examDoc, setExamDoc] = useState(null)
     const [result, setResult] = useState(null)
     const [items, setItems] = useState([])
+    const [types, setTypes] = useState([])
     const [uploaded, setUploaded] = useState(false)
 
     useEffect(() => {
-        socket.on('products-emitter', products => {
-            if (products) {
-                setItems(products)
+        socket.on('types-emitter', types => {
+            if (types) {
+                setTypes(types)
             } else {
+                setTypes([])
+            }
+        })
+
+        socket.on('products-emitter', products => {
+            if(products){
+                setItems(products)
+            }else{
                 setItems([])
             }
         })
@@ -28,6 +37,13 @@ export default function CreateTest(props) {
 
     function handleChange(event) {
         switch (event.target.name) {
+            case 'type':
+                if(event.target.value === 'A termék gyártója'){
+                    break
+                }else{
+                    socket.emit('get-products', event.target.value)
+                    break
+                }
             case 'item':
                 if (event.target.value === 'A vizsga terméke') {
                     break
@@ -113,8 +129,18 @@ export default function CreateTest(props) {
             <h1 className="text-center m-3"><p>Új vizsga feltöltése:</p></h1>
             <form onSubmit={handleSubmit}>
                 <div className="container text-center mb-2">
+
+                    <select name="type" className="pl-2 w-50 rounded" onChange={handleChange}>
+                        <option defaultValue={-1}>A termék gyártója</option>
+                        {types.length === 0 ? <></> : types.map((elem, index) => {
+                            return (
+                                <option key={index} value={elem}>{elem}</option>
+                            )
+                        })}
+                    </select>
+
                     <select name="item" className="pl-2 w-50 rounded" onChange={handleChange}>
-                        <option defaultValue={-1}>A vizsga terméke</option>
+                        <option defaultValue={-1}>{items.length === 0 ? 'Nincs megjeleníthető termék' : 'A vizsga terméke'}</option>
                         {items.length === 0 ? <></> : items.map((elem, index) => {
                             return (
                                 <option key={index} value={elem[1]}>{elem[0]} || {elem[1]}</option>

@@ -13,7 +13,7 @@ export default function ExamWrapper(props){
         socket.open()
 
         if(props.permission === 'admin'){
-            socket.emit('get-products')
+            socket.emit('get-types')
         }
         
         socket.emit('exams-get-signal')
