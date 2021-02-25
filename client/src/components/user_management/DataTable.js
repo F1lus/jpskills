@@ -38,12 +38,6 @@ export default function DetailTable(props) {
         }
     ]
 
-    createTheme("ownStyle", {
-        background: {
-            default: "#f8f9fa"
-        }
-    })
-
     function filterByExam() {
         let filteredArray = []
         if (props.results && examCode) {
@@ -147,6 +141,12 @@ export default function DetailTable(props) {
         selectAllRowsItemText: 'Összes' 
     }
 
+    createTheme("ownTheme", {
+        background: {
+            default: "#f8f9fa"
+        }
+    })
+
     return (
         <div className="container">
             <h1><p>Vizsgánkénti statisztika</p></h1>
@@ -179,7 +179,7 @@ export default function DetailTable(props) {
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}
                 conditionalRowStyles={conditionalRowStyles}
                 paginationComponentOptions={customText}
-                theme="ownStyle"
+                theme="ownTheme"
             />
         </div>
     )

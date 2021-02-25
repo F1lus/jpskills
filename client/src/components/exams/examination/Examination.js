@@ -45,7 +45,7 @@ export default function Examination() {
                     <p>Vizsga: {examProps[0]}</p>
                 </h2>
                 <h3>
-                    <p>Megjegyzés: {examProps[1] === 'null' ? 'Nincs' : examProps[1]}</p>
+                    <p>{examProps[1] === 'null' ? null : `Megjegyzés: ${examProps[1]}`}</p>
                 </h3>
             </div>
             <RenderContent socket={socket} list={questions} exam={exam} />

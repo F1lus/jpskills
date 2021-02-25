@@ -3,6 +3,8 @@ import {NavLink} from 'react-router-dom'
 
 import model from './models/ExamsModel'
 
+import ExamsTable from './examsTable'
+
 export default function Exams(props){
 
     const socket = props.socket
@@ -26,7 +28,8 @@ export default function Exams(props){
             {props.permission === 'admin'? <h1><p>Az Ön által készített vizsgák:</p></h1>
             : <h1><p>Elérhető vizsgák:</p></h1>
             }
-            <div className="container">
+            <ExamsTable/>
+            {/*<div className="container">
                 <div className="row">
                     {exams.length === 0 ? 
                         <div className="container text-center"><h2 className='text-center'>Itt fognak megjelenni az elérhető vizsgák</h2></div>  
@@ -46,7 +49,7 @@ export default function Exams(props){
                         )
                     })}
                 </div>
-            </div>
+                </div>*/}
         </div>
     )
 }
