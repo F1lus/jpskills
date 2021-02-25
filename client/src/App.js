@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import {Switch, Route, Redirect} from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Switch, Route, Redirect } from 'react-router-dom'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
@@ -17,7 +17,7 @@ import Profile from './components/user_management/Profile'
 import Examination from './components/exams/examination/Examination'
 import ExamResults from './components/exams/examination/ExamResults'
 
-export default function App(){
+export default function App() {
 
   const [loggedIn, setLoggedIn] = useState(false)
   const [user, setUser] = useState(null)
@@ -30,136 +30,136 @@ export default function App(){
 
     socket.on('login-info', (username, perm) => {
       setLoggedIn(username && perm)
-      if(loggedIn){
+      if (loggedIn) {
         setUser(username)
         setPermission(perm)
       }
     })
 
     return () => socket.disconnect()
-  },[loggedIn])
+  }, [loggedIn])
 
   return (
-        <Switch>
-          <Route exact path='/' component={() =>{
-            if(loggedIn){
-              return <Redirect to='/home' from='/'/>
-            }else{
-              return <Login />
-            }
-          }}/>
+    <Switch>
+      <Route exact path='/' component={() => {
+        if (loggedIn) {
+          return <Redirect to='/home' from='/' />
+        } else {
+          return <Login />
+        }
+      }} />
 
-          <Route exact path='/home' component={() =>{
-            if(loggedIn){
-              return (
-                <div>
-                  <CustomNavbar/>
-                  <Home user={user} permission={permission}/>
-                </div>
-              )
-            }else{
-              return <Redirect to='/' from='/home' />
-            }
-          }} />
+      <Route exact path='/home' component={() => {
+        if (loggedIn) {
+          return (
+            <div>
+              <CustomNavbar />
+              <Home user={user} permission={permission} />
+            </div>
+          )
+        } else {
+          return <Redirect to='/' from='/home' />
+        }
+      }} />
 
-          <Route exact path='/exams' component={() =>{
-            if(loggedIn){
-              return (
-                <div>
-                  <CustomNavbar/>
-                  <ExamWrapper permission={permission}/>
-                </div>
-              )
-            }else{
-              return <Redirect to='/' from='/exams'/>
-            }
-          }}/>
+      <Route exact path='/exams' component={() => {
+        if (loggedIn) {
+          return (
+            <div>
+              <CustomNavbar />
+              <ExamWrapper permission={permission} />
+            </div>
+          )
+        } else {
+          return <Redirect to='/' from='/exams' />
+        }
+      }} />
 
-          <Route exact path='/exams/modify/:examName' component={() =>{
-            if(loggedIn){
-              if(permission === 'admin'){
-                return (
-                <div>
-                  <CustomNavbar/>
-                  <ExamModify/>
-                </div>
-                )
-              }else{
-                return <Redirect to='/exams' from='/exams/modify/:examName' />
+      <Route exact path='/exams/modify/:examName' component={() => {
+        if (loggedIn) {
+          if (permission === 'admin') {
+            return (
+              <div>
+                <CustomNavbar />
+                <ExamModify />
+              </div>
+            )
+          } else {
+            return <Redirect to='/exams' from='/exams/modify/:examName' />
+          }
+        } else {
+          return <Redirect to='/' from='/exams/modify/:examName' />
+        }
+      }} />
+
+      <Route exact path='/exams/learn/:examCode' component={() => {
+        if (loggedIn) {
+          return (
+            <div>
+              <CustomNavbar />
+              <ExamDocument permission={permission} />
+            </div>
+          )
+
+        } else {
+          return <Redirect to='/' from='/exams/learn/:examCode' />
+        }
+      }} />
+
+      <Route exact path='/exams/:examCode' component={() => {
+        if (loggedIn) {
+          return (
+            <div>
+              <CustomNavbar />
+              <Examination />
+            </div>
+          )
+
+        } else {
+          return <Redirect to='/' from='/exams/:examCode' />
+        }
+      }} />
+
+      <Route exact path='/exams/result/:examCode/' component={() => {
+        if (loggedIn) {
+          return (
+            <div>
+              <CustomNavbar />
+              <ExamResults />
+            </div>
+          )
+
+        } else {
+          return <Redirect to='/' from='/exams/result/:examCode' />
+        }
+      }} />
+
+      <Route exact path='/profile' component={() => {
+        if (loggedIn) {
+          return (
+            <div>
+              <CustomNavbar />
+              <Profile user={user} permission={permission} />
+            </div>
+          )
+        } else {
+          return <Redirect to='/' from='/profile' />
+        }
+      }} />
+
+      <Route exact path='/logout' component={() => {
+        if (loggedIn) {
+          API.post('/logout', { cmd: 'jp-logout' })
+            .then(response => {
+              if (response.data.success) {
+                window.location.reload()
               }
-            }else{
-              return <Redirect to='/' from='/exams/modify/:examName' />
-            }
-          }}/>
-
-        <Route exact path='/exams/learn/:examCode' component={() =>{
-          if(loggedIn){
-            return (
-              <div>
-                <CustomNavbar/>
-                <ExamDocument permission={permission} />
-              </div>
-            )
-            
-          }else{
-            return <Redirect to='/' from='/exams/learn/:examCode' />
-          }
-        }} />
-
-        <Route exact path='/exams/:examCode' component={() =>{
-          if(loggedIn){
-            return (
-              <div>
-                <CustomNavbar/>
-                <Examination />
-              </div>
-            )
-            
-          }else{
-            return <Redirect to='/' from='/exams/:examCode' />
-          }
-        }} />
-
-        <Route exact path='/exams/result/:examCode/' component={() =>{
-          if(loggedIn){
-            return (
-              <div>
-                <CustomNavbar/>
-                <ExamResults />
-              </div>
-            )
-            
-          }else{
-            return <Redirect to='/' from='/exams/result/:examCode' />
-          }
-        }} />
-
-        <Route exact path='/profile' component={() =>{
-          if(loggedIn){
-            return (
-              <div>
-                <CustomNavbar/>
-                <Profile user={user} permission={permission} />
-              </div>
-            )
-          }else{
-            return <Redirect to='/' from='/profile' />
-          }
-        }} />
-
-        <Route exact path='/logout' component={() =>{
-          if(loggedIn){
-           API.post('/logout', {cmd: 'jp-logout'})
-           .then(response => {
-             if(response.data.success){
-              window.location.reload()
-             }
-           }).catch(err => console.log(err))
-          }else{
-            return <Redirect to='/' from='/logout' />
-          }
-        }} />
-      </Switch>
+            }).catch(err => console.log(err))
+        } else {
+          return <Redirect to='/' from='/logout' />
+        }
+      }} />
+    </Switch>
   )
 
 }

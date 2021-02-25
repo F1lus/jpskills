@@ -6,6 +6,7 @@ const http = require('http')
 const socketio = require('socket.io')
 const sharedSession = require('express-socket.io-session')
 const fileUpload = require('express-fileupload')
+const helmet = require('helmet')
 
 //Socketek
 const socketWrapper = require('./sockets/SocketWrapper')
@@ -37,6 +38,8 @@ const io = socketio(server, {
 })
 
 //Middleware-ek
+app.use(helmet())
+
 app.use(cors({
     origin: 'http://localhost:3000',
     methods: 'GET, POST',

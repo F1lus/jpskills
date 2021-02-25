@@ -46,7 +46,7 @@ export default function CreateTest(props) {
                     break
                 }
             case 'item':
-                if (event.target.value === 'A vizsga terméke') {
+                if (event.target.value === 'A vizsga terméke' || event.target.value === 'Nem található termék') {
                     break
                 } else {
                     setItem(event.target.value)
@@ -144,7 +144,7 @@ export default function CreateTest(props) {
                     </select>
 
                     <select name="item" className="pl-2 w-50 rounded" onChange={handleChange}>
-                        <option defaultValue={-1}>{items.length === 0 ? 'Nincs megjeleníthető termék' : 'A vizsga terméke'}</option>
+                        <option defaultValue={-1}>{items.length === 0 ? 'Nem található termék' : 'A vizsga terméke'}</option>
                         {items.length === 0 ? <></> : items.map((elem, index) => {
                             return (
                                 <option key={index} value={elem[1]}>{elem[0]} || {elem[1]}</option>

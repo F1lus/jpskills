@@ -1,4 +1,5 @@
 const dbconnect = require('../../../model/DbConnect')
+const Buffer = require('safe-buffer').Buffer
 
 module.exports = (socket) => {
 
