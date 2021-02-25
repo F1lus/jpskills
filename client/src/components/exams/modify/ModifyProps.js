@@ -23,12 +23,16 @@ export default function ModifyProps(props) {
         const list = examProps.slice()
         switch (event.target.name) {
             case 'examName':
-                list[0] = event.target.value
-                setExamProps(list)
+                if(list[0].length < 100){
+                    list[0] = event.target.value
+                    setExamProps(list)
+                }
                 break
             case 'examNotes':
-                list[1] = event.target.value
-                setExamProps(list)
+                if(list[1].length < 200){
+                    list[1] = event.target.value
+                    setExamProps(list)
+                }
                 break
             case 'examStatus':
                 if (event.target.value === 'Állapotváltás...') {

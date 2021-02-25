@@ -9,8 +9,8 @@ export default function CreateTest(props) {
     const socket = props.socket
 
     const [item, setItem] = useState(null)
-    const [examName, setExamName] = useState(null)
-    const [comment, setComment] = useState(null)
+    const [examName, setExamName] = useState('')
+    const [comment, setComment] = useState('')
     const [examDoc, setExamDoc] = useState(null)
     const [result, setResult] = useState(null)
     const [items, setItems] = useState([])
@@ -52,13 +52,16 @@ export default function CreateTest(props) {
                     break
                 }
             case 'examName':
-                setExamName(event.target.value)
+                if(examName.length < 100){
+                    setExamName(event.target.value)
+                }
                 break
             case 'comment':
-                setComment(event.target.value)
+                if(comment.length < 200){
+                    setComment(event.target.value)
+                }
                 break
             case 'examDoc':
-                console.log(event.target.files[0])
                 setExamDoc(event.target.files[0])
                 break
             default:
@@ -161,7 +164,7 @@ export default function CreateTest(props) {
                     <input type="text" name="comment" onChange={handleChange} value={comment || ''} autoComplete="off" />
                     <label htmlFor="comment" className="label-name">
                         <span className="content-name">
-                            Megjegyzés:
+                            Megjegyzés (ha van):
                         </span>
                     </label>
                 </div>
