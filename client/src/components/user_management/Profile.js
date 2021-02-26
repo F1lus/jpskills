@@ -85,10 +85,9 @@ export default function Profile(props) {
                     <div>
                         <div className="container shadow rounded text-center bg-light mb-3">
                             <Learn />
-                            <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')}/>
                         </div>
-                        <div className="container shadow rounded text-center bg-light mb-3">
-
+                        <div className="container shadow rounded text-center bg-light mb-3 pt-3">
+                            <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')}/>
                         </div>
                     </div>
                 }
