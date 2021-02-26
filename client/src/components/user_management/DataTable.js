@@ -65,17 +65,30 @@ export default function DetailTable(props) {
                     const timeFormat = (value.time % 60).toString().length < 2 ?
                         Math.floor(value.time / 60) + ":0" + (value.time % 60).toString()
                         : Math.floor(value.time / 60) + ":" + (value.time % 60).toString()
-                    filteredArray.push(
-                        {
-                            id: index + 1,
-                            examName: value.examName,
-                            score: value.score,
-                            time: timeFormat,
-                            completed: value.completed ? 'Átment' : 'Megbukott'
+                    if (examCode) {
+                        if (value.examCode === examCode) {
+                            filteredArray.push(
+                                {
+                                    id: index + 1,
+                                    examName: value.examName,
+                                    score: value.score,
+                                    time: timeFormat,
+                                    completed: value.completed ? 'Átment' : 'Megbukott'
+                                }
+                            )
                         }
-                    )
+                    } else {
+                        filteredArray.push(
+                            {
+                                id: index + 1,
+                                examName: value.examName,
+                                score: value.score,
+                                time: timeFormat,
+                                completed: value.completed ? 'Átment' : 'Megbukott'
+                            }
+                        )
+                    }
                 })
-
             }
         }
         return filteredArray
