@@ -133,24 +133,29 @@ export default function CreateTest(props) {
             <h1 className="text-center m-3"><p>Új vizsga feltöltése:</p></h1>
             <form onSubmit={handleSubmit}>
                 <div className="container text-center mb-2">
+                    <div className="row">
+                        <div className="col-md-4">
+                            <select name="type" className="w-50 rounded" onChange={handleChange}>
+                                <option defaultValue={-1}>A termék gyártója</option>
+                                {types.length === 0 ? <></> : types.map((elem, index) => {
+                                    return (
+                                        <option key={index} value={elem}>{elem}</option>
+                                    )
+                                })}
+                            </select>
+                        </div>
 
-                    <select name="type" className="pl-2 w-50 rounded" onChange={handleChange}>
-                        <option defaultValue={-1}>A termék gyártója</option>
-                        {types.length === 0 ? <></> : types.map((elem, index) => {
-                            return (
-                                <option key={index} value={elem}>{elem}</option>
-                            )
-                        })}
-                    </select>
-
-                    <select name="item" className="pl-2 w-50 rounded" onChange={handleChange}>
-                        <option defaultValue={-1}>{items.length === 0 ? 'Nem található termék' : 'A vizsga terméke'}</option>
-                        {items.length === 0 ? <></> : items.map((elem, index) => {
-                            return (
-                                <option key={index} value={elem[1]}>{elem[0]} || {elem[1]}</option>
-                            )
-                        })}
-                    </select>
+                        <div className="col-md-8">
+                            <select name="item" className="w-75 rounded" onChange={handleChange}>
+                                <option defaultValue={-1}>{items.length === 0 ? 'Válasszon gyártót először' : 'A vizsga terméke'}</option>
+                                {items.length === 0 ? <></> : items.map((elem, index) => {
+                                    return (
+                                        <option key={index} value={elem[1]}>{elem[0]} || {elem[1]}</option>
+                                    )
+                                })}
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="form-group m-auto w-75">
