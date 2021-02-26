@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { Document, Page, pdfjs } from 'react-pdf'
 
-import { io } from 'socket.io-client'
+import manager from '../../GlobalSocket'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
@@ -54,7 +54,7 @@ export default function ExamDocument(props) {
     }
 
     useEffect(() => {
-        const socket = io('http://localhost:5000', { withCredentials: true })
+        const socket = new manager().socket
 
         socket.emit('examDoc-signal', exam.examCode)
 

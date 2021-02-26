@@ -5,8 +5,6 @@ import model from '../models/ExamsModel'
 
 import manager from '../../GlobalSocket'
 
-//import { Bounce } from 'react-reveal';
-
 export default function Learn() {
 
     const socket = new manager().socket

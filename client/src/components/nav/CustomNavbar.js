@@ -2,9 +2,7 @@ import React from 'react'
 import {Elemek} from './navItems';
 import {NavLink} from 'react-router-dom';
 
-export default function CustomNavbar(){
-    
-    return (
+export default () => (
         <div className="sticky-top">
             <section className="sticky-top" id="hatter"/>
             <ul className="nav nav-fill mb-3 sticky-top">
@@ -16,6 +14,5 @@ export default function CustomNavbar(){
                 )
             })}
             </ul>
-        </div>
-    );  
-}
+        </div> 
+)

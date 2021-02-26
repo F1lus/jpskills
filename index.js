@@ -23,14 +23,16 @@ const updater = require('./routes/exams/update/ExamUpdate')
 const session = require('./model/SessionSetup')
 
 //Előkészítés
+const config = require('./config')
+
 const app = express()
 const server = http.createServer(app)
 
-const PORT = process.env.PORT || 5000
+const PORT = config.server_port
 
 const io = socketio(server, {
     cors:{
-        origin: 'http://localhost:3000',
+        origin: config.client,
         methods: ['GET', 'POST'],
         allowedHeaders: 'Content-Type',
         credentials: true
@@ -41,7 +43,7 @@ const io = socketio(server, {
 app.use(helmet())
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: config.client,
     methods: 'GET, POST',
     allowedHeaders: 'Content-Type',
     credentials: true

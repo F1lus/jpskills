@@ -24,13 +24,14 @@ class Connection {
      */
 
     constructor() {
+        const config = require('../config')
         this.con = require('knex')({
             client: 'mysql',
             connection: {
-                host: 'localhost',
-                user: 'root',
-                password: '',
-                database: 'jpskills',
+                host: config.database.host,
+                user: config.database.user,
+                password: config.database.password,
+                database: config.database.db,
                 multipleStatements: true
             },
             pool: { min: 0, max: 7 }

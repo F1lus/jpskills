@@ -1,7 +1,8 @@
 import {io} from 'socket.io-client'
+import config from '../config'
 
 export default class Socket{
     constructor(){
-        this.socket = io('http://localhost:5000',{withCredentials:true})
+        this.socket = io(config.server_address,{withCredentials:true})
     }
 }
