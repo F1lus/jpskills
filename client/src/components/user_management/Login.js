@@ -61,7 +61,11 @@ export default function Login(){
                     if(result.data.access){
                         window.location.reload()
                     }else{
-                        setAlert('A megadott adatok egyike hibás!')
+                        if(register){
+                            setAlert('A kártyaszám valószínűleg már foglalt!')
+                        }else{
+                            setAlert('A megadott adatok egyike hibás!')
+                        }
                     }
                 }).catch(err =>{
                     setAlert('Hiba történt! Próbálja újra!')

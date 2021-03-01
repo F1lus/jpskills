@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import manager from '../GlobalSocket'
+import { Admin, User } from '../user_management/handlers/PermissionHandler';
 
-export default function Home(props){
-    
+export default function Home(props) {
+
     const socket = new manager().socket
     const nev = props.user
-    
+
     const [vanVizsga, setVanVizsga] = useState(false)
 
     useEffect(() => {
@@ -18,23 +19,23 @@ export default function Home(props){
             socket.disconnect()
         }
         // eslint-disable-next-line
-    },[])
+    }, [])
 
     useEffect(() => {
         socket.on('exams-get-emitter', (dbExams) => {
             setVanVizsga(dbExams.length > 0)
         })
     })
-    
-    return(
+
+    return (
         <div className="container d-flex align-items-center vh-100">
             <div className="container shadow rounded p-3 bg-light">
                 <div className="container text-center">
                     <div className="container text-center m-3">
                         <span id="nev">Kedves {nev}!</span>
-                        <hr className="w-75"/>
+                        <hr className="w-75" />
                     </div>
-                    {props.permission === 'admin' ?
+                    <Admin permission={props.permission}>
                         <div>
                             <NavLink to="/profile">
                                 <button type="button" className="btn btn-warning m-2" >
@@ -48,20 +49,23 @@ export default function Home(props){
                                 </button>
                             </NavLink>
                         </div>
-                        :
-                            vanVizsga ? 
+                    </Admin>
+                    <User permission={props.permission}>
+                        {
+                            vanVizsga ?
                                 <NavLink to="/exams">
                                     <button type="button" className="btn btn-warning m-2" >
                                         Van teljesítetlen vizsgája!
                                     </button>
                                 </NavLink>
-                            :   
+                                :
                                 <div className="container w-50 text-center rounded m-auto p-2 border border-warning" id="nincs">
                                     <b>
                                         Gratulálunk, nincs teljesítetlen vizsgája!
                                     </b>
                                 </div>
-                    }
+                        }
+                    </User>
                 </div>
             </div>
         </div>
