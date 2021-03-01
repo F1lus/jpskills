@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import CryptoJS from 'crypto-js'
 
 import API from '../BackendAPI'
 
@@ -24,14 +25,24 @@ export default function Login(){
                 return
             }
 
+            if(password.toLowerCase() === password){
+                setAlert('A jelszóban szerepelnie kell legalább egy nagybetűnek!')
+                return
+            }
+
+            if(!password.split('').some(letter => !isNaN(letter))){
+                setAlert('A jelszóban szerepelnie kell legalább egy számnak!')
+                return
+            }
+
             if(password !== password2){
                 setAlert('A jelszavak nem egyeznek!')
                 return
             }
 
             data = {
-                cardNum: cardNum,
-                password: password,
+                cardNum: CryptoJS.AES.encrypt(cardNum, 'RcdNum@jp-$k-s3c#r3t').toString(),
+                password: CryptoJS.AES.encrypt(password, 'Rpw@jp-$k-s3c#r3t').toString(),
                 newUser: true
             }
         }else{
@@ -41,8 +52,8 @@ export default function Login(){
             }
     
             data = {
-                cardNum: cardNum,
-                password: password
+                cardNum: CryptoJS.AES.encrypt(cardNum, 'LcdNum@jp-$k-s3c#r3t').toString(),
+                password: CryptoJS.AES.encrypt(password, 'Lpw@jp-$k-s3c#r3t').toString()
             }
         }
         API.post('/login', data)

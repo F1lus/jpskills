@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { Document, Page, pdfjs } from 'react-pdf'
+import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 
 import manager from '../../GlobalSocket'
 
@@ -9,8 +9,6 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@primer/octicons-react';
 import { NavLink } from 'react-router-dom';
-
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
 
 export default function ExamDocument(props) {
 
@@ -20,8 +18,6 @@ export default function ExamDocument(props) {
     const [pageNum, setPageNum] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [status, setStatus] = useState(false)
-
-    pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
 
     function onDocumentLoadSuccess(numPages) {

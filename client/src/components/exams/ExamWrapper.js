@@ -4,6 +4,7 @@ import manager from '../GlobalSocket'
 
 import Exams from './Exams'
 import CreateTest from './create/CreateTest'
+import { Admin } from '../user_management/handlers/PermissionHandler'
 
 export default function ExamWrapper(props){
 
@@ -24,7 +25,9 @@ export default function ExamWrapper(props){
 
     return (
         <div>
-            {props.permission === 'admin' ? <CreateTest socket={socket} permission={props.permission}/> : null}
+            <Admin permission={props.permission}>
+                <CreateTest socket={socket} permission={props.permission}/>
+            </Admin>
             <Exams socket={socket} permission={props.permission}/>
         </div>
     )

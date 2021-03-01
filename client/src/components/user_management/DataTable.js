@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import DataTable, { createTheme } from 'react-data-table-component'
+import { Admin } from './handlers/PermissionHandler'
 
 import examStats from './models/ExamStatistics'
 
@@ -130,7 +131,7 @@ export default function DetailTable(props) {
     }
 
     function examStatistics() {
-        if (examCode && props.permission === 'admin' && workingList.length > 0) {
+        if (examCode && workingList.length > 0) {
             const stats = examStats(workingList)
             return (
                 <div>
@@ -139,6 +140,8 @@ export default function DetailTable(props) {
                     <p>Sikerességi arány: {stats.completionRate + "%"}</p>
                 </div>
             )
+        } else {
+            return null
         }
     }
 
@@ -195,18 +198,21 @@ export default function DetailTable(props) {
                 }) : null}
             </select>
 
-            {workingList.length > 0 ? examStatistics() : null}
-
-            {props.permission === 'admin' ? <form className="mb-3 w-50">
-                <div className="form-group m-auto">
-                    <input type="text" name="search" onChange={search} autoComplete="off" required />
-                    <label htmlFor="search" className="label-name">
-                        <span className="content-name">
-                            Vizsgázó keresése
-                        </span>
-                    </label>
-                </div>
-            </form> : null}
+            <Admin permission={props.permission}>
+                {examStatistics()}
+                {examCode ? 
+                    <form className="mb-3 w-50">
+                        <div className="form-group m-auto">
+                            <input type="text" name="search" onChange={search} autoComplete="off" required />
+                            <label htmlFor="search" className="label-name">
+                                <span className="content-name">
+                                    Vizsgázó keresése
+                            </span>
+                            </label>
+                        </div>
+                    </form> : null
+                }
+            </Admin>
 
             <DataTable
                 columns={columns}

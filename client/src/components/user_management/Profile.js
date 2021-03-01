@@ -6,6 +6,7 @@ import DetailTable from './DataTable'
 import globalStats from './models/GlobalStatistics'
 
 import manager from '../GlobalSocket'
+import { Admin, User } from './handlers/PermissionHandler'
 
 export default function Profile(props) {
 
@@ -77,11 +78,13 @@ export default function Profile(props) {
             </div>
 
             <div>
-                {csoport === 'admin' ? 
+                <Admin permission={csoport}>
                     <div className="container shadow rounded text-center bg-light mb-3 py-3">
                         <DetailTable permission={csoport} results={renderStatsObject('skills')}/>
                     </div>
-                :
+                </Admin>
+                
+                <User permission={csoport}>
                     <div>
                         <div className="container shadow rounded text-center bg-light mb-3">
                             <Learn />
@@ -90,7 +93,7 @@ export default function Profile(props) {
                             <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')}/>
                         </div>
                     </div>
-                }
+                </User>
             </div>
         </div>
     )

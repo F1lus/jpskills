@@ -1,19 +1,14 @@
+const CryptoJS = require('crypto-js')
 /**
  * Általános tudnivalók
  * 
  * @classdesc Ez az osztály kezeli az adatbázissal kapcsolatos összes műveletet
  * 
- * Külső modulok:
  * 
- * @module knex
- * @module mysql
- * 
- * 
- * Minden funkció Promise alapú
+ * Minden funkció async/await alapú
  * 
  * @author Filimon Márk
  */
-
 
 class Connection {
 
@@ -25,6 +20,7 @@ class Connection {
 
     constructor() {
         const config = require('../config')
+        
         this.con = require('knex')({
             client: 'mysql',
             connection: {
@@ -1039,8 +1035,7 @@ class Connection {
                 if (!login) {
                     const insert = await this.con('admin_login').insert({
                         cardcode: cardNum,
-                        password: password,
-                        latest_login: this.con.fn.now()
+                        password: CryptoJS.AES.encrypt(password, 'jp-$kDB').toString()
                     }).transacting(trx)
                     msg = insert.length > 0
                 }
@@ -1064,23 +1059,25 @@ class Connection {
     }
 
     userExists = async (cardNum, password) => {
-        let msg = false
+        let access = false
         try {
             await this.con.transaction(async trx => {
                 const login =
                     await this.con('admin_login')
                         .where(this.con.raw('cardcode = ?', [cardNum])).first().transacting(trx)
                 if (login.password) {
-                    await this.con('admin_login').update({
-                        latest_login: this.con.fn.now()
-                    }).where('cardcode', [cardNum]).transacting(trx)
-                    msg = login.password === password
+                    access = CryptoJS.AES.decrypt(login.password, 'jp-$kDB').toString(CryptoJS.enc.Utf8) === password
+                    if(access){
+                        await this.con('admin_login').update({
+                            latest_login: this.con.fn.now()
+                        }).where('cardcode', [cardNum]).transacting(trx)
+                    }
                 }
             })
         } catch (error) {
             console.log(error.message)
         }
-        return msg
+        return access
     }
 
     /*

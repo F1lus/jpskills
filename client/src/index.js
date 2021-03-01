@@ -20,7 +20,8 @@ console.warn(`FIGYELEM! Ez a weboldal a Jász-Plasztik tulajdona,
   és azonnal értesíti az Adminisztrátorokat, 
   akik ezáltal büntetéseket szabhatnak ki Önre! 
 
-  A weboldal használatával Ön beleegyezik és elfogadja a feltételeket.
+  A weboldal használatával Ön beleegyezik, 
+  és elfogadja ezeket a feltételeket.
 
   (Ha Ön ezekkel az információkkal nincs, vagy nem volt tisztában, 
   az semmilyen esetben nem mentesíti Önt a következmények alól!)`)

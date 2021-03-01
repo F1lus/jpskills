@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
@@ -16,6 +16,7 @@ import ExamDocument from './components/exams/learn/ExamDocument'
 import Profile from './components/user_management/Profile'
 import Examination from './components/exams/examination/Examination'
 import ExamResults from './components/exams/examination/ExamResults'
+import LoginHandler from './components/user_management/handlers/LoginHandler'
 
 export default function App() {
 
@@ -41,124 +42,73 @@ export default function App() {
 
   return (
     <Switch>
-      <Route exact path='/' component={() => {
-        if (loggedIn) {
-          return <Redirect to='/home' from='/' />
-        } else {
-          return <Login />
-        }
-      }} />
+      <Route exact path='/' component={() => (
+        <LoginHandler login={true} loggedIn={loggedIn} allowed={['*']} permission={permission}>
+           <Login />
+        </LoginHandler>
+      )} />
 
-      <Route exact path='/home' component={() => {
-        if (loggedIn) {
-          return (
-            <div>
-              <CustomNavbar />
-              <Home user={user} permission={permission} />
-            </div>
-          )
-        } else {
-          return <Redirect to='/' from='/home' />
-        }
-      }} />
+      <Route exact path='/home' component={() => (
+        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+          <CustomNavbar />
+          <Home user={user} permission={permission} />
+        </LoginHandler>
+      )} />
 
-      <Route exact path='/exams' component={() => {
-        if (loggedIn) {
-          return (
-            <div>
-              <CustomNavbar />
-              <ExamWrapper permission={permission} />
-            </div>
-          )
-        } else {
-          return <Redirect to='/' from='/exams' />
-        }
-      }} />
+      <Route exact path='/exams' component={() => (
+        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+          <CustomNavbar />
+          <ExamWrapper permission={permission} />
+        </LoginHandler>
+      )} />
 
-      <Route exact path='/exams/modify/:examName' component={() => {
-        if (loggedIn) {
-          if (permission === 'admin') {
-            return (
-              <div>
-                <CustomNavbar />
-                <ExamModify />
-              </div>
-            )
-          } else {
-            return <Redirect to='/exams' from='/exams/modify/:examName' />
+      <Route exact path='/exams/modify/:examName' component={() => (
+        <LoginHandler loggedIn={loggedIn} allowed={['admin', 'superuser']} permission={permission}>
+          <CustomNavbar />
+          <ExamModify />
+        </LoginHandler>
+      )} />
+
+      <Route exact path='/exams/learn/:examCode' component={() => (
+        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+          <CustomNavbar />
+          <ExamDocument permission={permission} />
+        </LoginHandler>
+      )} />
+
+      <Route exact path='/exams/:examCode' component={() => (
+        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+          <CustomNavbar />
+          <Examination />
+        </LoginHandler>
+      )} />
+
+      <Route exact path='/exams/result/:examCode/' component={() => (
+        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+          <CustomNavbar />
+          <ExamResults />
+        </LoginHandler>
+      )} />
+
+      <Route exact path='/profile' component={() => (
+        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+          <CustomNavbar />
+          <Profile user={user} permission={permission} />
+        </LoginHandler>
+      )} />
+
+      <Route exact path='/logout' component={() => (
+        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+          {
+            API.post('/logout', { cmd: 'jp-logout' })
+              .then(response => {
+                if (response.data.success) {
+                  window.location.reload()
+                }
+              }).catch(err => console.log(err))
           }
-        } else {
-          return <Redirect to='/' from='/exams/modify/:examName' />
-        }
-      }} />
-
-      <Route exact path='/exams/learn/:examCode' component={() => {
-        if (loggedIn) {
-          return (
-            <div>
-              <CustomNavbar />
-              <ExamDocument permission={permission} />
-            </div>
-          )
-
-        } else {
-          return <Redirect to='/' from='/exams/learn/:examCode' />
-        }
-      }} />
-
-      <Route exact path='/exams/:examCode' component={() => {
-        if (loggedIn) {
-          return (
-            <div>
-              <CustomNavbar />
-              <Examination />
-            </div>
-          )
-
-        } else {
-          return <Redirect to='/' from='/exams/:examCode' />
-        }
-      }} />
-
-      <Route exact path='/exams/result/:examCode/' component={() => {
-        if (loggedIn) {
-          return (
-            <div>
-              <CustomNavbar />
-              <ExamResults />
-            </div>
-          )
-
-        } else {
-          return <Redirect to='/' from='/exams/result/:examCode' />
-        }
-      }} />
-
-      <Route exact path='/profile' component={() => {
-        if (loggedIn) {
-          return (
-            <div>
-              <CustomNavbar />
-              <Profile user={user} permission={permission} />
-            </div>
-          )
-        } else {
-          return <Redirect to='/' from='/profile' />
-        }
-      }} />
-
-      <Route exact path='/logout' component={() => {
-        if (loggedIn) {
-          API.post('/logout', { cmd: 'jp-logout' })
-            .then(response => {
-              if (response.data.success) {
-                window.location.reload()
-              }
-            }).catch(err => console.log(err))
-        } else {
-          return <Redirect to='/' from='/logout' />
-        }
-      }} />
+        </LoginHandler>
+      )} />
     </Switch>
   )
 
