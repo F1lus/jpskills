@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
-
+import React, { useState, useEffect } from 'react'
+import {NavLink} from 'react-router-dom'
+ 
 import manager from '../GlobalSocket'
-import { Admin, User } from '../user_management/handlers/PermissionHandler';
+import { Admin, User } from '../user_management/handlers/PermissionHandler'
+
+import { Adminnak, Usernek } from './Helpdesk'
 
 export default function Home(props) {
 
@@ -10,6 +12,7 @@ export default function Home(props) {
     const nev = props.user
 
     const [vanVizsga, setVanVizsga] = useState(false)
+    const [help, setHelp] = useState(false)
 
     useEffect(() => {
         socket.open()
@@ -27,9 +30,17 @@ export default function Home(props) {
         })
     })
 
+    function needHelp(event, index) {
+        if(event.target.checked) {
+            setHelp(true)
+        } else {
+            setHelp(false)
+        }
+    }
+
     return (
-        <div className="container d-flex align-items-center vh-100">
-            <div className="container shadow rounded p-3 bg-light">
+        <div className="container mb-3">
+            <div className="container shadow rounded p-3 bg-light mb-3">
                 <div className="container text-center">
                     <div className="container text-center m-3">
                         <span id="nev">Kedves {nev}!</span>
@@ -67,6 +78,27 @@ export default function Home(props) {
                         }
                     </User>
                 </div>
+            </div>
+
+            <div className="container shadow rounded p-3 bg-light">
+                <h1 className="text-center"><p>Segítség a használathoz</p></h1>
+                    <Admin permission={props.permission}>
+                        {Adminnak.map((value, index) => {
+                            return(
+                                <div className="container" key={index}>
+                                    <label>
+                                        <input type="checkbox" className="help" onChange={e => needHelp(e,index)}/>
+                                        {value.kerdes}
+                                    </label>
+                                    {help && (
+                                        <div className="container" key={index}>
+                                            <p>{value.valasz}</p>
+                                        </div>)
+                                    }
+                                </div>
+                            )
+                        })}
+                    </Admin>
             </div>
         </div>
     )
