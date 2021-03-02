@@ -140,7 +140,7 @@ class Connection {
                     .where('question_id', [question.question_id]).andWhere('correct', 1)
 
                 if (answers.length > 0) {
-                    maxPoints += question.points * results.length
+                    maxPoints += question.points * answers.length
                 }
             }
         } catch (error) {
