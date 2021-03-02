@@ -169,7 +169,7 @@ class Connection {
                         let questionPoints = 0
 
                         for (const answer of answerObj.answers) {
-                            if (result.findIndex(value => value.results_id === answer) > -1 && answerObj.answers.length > 0 && answerObj.answers.length <= result.length) {
+                            if (results.findIndex(value => value.results_id === answer) > -1 && answerObj.answers.length > 0 && answerObj.answers.length <= results.length) {
                                 totalPoints += question.points
                                 questionPoints += question.points
                             }
