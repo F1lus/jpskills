@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Redirect } from 'react-router-dom'
 
 import API from '../../BackendAPI'
@@ -17,22 +17,32 @@ export default function CreateTest(props) {
     const [types, setTypes] = useState([])
     const [uploaded, setUploaded] = useState(false)
 
-    useEffect(() => {
-        socket.on('types-emitter', types => {
-            if (types) {
-                setTypes(types)
-            } else {
-                setTypes([])
-            }
-        })
+    const handleTypes = useCallback(types => {
+        if (types) {
+            setTypes(types)
+        } else {
+            setTypes([])
+        }
+    }, [])
 
-        socket.on('products-emitter', products => {
-            if(products){
-                setItems(products)
-            }else{
-                setItems([])
-            }
-        })
+    const handleProducts = useCallback(products => {
+        if(products){
+            setItems(products)
+        }else{
+            setItems([])
+        }
+    }, [])
+
+    useEffect(() => {
+        socket.on('types-emitter', handleTypes)
+
+        socket.on('products-emitter', handleProducts)
+
+        return () => {
+            socket.off('types-emitter', handleTypes)
+
+            socket.off('products-emitter', handleProducts)
+        }
     })
 
     function handleChange(event) {

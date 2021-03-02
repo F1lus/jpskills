@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
 
 import Learn from '../exams/learn/Learn'
 import DetailTable from './DataTable'
 
 import globalStats from './models/GlobalStatistics'
 
-import manager from '../GlobalSocket'
+import {SocketContext} from '../GlobalSocket'
 import { Admin, User } from './handlers/PermissionHandler'
 
 export default function Profile(props) {
@@ -13,23 +13,22 @@ export default function Profile(props) {
     const nev = props.user
     const csoport = props.permission
 
-    const socket = new manager().socket
+    const socket = useContext(SocketContext)
 
     const [stats, setStats] = useState(null)
 
+    const handleStatistics = useCallback(stats => {
+        setStats(globalStats(stats))
+    }, [])
+
     useEffect(() => {
-        socket.open()
         socket.emit('requesting-statistics')
+
+        socket.on('sending-statistics', handleStatistics)
+
+        return () => socket.off('sending-statistics', handleStatistics)
         // eslint-disable-next-line
     },[])
-
-    useEffect(() => {
-        socket.on('sending-statistics', (stats) => {
-            setStats(globalStats(stats))
-        })
-
-        return () => socket.disconnect()
-    })
 
     function renderStatsObject(entry){
         if(stats){

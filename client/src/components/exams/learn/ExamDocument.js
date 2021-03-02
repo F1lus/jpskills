@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 
-import manager from '../../GlobalSocket'
+import {SocketContext} from '../../GlobalSocket'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
@@ -13,6 +13,7 @@ import { NavLink } from 'react-router-dom';
 export default function ExamDocument(props) {
 
     const exam = useParams()
+    const socket = useContext(SocketContext)
 
     const [examDoc, setExamDoc] = useState('/')
     const [pageNum, setPageNum] = useState(null);
@@ -49,20 +50,18 @@ export default function ExamDocument(props) {
         }
     }
 
-    useEffect(() => {
-        const socket = new manager().socket
+    const handleExamDoc = useCallback((status, document) => {
+        setExamDoc(document)
+        setStatus(status === 0)
+    }, [])
 
+    useEffect(() => {
         socket.emit('examDoc-signal', exam.examCode)
 
-        socket.on('examDoc-emitter', (status, document) => {
-            if (document) {
-                setExamDoc(document)
-                setStatus(status === 0)
-            }
-        })
+        socket.on('examDoc-emitter', handleExamDoc)
 
-        return () => socket.disconnect()
-    }, [exam.examCode])
+        return () => socket.off('examDoc-emitter', handleExamDoc)
+    }, [exam.examCode, socket, handleExamDoc])
 
     return (
         <div className="container text-center bg-light rounded shadow mb-3">

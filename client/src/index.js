@@ -1,13 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {Provider} from 'react-redux'
+import stateStore from './components/store/Store'
+
+import { BrowserRouter as Router } from 'react-router-dom'
+import App from './App'
+import * as serviceWorker from './serviceWorker'
+import {socket, SocketContext} from './components/GlobalSocket'
 
 ReactDOM.render(
   <Router>
     <React.StrictMode>
-      <App />
+      <Provider store={stateStore}>
+        <SocketContext.Provider value={socket}>
+          <App />
+        </SocketContext.Provider>
+      </Provider>
     </React.StrictMode>
   </Router>
   ,

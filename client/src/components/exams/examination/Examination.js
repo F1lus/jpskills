@@ -1,41 +1,38 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Redirect, useParams } from 'react-router-dom'
 
 import RenderContent from './RenderContent'
 import model from '../models/QuestionsModel'
 
-import manager from '../../GlobalSocket'
+import {SocketContext} from '../../GlobalSocket'
 
 export default function Examination() {
 
-    const socket = new manager().socket
+    const socket = useContext(SocketContext)
     const exam = useParams().examCode
 
     const [examProps, setExamProps] = useState([])
     const [questions, setQuestions] = useState([])
 
+    const handleContent = useCallback(questionList => setQuestions(model(questionList).questions), [])
+
+    const handleProps = useCallback(examProps => setExamProps(examProps), [])
+
     useEffect(() => {
-        socket.open()
         socket.emit('request-exam-content', exam)
         socket.emit('request-exam-props', exam)
         socket.emit('begin-timer')
 
+        socket.on('exam-content', handleContent)
+
+        socket.on('exam-props', handleProps)
+
         return () => {
-            socket.disconnect()
+            socket.off('exam-content', handleContent)
+
+            socket.off('exam-props', handleProps)
         }
-
-        // eslint-disable-next-line
-    }, [])
-
-    useEffect(() => {
-        socket.on('exam-content', (questionList) => {
-            setQuestions(model(questionList).questions)
-        })
-
-        socket.on('exam-props', examProps => {
-            setExamProps(examProps)
-        })
-    })
+    }, [exam, handleContent, handleProps, socket])
 
     return (
         <div>

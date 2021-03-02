@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom'
 
 import AddAnswer from './AddAnswer'
@@ -30,15 +30,14 @@ export default function ListManager(props){
         }
     }
 
+    const handleServerAccept = useCallback(() => setDisableButton(false), [])
+
     useEffect(() =>{
         setList(props.list)
-    }, [props.list])
+        socket.on('server-accept', handleServerAccept)
 
-    useEffect(() => {
-        socket.on('server-accept', () => {
-            setDisableButton(false)
-        })
-    })
+        return () => socket.off('server-accept', handleServerAccept)
+    }, [props.list, socket, handleServerAccept])
 
     return (
         <div className="container">

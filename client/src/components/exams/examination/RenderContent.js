@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Redirect, Prompt } from 'react-router-dom'
 
 export default function RenderContent(props) {
@@ -43,6 +43,30 @@ export default function RenderContent(props) {
         setDisable(true)
     }
 
+    const handleExamProcessed = useCallback(() => setFinished(true), [])
+
+    const submitExam = useCallback(() => {
+        if(!disable){
+            socket.emit('exam-finished', answers, props.exam)
+        }
+    }, [answers, disable, props.exam, socket])
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', warnUser)
+        window.addEventListener('unload', submitExam)
+
+        if(disable){
+            socket.on('exam-processed', handleExamProcessed)
+        }
+
+        return () => {
+            window.removeEventListener('beforeunload', warnUser)
+            window.removeEventListener('unload', submitExam)
+
+            socket.off('exam-processed', handleExamProcessed)
+        }
+    }, [list, disable, handleExamProcessed, socket, submitExam])
+
     useEffect(() => {
         const temp = []
         list.forEach(question => {
@@ -50,34 +74,11 @@ export default function RenderContent(props) {
             temp.push(answerObj)
         })
         setAnswers(temp)
-        // eslint-disable-next-line
     }, [list])
-
-    useEffect(() => {
-        window.addEventListener('beforeunload', warnUser)
-        window.addEventListener('unload', submitExam)
-
-        if(disable){
-            socket.on('exam-processed', () => {
-                setFinished(true)
-            })
-        }
-
-        return () => {
-            window.removeEventListener('beforeunload', warnUser)
-            window.removeEventListener('unload', submitExam)
-        }
-    })
 
     const warnUser = (event) => {
         event.preventDefault()
         event.returnValue = 'Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva.'
-    }
-
-    const submitExam = () => {
-        if(!disable){
-            socket.emit('exam-finished', answers, props.exam)
-        }
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, {useState, useEffect}  from 'react'
+import React, {useState, useEffect, useCallback}  from 'react'
 
 import DataTable, { createTheme } from 'react-data-table-component'
 
@@ -9,14 +9,7 @@ export default function ExamsTable(props) {
     const [workData, setWorkData] = useState([])
     const [data, setData] = useState([])
 
-    useEffect(() => {
-        const links = toLink()
-        setData(links)
-        setWorkData(links)
-        // eslint-disable-next-line
-    },[props.exams])
-
-    function toLink() {
+    const toLink = useCallback(() => {
         let data = []
         props.exams.forEach((value, index) => {
             data.push(
@@ -36,7 +29,14 @@ export default function ExamsTable(props) {
             )
         });
         return data
-    }
+    }, [props.exams, props.permission])
+
+    useEffect(() => {
+        const links = toLink()
+        setData(links)
+        setWorkData(links)
+        
+    },[props.exams, toLink])
 
     function search(event) {
         if (workData.length > 0) {

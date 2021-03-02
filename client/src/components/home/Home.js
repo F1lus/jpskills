@@ -1,37 +1,38 @@
-import React, { useState, useEffect } from 'react'
-import {NavLink} from 'react-router-dom'
- 
-import manager from '../GlobalSocket'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
+import { NavLink } from 'react-router-dom'
+
+import { SocketContext } from '../GlobalSocket'
 import { Admin, User } from '../user_management/handlers/PermissionHandler'
 
 import { Adminnak, Usernek } from './Helpdesk'
-import {ChevronRightIcon} from '@primer/octicons-react'
+import { ChevronRightIcon } from '@primer/octicons-react'
 
 export default function Home(props) {
 
-    const socket = new manager().socket
+    const socket = useContext(SocketContext)
+
     const nev = props.user
 
     const [vanVizsga, setVanVizsga] = useState(false)
 
-    useEffect(() => {
-        socket.open()
-        socket.emit('exams-get-signal')
-
-        return () => {
-            socket.disconnect()
-        }
-        // eslint-disable-next-line
+    const handleExams = useCallback(dbExams => {
+        setVanVizsga(dbExams.length > 0)
     }, [])
 
     useEffect(() => {
-        socket.on('exams-get-emitter', (dbExams) => {
-            setVanVizsga(dbExams.length > 0)
-        })
-    })
+
+        socket.emit('exams-get-signal')
+
+        socket.on('exams-get-emitter', handleExams)
+
+        return () => socket.off('exams-get-emitter', handleExams)
+        // eslint-disable-next-line
+    }, [])
+
+
 
     function needHelp(event, index) {
-        if(event.target.checked) {
+        if (event.target.checked) {
             document.getElementById('help').innerHTML = Adminnak[index].valasz
         } else {
             document.getElementById('help').innerHTML = null
@@ -82,49 +83,49 @@ export default function Home(props) {
 
             <div className="container shadow rounded p-3 bg-light">
                 <h1 className="text-center"><p>Segítség a használathoz</p></h1>
-                    <Admin permission={props.permission}>
-                        <div className="container">
-                            <div className="row">
-                                <div className="col-6">
-                                    {Adminnak.map((value, index) => {
-                                        return(
-                                            <div className="container radio" key={index}>
-                                                <label>
-                                                    <input type="radio" name="question" onChange={e => needHelp(e, index)}/>
-                                                    <ChevronRightIcon className="icon"/>
-                                                    <label id="text">{value.kerdes}</label>
-                                                </label>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                                <div className="col-6">
-                                    <p id="help"/>
-                                </div>
+                <Admin permission={props.permission}>
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-6">
+                                {Adminnak.map((value, index) => {
+                                    return (
+                                        <div className="container radio" key={index}>
+                                            <label>
+                                                <input type="radio" name="question" onChange={e => needHelp(e, index)} />
+                                                <ChevronRightIcon className="icon" />
+                                                <label id="text">{value.kerdes}</label>
+                                            </label>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            <div className="col-6">
+                                <p id="help" />
                             </div>
                         </div>
-                    </Admin>
-                    <User permission={props.permission}>
-                        <div className="container">
-                            <div className="row">
-                                <div className="col-4">
-                                    {Usernek.map((value, index) => {
-                                        return(
-                                            <div className="container radio" key={index}>
-                                                <label>
-                                                    <input type="radio" name="question" className="mr-1" onChange={e => needHelp(e, index)}/>
-                                                    {value.kerdes}
-                                                </label>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                                <div className="col-8">
-                                    <p id="help"/>
-                                </div>
+                    </div>
+                </Admin>
+                <User permission={props.permission}>
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-4">
+                                {Usernek.map((value, index) => {
+                                    return (
+                                        <div className="container radio" key={index}>
+                                            <label>
+                                                <input type="radio" name="question" className="mr-1" onChange={e => needHelp(e, index)} />
+                                                {value.kerdes}
+                                            </label>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            <div className="col-8">
+                                <p id="help" />
                             </div>
                         </div>
-                    </User>
+                    </div>
+                </User>
             </div>
         </div>
     )

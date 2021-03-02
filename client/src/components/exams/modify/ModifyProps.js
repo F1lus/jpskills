@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import API from '../../BackendAPI'
 
@@ -11,12 +11,16 @@ export default function ModifyProps(props) {
     const [examProps, setExamProps] = useState([])
     const [status, setStatus] = useState(null)
 
-    useEffect(() => {
-        socket.on('exam-props', examProps => {
-            setExamProps([examProps[0], examProps[1] === 'null' ? '' : examProps[1], examProps[2], examProps[3] * 100])
+    const handleProps = useCallback(examProps => {
+        setExamProps([examProps[0], examProps[1] === 'null' ? '' : examProps[1], examProps[2], examProps[3] * 100])
 
-            setStatus(examProps[2])
-        })
+        setStatus(examProps[2])
+    }, [])
+
+    useEffect(() => {
+        socket.on('exam-props', handleProps)
+
+        return () => socket.off('exam-props', handleProps)
     })
 
     function handleChange(event) {

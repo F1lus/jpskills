@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 
 import model from './models/ExamsModel'
 
@@ -11,17 +11,23 @@ export default function Exams(props){
 
     const [exams, setExams] = useState([])
 
+    const handleExams = useCallback(dbExams => setExams(model(dbExams)), [])
+
+    const handleProcessed = useCallback(() => socket.emit('exams-get-signal'), [socket])
+
     useEffect(() => {
 
-        socket.on('exam-processed', () => {
-            socket.emit('exams-get-signal')
-        })
+        socket.on('exam-processed', handleProcessed)
 
-        socket.on('exams-get-emitter', (dbExams) => {
-            setExams(model(dbExams))
-        })
-        // eslint-disable-next-line
-    }, [])
+        socket.on('exams-get-emitter', handleExams)
+
+        return () => {
+            socket.off('exam-processed', handleProcessed)
+
+            socket.off('exams-get-emitter', handleExams)
+        }
+        
+    }, [socket, handleExams, handleProcessed])
 
     return(
         <div className="container shadow rounded text-center p-3 mt-3 mb-3 bg-light">

@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react'
+import React, {useContext, useEffect} from 'react'
 
-import manager from '../GlobalSocket'
+import {SocketContext} from '../GlobalSocket'
 
 import Exams from './Exams'
 import CreateTest from './create/CreateTest'
@@ -8,20 +8,16 @@ import { Admin } from '../user_management/handlers/PermissionHandler'
 
 export default function ExamWrapper(props){
 
-    const socket = new manager().socket
+    const socket = useContext(SocketContext)
 
     useEffect(() => {
-        socket.open()
-
         if(props.permission === 'admin'){
             socket.emit('get-types')
         }
         
         socket.emit('exams-get-signal')
-
-        return () => socket.disconnect()
-        // eslint-disable-next-line
-    },[])
+        
+    },[socket, props.permission])
 
     return (
         <div>

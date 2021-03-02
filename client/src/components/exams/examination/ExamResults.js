@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { useParams, Redirect } from 'react-router-dom'
 
 import model from '../models/ResultModel'
 
-import manager from '../../GlobalSocket'
+import {SocketContext} from '../../GlobalSocket'
 
 export default function ExamResults() {
 
     const exam = useParams().examCode
-    const socket = new manager().socket
+    const socket = useContext(SocketContext)
 
     const [result, setResult] = useState({})
     const [redirect, setRedirect] = useState(false)
@@ -18,20 +18,17 @@ export default function ExamResults() {
         setRedirect(true)
     }
 
+    const handleExamFinalized = useCallback(skill => setResult(model(skill)), [])
+
     useEffect(() => {
-        socket.open()
 
         socket.emit('request-results', exam)
 
-        return () => socket.disconnect()
-        // eslint-disable-next-line
-    }, [])
+        socket.on('exam-finalized', handleExamFinalized)
 
-    useEffect(() => {
-        socket.on('exam-finalized', skill => {
-            setResult(model(skill))
-        })
-    })
+        return () => socket.off('exam-finalized', handleExamFinalized)
+        
+    }, [exam, handleExamFinalized, socket])
 
     return (
         <div className="container bg-white text-center rounded shadow p-3">

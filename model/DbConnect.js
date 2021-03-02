@@ -117,8 +117,8 @@ class Connection {
                     const maxPoints = await this.countExamMaxPoints(exam.exam_id)
 
                     if (skillResult && maxPoints) {
-                        skill.push([exam.exam_name, exam.points_required,
-                        skillResult.points, skillResult.time, skillResult.completed, points])
+                        skill.push(exam.exam_name, exam.points_required,
+                        skillResult.points, skillResult.time, skillResult.completed, maxPoints)
                     }
                 }
             }
@@ -226,7 +226,7 @@ class Connection {
         try {
             await this.con.transaction(async trx => {
                 const worker = await this.con('workers').select('worker_id')
-                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).transacting(trx)
+                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).first().transacting(trx)
 
                 if (worker) {
                     const insert = await this.con('exam_result').insert({

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Switch, Route } from 'react-router-dom'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
 
-import manager from './components/GlobalSocket'
+import { SocketContext } from './components/GlobalSocket'
+
 import API from './components/BackendAPI'
 
 import Login from './components/user_management/Login'
@@ -20,31 +21,33 @@ import LoginHandler from './components/user_management/handlers/LoginHandler'
 
 export default function App() {
 
+  const socket = useContext(SocketContext)
+
   const [loggedIn, setLoggedIn] = useState(false)
   const [user, setUser] = useState(null)
   const [permission, setPermission] = useState(null)
 
-  useEffect(() => {
-    const socket = new manager().socket
+  const handleLoginInfo = useCallback((username, perm) => {
+    setLoggedIn(username && perm)
+    if (loggedIn) {
+      setUser(username)
+      setPermission(perm)
+    }
+  }, [loggedIn])
 
+  useEffect(() => {
     socket.emit('request-login-info')
 
-    socket.on('login-info', (username, perm) => {
-      setLoggedIn(username && perm)
-      if (loggedIn) {
-        setUser(username)
-        setPermission(perm)
-      }
-    })
+    socket.on('login-info', handleLoginInfo)
 
-    return () => socket.disconnect()
-  }, [loggedIn])
+    return () => socket.off('login-info', handleLoginInfo)
+  }, [loggedIn, socket, handleLoginInfo])
 
   return (
     <Switch>
       <Route exact path='/' component={() => (
         <LoginHandler login={true} loggedIn={loggedIn} allowed={['*']} permission={permission}>
-           <Login />
+          <Login />
         </LoginHandler>
       )} />
 

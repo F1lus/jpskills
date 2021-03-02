@@ -1,17 +1,17 @@
-import React, {useState, useEffect} from 'react'
-import {useParams, Redirect} from 'react-router-dom'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
+import { useParams, Redirect } from 'react-router-dom'
 
 import ListManager from './ListManager'
 import AddQuestion from './AddQuestion'
 import Qmodel from '../models/QuestionsModel'
 import ModifyProps from './ModifyProps'
 
-import manager from '../../GlobalSocket'
+import { SocketContext } from '../../GlobalSocket'
 
-export default function ExamModify(){
+export default function ExamModify() {
 
     const examCode = useParams()
-    const socket = new manager().socket
+    const socket = useContext(SocketContext)
 
     const [questions, setQuestions] = useState([])
     const [maxPoints, setMaxPoints] = useState(0)
@@ -20,44 +20,45 @@ export default function ExamModify(){
 
     const [removed, setRemoved] = useState(false)
 
-    useEffect(() => {
-        socket.open()
+    const handleContent = useCallback(questionList => {
+        setQuestions([])
 
+        const questionsModel = Qmodel(questionList)
+
+        if (questionsModel.questions.length > 0) {
+            setQuestions(questionsModel.questions)
+        }
+        setMaxPoints(questionsModel.points)
+    }, [])
+
+    const handleServerAccept = useCallback(() => setUpdater(count => ++count), [])
+
+    const handleExamRemoved = useCallback(() => setRemoved(true), [])
+
+    useEffect(() => {
         socket.emit('request-exam-content', examCode.examName)
         socket.emit('request-exam-props', examCode.examName)
 
-        socket.on('exam-content', (questionList) => {
-            setQuestions([])
-            
-            const questionsModel = Qmodel(questionList)
+        socket.on('exam-content', handleContent)
 
-            if(questionsModel.questions.length > 0){
-                setQuestions(questionsModel.questions)
-            }
-            setMaxPoints(questionsModel.points)
-        })
+        socket.on('server-accept', handleServerAccept)
 
-        return () => socket.disconnect()
-        // eslint-disable-next-line
-    }, [updater])
+        socket.on('removed-exam', handleExamRemoved)
 
-    useEffect(() => {
+        return () => {
+            socket.off('exam-content', handleContent)
+            socket.off('server-accept', handleServerAccept)
+            socket.off('removed-exam', handleExamRemoved)
+        }
+        
+    }, [updater, examCode.examName, handleContent, handleExamRemoved, handleServerAccept, socket])
 
-        socket.on('server-accept', () => {
-            setUpdater(count => ++count)
-        })
-
-        socket.on('removed-exam', () => {
-            setRemoved(true)
-        })
-    })
-
-    function setDisplay(event){
+    function setDisplay(event) {
         event.preventDefault()
         setDisplayQuestion(display => !display)
     }
 
-    function removeExam(event){
+    function removeExam(event) {
         event.preventDefault()
         socket.emit('remove-test', examCode.examName)
     }
@@ -65,7 +66,7 @@ export default function ExamModify(){
     return (
         <div className="container text-center mb-3">
             {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
-            <ModifyProps socket={socket} points={maxPoints} exam={examCode}/>
+            <ModifyProps socket={socket} points={maxPoints} exam={examCode} />
             {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}
 
             <div className="container text-center rounded w-75 shadow bg-light p-3 mb-3">
@@ -74,7 +75,7 @@ export default function ExamModify(){
                 <AddQuestion socket={socket} display={displayQuestion} />
 
                 <button onClick={setDisplay} className="btn btn-warning m-2">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
-                <br/>
+                <br />
                 <button onClick={removeExam} className="btn btn-warning m-3">A vizsga törlése</button>
             </div>
         </div>

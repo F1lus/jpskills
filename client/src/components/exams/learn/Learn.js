@@ -1,30 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import model from '../models/ExamsModel'
 
-import manager from '../../GlobalSocket'
+import {SocketContext} from '../../GlobalSocket'
 
 export default function Learn() {
 
-    const socket = new manager().socket
+    const socket = useContext(SocketContext)
 
     const [exams, setExams] = useState([])
 
-    useEffect(() => {
-        socket.open()
-
-        socket.emit('exams-learn-signal')
-
-        return () => socket.disconnect()
-        // eslint-disable-next-line
+    const handleExams = useCallback(dbExams => {
+        setExams(model(dbExams))
     }, [])
 
     useEffect(() => {
-        socket.on('exams-learn-emitter', (dbExams) => {
-            setExams(model(dbExams))
-        })
-    })
+        socket.emit('exams-learn-signal')
+
+        socket.on('exams-learn-emitter', handleExams)
+
+        return () => socket.off('exams-learn-emitter', handleExams)
+        // eslint-disable-next-line
+    }, [])
 
     return (
         <div className="container text-center p-3 mb-3">

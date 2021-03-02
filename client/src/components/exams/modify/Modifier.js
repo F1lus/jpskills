@@ -7,7 +7,6 @@ export default function Modifier(props){
 
     const param = useParams()
 
-
     const [type, setType] = useState(null)
     const [index,] = useState(props.index)
     const [value, setValue] = useState(props.value || false)
