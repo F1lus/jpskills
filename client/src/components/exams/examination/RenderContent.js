@@ -117,7 +117,7 @@ export default function RenderContent(props) {
                         }
                     })}</ul>
             })}
-            <div className="container text-center rounded bg-light shadow p-3">
+            <div className="container text-center rounded bg-light shadow p-3 mb-3">
                 <button className="btn btn-warning" onClick={handleSubmit} disabled={disable}>Leadás</button>
             </div>
 

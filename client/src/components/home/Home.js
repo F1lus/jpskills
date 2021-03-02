@@ -5,6 +5,7 @@ import manager from '../GlobalSocket'
 import { Admin, User } from '../user_management/handlers/PermissionHandler'
 
 import { Adminnak, Usernek } from './Helpdesk'
+import {ChevronRightIcon} from '@primer/octicons-react'
 
 export default function Home(props) {
 
@@ -12,7 +13,6 @@ export default function Home(props) {
     const nev = props.user
 
     const [vanVizsga, setVanVizsga] = useState(false)
-    const [help, setHelp] = useState(false)
 
     useEffect(() => {
         socket.open()
@@ -32,9 +32,9 @@ export default function Home(props) {
 
     function needHelp(event, index) {
         if(event.target.checked) {
-            setHelp(true)
+            document.getElementById('help').innerHTML = Adminnak[index].valasz
         } else {
-            setHelp(false)
+            document.getElementById('help').innerHTML = null
         }
     }
 
@@ -83,22 +83,48 @@ export default function Home(props) {
             <div className="container shadow rounded p-3 bg-light">
                 <h1 className="text-center"><p>Segítség a használathoz</p></h1>
                     <Admin permission={props.permission}>
-                        {Adminnak.map((value, index) => {
-                            return(
-                                <div className="container" key={index}>
-                                    <label>
-                                        <input type="checkbox" className="help" onChange={e => needHelp(e,index)}/>
-                                        {value.kerdes}
-                                    </label>
-                                    {help && (
-                                        <div className="container" key={index}>
-                                            <p>{value.valasz}</p>
-                                        </div>)
-                                    }
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-6">
+                                    {Adminnak.map((value, index) => {
+                                        return(
+                                            <div className="container radio" key={index}>
+                                                <label>
+                                                    <input type="radio" name="question" onChange={e => needHelp(e, index)}/>
+                                                    <ChevronRightIcon className="icon"/>
+                                                    <label id="text">{value.kerdes}</label>
+                                                </label>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
-                            )
-                        })}
+                                <div className="col-6">
+                                    <p id="help"/>
+                                </div>
+                            </div>
+                        </div>
                     </Admin>
+                    <User permission={props.permission}>
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-4">
+                                    {Usernek.map((value, index) => {
+                                        return(
+                                            <div className="container radio" key={index}>
+                                                <label>
+                                                    <input type="radio" name="question" className="mr-1" onChange={e => needHelp(e, index)}/>
+                                                    {value.kerdes}
+                                                </label>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                                <div className="col-8">
+                                    <p id="help"/>
+                                </div>
+                            </div>
+                        </div>
+                    </User>
             </div>
         </div>
     )
