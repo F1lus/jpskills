@@ -50,7 +50,7 @@ app.use(cors({
 }))
 
 app.use(fileUpload({
-    limits: { fileSize: 1 * 1024 * 1024 * 1024 }
+    limits: { fileSize: 2 * 1024 * 1024 * 1024 }
 }))
 
 app.use(bodyParser.json())

@@ -20,7 +20,7 @@ class Connection {
 
     constructor() {
         const config = require('../config')
-        
+
         this.con = require('knex')({
             client: 'mysql',
             connection: {
@@ -118,7 +118,7 @@ class Connection {
 
                     if (skillResult && maxPoints) {
                         skill.push(exam.exam_name, exam.points_required,
-                        skillResult.points, skillResult.time, skillResult.completed, maxPoints)
+                            skillResult.points, skillResult.time, skillResult.completed, maxPoints)
                     }
                 }
             }
@@ -341,7 +341,7 @@ class Connection {
                     await this.con('questions').delete()
                         .where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
 
-                    success = await this.updateExamModify(user, examCode)
+                    success = await this.updateExamModify(user, examCode, trx)
                 }
             })
         } catch (error) {
@@ -393,7 +393,7 @@ class Connection {
                         .where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
 
                     if (del) {
-                        success = await this.updateExamModify(user, examCode)
+                        success = await this.updateExamModify(user, examCode, trx)
                     }
                 }
             })
@@ -440,7 +440,7 @@ class Connection {
                         }).transacting(trx)
 
                         if (insert[0].insertId !== 0) {
-                            success = await this.updateExamModify(user, examCode)
+                            success = await this.updateExamModify(user, examCode, trx)
                         }
                     }
                 }
@@ -485,7 +485,7 @@ class Connection {
                             }).transacting(trx)
 
                             if (insertLink[0].insertId !== 0) {
-                                success = await this.updateExamModify(user, examCode)
+                                success = await this.updateExamModify(user, examCode, trx)
                             }
                         }
                     }
@@ -580,7 +580,7 @@ class Connection {
                     }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
 
                     if (update) {
-                        success = await this.updateExamModify(user, examCode)
+                        success = await this.updateExamModify(user, examCode, trx)
                     }
                 }
             })
@@ -629,7 +629,7 @@ class Connection {
                     }
 
                     if (update) {
-                        success = await this.updateExamModify(user, examCode)
+                        success = await this.updateExamModify(user, examCode, trx)
                     }
                 }
             })
@@ -678,7 +678,7 @@ class Connection {
                     }
 
                     if (update) {
-                        success = await this.updateExamModify(user, examCode)
+                        success = await this.updateExamModify(user, examCode, trx)
                     }
                 }
             })
@@ -770,20 +770,16 @@ class Connection {
      * Használt táblák: exams
      */
 
-    updateExamModify = async (user, examCode) => {
+    updateExamModify = async (user, examCode, trx) => {
         let updated = false
         try {
-            await this.con.transaction(async trx => {
-                const updater = await this.con('exams').update({
-                    exam_modifier: user,
-                    exam_modified_time: this.con.fn.now()
-                })
-                    .where(this.con.raw('exam_itemcode = ?', [examCode]))
-                    .transacting(trx)
-                if (updater) {
-                    updated = true
-                }
+            const updater = await this.con('exams').update({
+                exam_modifier: user,
+                exam_modified_time: this.con.fn.now()
             })
+                .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                .transacting(trx)
+            updated = updater === 1
         } catch (error) {
             console.log(error.message)
         }
@@ -1067,7 +1063,7 @@ class Connection {
                         .where(this.con.raw('cardcode = ?', [cardNum])).first().transacting(trx)
                 if (login.password) {
                     access = CryptoJS.AES.decrypt(login.password, 'jp-$kDB').toString(CryptoJS.enc.Utf8) === password
-                    if(access){
+                    if (access) {
                         await this.con('admin_login').update({
                             latest_login: this.con.fn.now()
                         }).where('cardcode', [cardNum]).transacting(trx)
