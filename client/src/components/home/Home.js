@@ -109,7 +109,7 @@ export default function Home(props) {
                 <User permission={props.permission}>
                     <div className="container">
                         <div className="row">
-                            <div className="col-8">
+                        <div className="col-sm-6 col-8">
                                 {Usernek.map((value, index) => {
                                     return (
                                         <div className="container radio" key={index}>
@@ -122,7 +122,7 @@ export default function Home(props) {
                                     )
                                 })}
                             </div>
-                            <div className="col-4">
+                            <div className="col-sm-6 col-4">
                                 <p id="help" />
                             </div>
                         </div>
