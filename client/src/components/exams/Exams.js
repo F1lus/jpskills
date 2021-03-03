@@ -30,7 +30,7 @@ export default function Exams(props){
     }, [socket, handleExams, handleProcessed])
 
     return(
-        <div className="container shadow rounded text-center p-3 mt-3 mb-3 bg-light">
+        <div className="container shadow rounded text-center p-3 mt-3 mb-3 bg-light page">
             <Admin permission={props.permission}>
                 <h1><p>Az Ön által készített vizsgák:</p></h1>
                 <ExamsTable exams={exams} permission={props.permission}/>

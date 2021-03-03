@@ -64,7 +64,7 @@ export default function ExamDocument(props) {
     }, [exam.examCode, socket, handleExamDoc])
 
     return (
-        <div className="container text-center bg-light rounded shadow mb-3">
+        <div className="container text-center bg-light rounded shadow page mb-3 ">
             <Document
                 loading='A virtuális tananyag betöltése...'
                 file={{ data: examDoc }}

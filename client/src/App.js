@@ -4,6 +4,8 @@ import { Switch, Route } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
 
+import {CSSTransition, TransitionGroup} from 'react-transition-group'
+
 import { SocketContext } from './components/GlobalSocket'
 
 import API from './components/BackendAPI'
@@ -44,75 +46,85 @@ export default function App() {
   }, [loggedIn, socket, handleLoginInfo])
 
   return (
-    <Switch>
-      <Route exact path='/' component={() => (
-        <LoginHandler login={true} loggedIn={loggedIn} allowed={['*']} permission={permission}>
-          <Login />
-        </LoginHandler>
-      )} />
+    <Route render={({location}) => (
+      <TransitionGroup>
+        <CSSTransition
+          key={location.key}
+          timeout={500}
+          classNames="fade"
+        >
+          <Switch location={location}>
+            <Route exact path='/' component={() => (
+              <LoginHandler login={true} loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                <Login />
+              </LoginHandler>
+            )} />
 
-      <Route exact path='/home' component={() => (
-        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-          <CustomNavbar />
-          <Home user={user} permission={permission} />
-        </LoginHandler>
-      )} />
+            <Route exact path='/home' component={() => (
+              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                <CustomNavbar />
+                <Home user={user} permission={permission} />
+              </LoginHandler>
+            )} />
 
-      <Route exact path='/exams' component={() => (
-        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-          <CustomNavbar />
-          <ExamWrapper permission={permission} />
-        </LoginHandler>
-      )} />
+            <Route exact path='/exams' component={() => (
+              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                <CustomNavbar />
+                <ExamWrapper permission={permission} />
+              </LoginHandler>
+            )} />
 
-      <Route exact path='/exams/modify/:examName' component={() => (
-        <LoginHandler loggedIn={loggedIn} allowed={['admin', 'superuser']} permission={permission}>
-          <CustomNavbar />
-          <ExamModify />
-        </LoginHandler>
-      )} />
+            <Route exact path='/exams/modify/:examName' component={() => (
+              <LoginHandler loggedIn={loggedIn} allowed={['admin', 'superuser']} permission={permission}>
+                <CustomNavbar />
+                <ExamModify />
+              </LoginHandler>
+            )} />
 
-      <Route exact path='/exams/learn/:examCode' component={() => (
-        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-          <CustomNavbar />
-          <ExamDocument permission={permission} />
-        </LoginHandler>
-      )} />
+            <Route exact path='/exams/learn/:examCode' component={() => (
+              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                <CustomNavbar />
+                <ExamDocument permission={permission} />
+              </LoginHandler>
+            )} />
 
-      <Route exact path='/exams/:examCode' component={() => (
-        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-          <CustomNavbar />
-          <Examination />
-        </LoginHandler>
-      )} />
+            <Route exact path='/exams/:examCode' component={() => (
+              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                <CustomNavbar />
+                <Examination />
+              </LoginHandler>
+            )} />
 
-      <Route exact path='/exams/result/:examCode/' component={() => (
-        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-          <CustomNavbar />
-          <ExamResults />
-        </LoginHandler>
-      )} />
+            <Route exact path='/exams/result/:examCode/' component={() => (
+              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                <CustomNavbar />
+                <ExamResults />
+              </LoginHandler>
+            )} />
 
-      <Route exact path='/profile' component={() => (
-        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-          <CustomNavbar />
-          <Profile user={user} permission={permission} />
-        </LoginHandler>
-      )} />
+            <Route exact path='/profile' component={() => (
+              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                <CustomNavbar />
+                <Profile user={user} permission={permission} />
+              </LoginHandler>
+            )} />
 
-      <Route exact path='/logout' component={() => (
-        <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-          {
-            API.post('/logout', { cmd: 'jp-logout' })
-              .then(response => {
-                if (response.data.success) {
-                  window.location.reload()
+            <Route exact path='/logout' component={() => (
+              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                {
+                  API.post('/logout', { cmd: 'jp-logout' })
+                    .then(response => {
+                      if (response.data.success) {
+                        window.location.reload()
+                      }
+                    }).catch(err => console.log(err))
                 }
-              }).catch(err => console.log(err))
-          }
-        </LoginHandler>
-      )} />
-    </Switch>
+              </LoginHandler>
+            )} />
+          </Switch>
+        </CSSTransition>
+      </TransitionGroup>
+    )}/>
   )
 
 }

@@ -62,7 +62,7 @@ export default function Profile(props) {
     }
     
     return (
-        <div className="container text-center">
+        <div className="container text-center page">
             <div className="container shadow rounded text-center bg-light mb-3 mt-3">
                 <span id="nev"><p>{nev}</p></span>
                 <hr className="w-75" id="customline"/>

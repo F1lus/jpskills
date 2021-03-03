@@ -82,7 +82,7 @@ export default function RenderContent(props) {
     }
 
     return (
-        <div>
+        <div className="page">
             {finished ? <Redirect to={`/exams/result/${props.exam}`} /> : null}
             {list.map((question, qId) => {
                 return <ul key={qId} className="container bg-white rounded shadow py-3 mb-3 text-center">
