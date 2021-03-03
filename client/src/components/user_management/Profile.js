@@ -18,7 +18,9 @@ export default function Profile(props) {
     const [stats, setStats] = useState(null)
 
     const handleStatistics = useCallback(stats => {
-        setStats(globalStats(stats))
+        if(stats.length > 0){
+            setStats(globalStats(stats))
+        }
     }, [])
 
     useEffect(() => {

@@ -4,7 +4,7 @@ import { Switch, Route } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
 
-import {CSSTransition, TransitionGroup} from 'react-transition-group'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import { SocketContext } from './components/GlobalSocket'
 
@@ -46,85 +46,83 @@ export default function App() {
   }, [loggedIn, socket, handleLoginInfo])
 
   return (
-    <Route render={({location}) => (
-      <TransitionGroup>
-        <CSSTransition
-          key={location.key}
-          timeout={500}
-          classNames="fade"
-        >
-          <Switch location={location}>
-            <Route exact path='/' component={() => (
-              <LoginHandler login={true} loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                <Login />
-              </LoginHandler>
-            )} />
+    <React.Fragment>
+      {loggedIn ? <CustomNavbar /> : null}
+      <Route render={({ location }) => (
+        <TransitionGroup>
+          <CSSTransition
+            key={location.key}
+            timeout={500}
+            classNames="fade"
+          >
+            <Switch location={location}>
+              <Route exact path='/' component={() => (
+                <LoginHandler login={true} loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                  <Login />
+                </LoginHandler>
+              )} />
 
-            <Route exact path='/home' component={() => (
-              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                <CustomNavbar />
-                <Home user={user} permission={permission} />
-              </LoginHandler>
-            )} />
+              <Route exact path='/home' component={() => (
+                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                  <Home user={user} permission={permission} />
+                </LoginHandler>
+              )} />
 
-            <Route exact path='/exams' component={() => (
-              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                <CustomNavbar />
-                <ExamWrapper permission={permission} />
-              </LoginHandler>
-            )} />
+              <Route exact path='/exams' component={() => (
+                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                  <ExamWrapper permission={permission} />
+                </LoginHandler>
+              )} />
 
-            <Route exact path='/exams/modify/:examName' component={() => (
-              <LoginHandler loggedIn={loggedIn} allowed={['admin', 'superuser']} permission={permission}>
-                <CustomNavbar />
-                <ExamModify />
-              </LoginHandler>
-            )} />
+              <Route exact path='/exams/modify/:examName' component={() => (
+                <LoginHandler loggedIn={loggedIn} allowed={['admin', 'superuser']} permission={permission}>
+                  <ExamModify />
+                </LoginHandler>
+              )} />
 
-            <Route exact path='/exams/learn/:examCode' component={() => (
-              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                <CustomNavbar />
-                <ExamDocument permission={permission} />
-              </LoginHandler>
-            )} />
+              <Route exact path='/exams/learn/:examCode' component={() => (
+                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                  <ExamDocument permission={permission} />
+                </LoginHandler>
+              )} />
 
-            <Route exact path='/exams/:examCode' component={() => (
-              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                <CustomNavbar />
-                <Examination />
-              </LoginHandler>
-            )} />
+              <Route exact path='/exams/:examCode' component={() => (
+                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                  <Examination />
+                </LoginHandler>
+              )} />
 
-            <Route exact path='/exams/result/:examCode/' component={() => (
-              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                <CustomNavbar />
-                <ExamResults />
-              </LoginHandler>
-            )} />
+              <Route exact path='/exams/result/:examCode/' component={() => (
+                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
 
-            <Route exact path='/profile' component={() => (
-              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                <CustomNavbar />
-                <Profile user={user} permission={permission} />
-              </LoginHandler>
-            )} />
+                  <ExamResults />
+                </LoginHandler>
+              )} />
 
-            <Route exact path='/logout' component={() => (
-              <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                {
-                  API.post('/logout', { cmd: 'jp-logout' })
-                    .then(response => {
-                      if (response.data.success) {
-                        window.location.reload()
-                      }
-                    }).catch(err => console.log(err))
-                }
-              </LoginHandler>
-            )} />
-          </Switch>
-        </CSSTransition>
-      </TransitionGroup>
-    )}/>
+              <Route exact path='/profile' component={() => (
+                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                  <Profile user={user} permission={permission} />
+                </LoginHandler>
+              )} />
+
+              <Route exact path='/logout' component={() => (
+                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
+                  {
+                    API.post('/logout', { cmd: 'jp-logout' })
+                      .then(response => {
+                        if (response.data.success) {
+                          window.location.reload()
+                        }
+                      }).catch(err => console.log(err))
+                  }
+                </LoginHandler>
+              )} />
+            </Switch>
+          </CSSTransition>
+        </TransitionGroup>
+
+      )} />
+    </React.Fragment>
   )
 
 }
