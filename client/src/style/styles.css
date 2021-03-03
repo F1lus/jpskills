@@ -225,7 +225,7 @@ input:checked[type="checkbox"]:before {
     top: 4px;
     line-height: 30px;
     text-align: center;
-    margin: 0 4px;
+    margin: 0 8px;
     border-radius: 50%;
     cursor: pointer;
     box-shadow: -1px -1px 3px rgba(255,255,255,0.1),

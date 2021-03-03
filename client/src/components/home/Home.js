@@ -84,6 +84,7 @@ export default function Home(props) {
             <div className="container shadow rounded p-3 bg-light">
                 <h1 className="text-center"><p>Segítség a használathoz</p></h1>
                 <Admin permission={props.permission}>
+                    <p className="ml-2">Segítségnyújtás adminoknak</p>
                     <div className="container">
                         <div className="row">
                             <div className="col-sm-6 col-8">
@@ -95,6 +96,7 @@ export default function Home(props) {
                                                 <ChevronRightIcon className="icon" />
                                                 <label>{value.kerdes}</label>
                                             </label>
+                                            <hr className="w-50 mx-0 mb-4" />
                                         </div>
                                     )
                                 })}
@@ -105,8 +107,8 @@ export default function Home(props) {
                         </div>
                     </div>
                 </Admin>
-
                 <User permission={props.permission}>
+                <p className="ml-2">Segítségnyújtás vizsgázóknak</p>
                     <div className="container">
                         <div className="row">
                         <div className="col-sm-6 col-8">

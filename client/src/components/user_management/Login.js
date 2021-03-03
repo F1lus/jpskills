@@ -116,7 +116,7 @@ export default function Login(){
                         <input type="password" name="password" autoComplete="off" value={password || ''} onChange={handleChange} required/>
                         <label htmlFor="password" className="label-name">
                             <span className="content-name">
-                                Jelszó
+                                Jelszó{register && ("*")}
                             </span>
                         </label>
                     </div>
@@ -150,6 +150,7 @@ export default function Login(){
                         Pipálja be, ha még nincs fiókja!
                     </label>
                 </div>
+                {register && (<small>* A jelszó formai követelményei: 8-16 karakter, minimum egy számot tartalmaznia kell, minimum egy nagy betűnek szerepelnie kell benne</small>)}
             </div>
         </div>
     )
