@@ -4,7 +4,7 @@ export const Adminnak = [
         valasz: "Az eddig önáltal létrehozott vizsgákról általános adatok."
     },
     {
-        kerdes: "Globális ",
+        kerdes: "Vizsgánkénti statisztika",
         valasz: "Az eddig önáltal létrehozott."
     },
 ]

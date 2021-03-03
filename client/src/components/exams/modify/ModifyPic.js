@@ -22,7 +22,6 @@ export default function ModifyPic(props) {
 
     function handleChange(event){
         setImg(event.target.files[0])
-        console.log(event.target.files[0])
     }
 
     function handleSubmit(event){

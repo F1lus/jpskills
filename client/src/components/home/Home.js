@@ -86,41 +86,43 @@ export default function Home(props) {
                 <Admin permission={props.permission}>
                     <div className="container">
                         <div className="row">
-                            <div className="col-6">
+                            <div className="col-sm-6 col-8">
                                 {Adminnak.map((value, index) => {
                                     return (
                                         <div className="container radio" key={index}>
                                             <label>
                                                 <input type="radio" name="question" onChange={e => needHelp(e, index)} />
                                                 <ChevronRightIcon className="icon" />
-                                                <label id="text">{value.kerdes}</label>
+                                                <label>{value.kerdes}</label>
                                             </label>
                                         </div>
                                     )
                                 })}
                             </div>
-                            <div className="col-6">
+                            <div className="col-sm-6 col-4">
                                 <p id="help" />
                             </div>
                         </div>
                     </div>
                 </Admin>
+
                 <User permission={props.permission}>
                     <div className="container">
                         <div className="row">
-                            <div className="col-4">
+                            <div className="col-8">
                                 {Usernek.map((value, index) => {
                                     return (
                                         <div className="container radio" key={index}>
                                             <label>
-                                                <input type="radio" name="question" className="mr-1" onChange={e => needHelp(e, index)} />
-                                                {value.kerdes}
+                                                <input type="radio" name="question" onChange={e => needHelp(e, index)} />
+                                                <ChevronRightIcon className="icon" />
+                                                <label>{value.kerdes}</label>
                                             </label>
                                         </div>
                                     )
                                 })}
                             </div>
-                            <div className="col-8">
+                            <div className="col-4">
                                 <p id="help" />
                             </div>
                         </div>
