@@ -31,7 +31,7 @@ export default function ExamResults() {
     }, [exam, handleExamFinalized, socket])
 
     return (
-        <div className="container bg-white text-center rounded shadow p-3 page">
+        <div className="container bg-white text-center rounded shadow p-3 mt-3 page">
             {redirect ? <Redirect to='/exams' /> : null}
 
             <h2><p>Vizsga: {result.examName}</p></h2>

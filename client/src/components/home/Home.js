@@ -40,7 +40,7 @@ export default function Home(props) {
     }
 
     return (
-        <div className="container mb-3 page">
+        <div className="container mb-3 mt-3 page">
             <div className="container shadow rounded p-3 bg-light mb-3">
                 <div className="container text-center">
                     <div className="container text-center m-3">

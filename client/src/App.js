@@ -28,7 +28,7 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [user, setUser] = useState(null)
   const [permission, setPermission] = useState(null)
-  const location = useLocation();
+  const location = useLocation()
 
   const handleLoginInfo = useCallback((username, perm) => {
     setLoggedIn(username && perm)
@@ -49,13 +49,12 @@ export default function App() {
   return (
     <React.Fragment>
       {loggedIn ? <CustomNavbar /> : null}
-      {/*<Route render={({ location }) => (*/}
         <TransitionGroup>
           <CSSTransition
             key={location.key}
             timeout={500}
             classNames="fade"
-          >
+            >
             <Switch location={location}>
               <Route exact path='/' component={() => (
                 <LoginHandler login={true} loggedIn={loggedIn} allowed={['*']} permission={permission}>
@@ -120,8 +119,6 @@ export default function App() {
             </Switch>
           </CSSTransition>
         </TransitionGroup>
-
-      {/*)} />*/}
     </React.Fragment>
   )
 

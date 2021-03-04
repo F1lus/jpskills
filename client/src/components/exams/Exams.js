@@ -31,19 +31,19 @@ export default function Exams(props){
 
     return(
         <div>
-            <div className="container shadow rounded text-center p-3 mt-3 mb-3 bg-light">
-                <Admin permission={props.permission}>
+            <Admin permission={props.permission}>
+                <div className="container shadow rounded text-center p-3 mt-3 mb-3 bg-light">
                     <h1><p>Az Ön által készített vizsgák:</p></h1>
                     <ExamsTable exams={exams} permission={props.permission}/>
-                </Admin>
-            </div>
+                </div>
+            </Admin>
 
-            <div className="container shadow rounded text-center p-3 mt-3 mb-3 bg-light">
-                <User permission={props.permission}>
+            <User permission={props.permission}>
+                <div className="container shadow rounded text-center p-3 mt-3 mb-3 bg-light">
                     <h1><p>Elérhető vizsgák:</p></h1>
                     <ExamsTable exams={exams} permission={props.permission}/>
-                </User>
-            </div>
+                </div>
+            </User>
         </div>
     )
 }

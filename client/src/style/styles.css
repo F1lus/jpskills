@@ -249,6 +249,7 @@ input:checked[type="checkbox"]:before {
 /*page transition animation*/
 .page {
     position: absolute;
+    top: 40px;
     left: 0;
     right: 0;
 }
