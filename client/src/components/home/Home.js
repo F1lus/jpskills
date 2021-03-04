@@ -81,7 +81,7 @@ export default function Home(props) {
                 </div>
             </div>
 
-            <div className="container shadow rounded p-3 bg-light">
+            <div className="container shadow rounded p-3 bg-light mb-3">
                 <h1 className="text-center"><p>Segítség a használathoz</p></h1>
                 <Admin permission={props.permission}>
                     <p className="ml-2">Segítségnyújtás adminoknak</p>

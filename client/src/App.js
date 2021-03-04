@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, useLocation } from 'react-router-dom'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
@@ -28,6 +28,7 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [user, setUser] = useState(null)
   const [permission, setPermission] = useState(null)
+  const location = useLocation();
 
   const handleLoginInfo = useCallback((username, perm) => {
     setLoggedIn(username && perm)
@@ -48,7 +49,7 @@ export default function App() {
   return (
     <React.Fragment>
       {loggedIn ? <CustomNavbar /> : null}
-      <Route render={({ location }) => (
+      {/*<Route render={({ location }) => (*/}
         <TransitionGroup>
           <CSSTransition
             key={location.key}
@@ -94,7 +95,6 @@ export default function App() {
 
               <Route exact path='/exams/result/:examCode/' component={() => (
                 <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-
                   <ExamResults />
                 </LoginHandler>
               )} />
@@ -121,7 +121,7 @@ export default function App() {
           </CSSTransition>
         </TransitionGroup>
 
-      )} />
+      {/*)} />*/}
     </React.Fragment>
   )
 

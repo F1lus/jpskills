@@ -3,9 +3,9 @@ import {Elemek} from './navItems';
 import {NavLink} from 'react-router-dom';
 
 export default () => (
-        <div className="sticky-top">
-            <section className="sticky-top" id="hatter"/>
-            <ul className="nav nav-fill mb-3 sticky-top">
+        <div>
+            <section id="hatter"/>
+            <ul className="nav nav-fill mb-3">
             {Elemek.map((elem,index)=>{
                 return(
                     <NavLink exact to={elem.url} className="nav-link" key={index} activeClassName="current">

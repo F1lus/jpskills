@@ -261,7 +261,7 @@ input:checked[type="checkbox"]:before {
 .fade-appear-active,
 .fade-enter.fade-enter-active {
     opacity: 1;
-    transition: opacity 500ms linear 350ms;
+    transition: opacity 500ms linear 250ms;
 }
 
 .fade-exit {
@@ -270,5 +270,5 @@ input:checked[type="checkbox"]:before {
 
 .fade-exit.fade-exit-active {
     opacity: 0;
-    transition: opacity 350ms linear;
+    transition: opacity 250ms linear;
 }

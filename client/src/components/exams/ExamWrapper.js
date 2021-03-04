@@ -20,7 +20,7 @@ export default function ExamWrapper(props){
     },[socket, props.permission])
 
     return (
-        <div>
+        <div className="page">
             <Admin permission={props.permission}>
                 <CreateTest socket={socket} permission={props.permission}/>
             </Admin>
