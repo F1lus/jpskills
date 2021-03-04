@@ -32,7 +32,7 @@ export default function Profile(props) {
         // eslint-disable-next-line
     },[])
 
-    function renderStatsObject(entry){
+    const renderStatsObject = useCallback(entry =>{
         if(stats){
             switch(entry){
                 case 'time':
@@ -47,9 +47,9 @@ export default function Profile(props) {
                     return null
             }
         }
-    }
+    }, [stats])
 
-    function renderGlobalStats(){
+    const renderGlobalStats = useCallback(() => {
         if(stats != null){
             return (
                 <div className="alert alert-success my-2 w-75 mx-auto">
@@ -61,7 +61,7 @@ export default function Profile(props) {
         }else{
             return <p className="alert alert-danger my-2">Nincs megjeleníthető tartalom</p>
         }
-    }
+    }, [renderStatsObject, stats])
     
     return (
         <div className="container text-center page">

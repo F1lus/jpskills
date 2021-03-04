@@ -15,12 +15,12 @@ export default function ListManager(props){
     const [display, setDisplay] = useState(false)
     const [disableButton, setDisableButton] = useState(props.disable || false)
 
-    function modifyDisplay(event){
+    const modifyDisplay = useCallback(event => {
         event.preventDefault()
         setDisplay(state => !state)
-    }
+    }, [])
 
-    function remove(e, id){
+    const remove = useCallback((e, id) =>{
         e.preventDefault()
         setDisableButton(true)
         if(props.isAnswer){
@@ -28,7 +28,7 @@ export default function ListManager(props){
         }else{
             socket.emit('remove-question', id, examCode)
         }
-    }
+    }, [examCode, props.isAnswer, socket])
 
     const handleServerAccept = useCallback(() => setDisableButton(false), [])
 

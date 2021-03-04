@@ -53,15 +53,15 @@ export default function ExamModify() {
         
     }, [updater, examCode.examName, handleContent, handleExamRemoved, handleServerAccept, socket])
 
-    function setDisplay(event) {
+    const setDisplay = useCallback(event => {
         event.preventDefault()
         setDisplayQuestion(display => !display)
-    }
+    }, [])
 
-    function removeExam(event) {
+    const removeExam = useCallback(event => {
         event.preventDefault()
         socket.emit('remove-test', examCode.examName)
-    }
+    },[examCode.examName, socket])
 
     return (
         <div className="container text-center mb-3">

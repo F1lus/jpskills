@@ -45,7 +45,7 @@ export default function CreateTest(props) {
         }
     })
 
-    function handleChange(event) {
+    const handleChange = useCallback(event => {
         switch (event.target.name) {
             case 'type':
                 if(event.target.value === 'A termék gyártója'){
@@ -78,9 +78,9 @@ export default function CreateTest(props) {
             default:
                 break
         }
-    }
+    },[comment.length, examName.length, socket])
 
-    function handleSubmit(event) {
+    const handleSubmit = useCallback(event => {
         event.preventDefault()
 
         if (permission !== 'admin') {
@@ -135,7 +135,7 @@ export default function CreateTest(props) {
                 }
             })
             .catch(err => console.log(err))
-    }
+    },[comment, examDoc, examName, item, permission])
 
     return (
         <div className="container shadow rounded p-3 bg-light mt-3">

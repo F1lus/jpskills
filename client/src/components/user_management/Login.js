@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import CryptoJS from 'crypto-js'
 
 import API from '../BackendAPI'
@@ -11,7 +11,7 @@ export default function Login(){
     const [alert, setAlert] = useState(null)
     const [register, setRegister] = useState(false)
 
-    function handleSubmit(event){
+    const handleSubmit = useCallback(event => {
         event.preventDefault()
         let data = null
         if(register){
@@ -60,6 +60,8 @@ export default function Login(){
                 .then(result => {
                     if(result.data.access){
                         window.location.reload()
+                    }else if(result.data.error){
+                        setAlert(result.data.error)
                     }else{
                         if(register){
                             setAlert('A kártyaszám valószínűleg már foglalt!')
@@ -71,9 +73,9 @@ export default function Login(){
                     setAlert('Hiba történt! Próbálja újra!')
                     console.log(err)
                 })
-    }
+    }, [cardNum, password, password2, register])
 
-    function handleChange(event){
+    const handleChange = useCallback(event => {
         switch(event.target.name){
             case 'cardNum':
                 setCardNum(event.target.value)
@@ -87,15 +89,15 @@ export default function Login(){
             default:
                 return
         }
-    }
+    }, [])
 
-    function newUser(event) {
+    const newUser = useCallback(event => {
         if(event.target.checked) {
             setRegister(true)
         } else {
             setRegister(false)
         }
-    }
+    }, [])
 
     return (
         <div className="d-flex container text-center align-items-center justify-content-center vh-100 w-50">

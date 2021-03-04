@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 import DataTable, { createTheme } from 'react-data-table-component'
 import { Admin } from './handlers/PermissionHandler'
@@ -39,7 +39,7 @@ export default function DetailTable(props) {
         }
     ]
 
-    function filterByExam(isAdmin) {
+    const filterByExam = useCallback(isAdmin => {
         let filteredArray = []
         if (isAdmin) {
             if (props.results && examCode) {
@@ -93,7 +93,7 @@ export default function DetailTable(props) {
             }
         }
         return filteredArray
-    }
+    }, [examCode, props.results])
 
     useEffect(() => {
         if (props.results) {
@@ -122,15 +122,15 @@ export default function DetailTable(props) {
         // eslint-disable-next-line
     }, [examCode, props.results])
 
-    function handleChange(event) {
+    const handleChange = useCallback(event => {
         if (!event.target.value || event.target.value === 'Vizsga kiválasztása') {
             setExamCode(null)
         } else {
             setExamCode(event.target.value)
         }
-    }
+    }, [])
 
-    function examStatistics() {
+    const examStatistics = useCallback(() => {
         if (examCode && workingList.length > 0) {
             const stats = examStats(workingList)
             return (
@@ -143,9 +143,9 @@ export default function DetailTable(props) {
         } else {
             return null
         }
-    }
+    }, [examCode, workingList])
 
-    function search(event) {
+    const search = useCallback(event => {
         if (props.permission === 'admin') {
             if (examCode && results.length > 0) {
                 const filterBySearch = results.filter(exam => exam.worker.toLowerCase().includes(event.target.value.toLowerCase().trim()))
@@ -153,7 +153,7 @@ export default function DetailTable(props) {
             }
         }
 
-    }
+    }, [examCode, props.permission, results])
 
     const conditionalRowStyles = [
         {

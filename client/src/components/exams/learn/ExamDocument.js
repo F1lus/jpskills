@@ -21,11 +21,11 @@ export default function ExamDocument(props) {
     const [status, setStatus] = useState(false)
 
 
-    function onDocumentLoadSuccess(numPages) {
+    const onDocumentLoadSuccess = useCallback(numPages => {
         setPageNum(numPages)
-    }
+    },[])
 
-    function nextPage(event) {
+    const nextPage = useCallback(event => {
         event.preventDefault()
         if (pageNum) {
             setCurrentPage(page => {
@@ -36,8 +36,9 @@ export default function ExamDocument(props) {
                 }
             })
         }
-    }
-    function prevPage(event) {
+    },[pageNum])
+
+    const prevPage = useCallback(event => {
         event.preventDefault()
         if (pageNum) {
             setCurrentPage(page => {
@@ -48,7 +49,7 @@ export default function ExamDocument(props) {
                 }
             })
         }
-    }
+    },[pageNum])
 
     const handleExamDoc = useCallback((status, document) => {
         setExamDoc(document)

@@ -23,7 +23,7 @@ export default function ModifyProps(props) {
         return () => socket.off('exam-props', handleProps)
     })
 
-    function handleChange(event) {
+    const handleChange = useCallback(event => {
         const list = examProps.slice()
         switch (event.target.name) {
             case 'examName':
@@ -58,9 +58,9 @@ export default function ModifyProps(props) {
             default:
                 break
         }
-    }
+    }, [examProps])
 
-    function statusChange(event) {
+    const statusChange = useCallback(event => {
         event.preventDefault()
         if (examProps[2] != null) {
             API.post(`/exams/modify/${examCode.examName}`, { status: examProps[2] })
@@ -70,9 +70,9 @@ export default function ModifyProps(props) {
                     }
                 }).catch(err => console.log(err))
         }
-    }
+    },[examCode.examName, examProps, socket])
 
-    function handleSubmit(event) {
+    const handleSubmit = useCallback(event => {
         event.preventDefault()
         if (examProps != null) {
             API.post(`/exams/modify/${examCode.examName}`,
@@ -83,7 +83,7 @@ export default function ModifyProps(props) {
                     }
                 }).catch(err => console.log(err))
         }
-    }
+    },[examCode.examName, examProps, socket])
 
 
     return (

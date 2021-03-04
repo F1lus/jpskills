@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import {useParams} from 'react-router-dom'
 
 import API from '../../BackendAPI'
@@ -12,7 +12,7 @@ export default function AddQuestion(props){
     const [points, setPoints] = useState(null)
     const [pic, setPic] = useState(null)
 
-    function handleChange(event){
+    const handleChange = useCallback(event => {
         switch(event.target.name){
             case 'question':
                 setQuestion(event.target.value)
@@ -26,9 +26,9 @@ export default function AddQuestion(props){
             default:
                 return
         }
-    }
+    }, [])
 
-    function handleSubmit(event){
+    const handleSubmit = useCallback(event => {
         event.preventDefault()
         if(question && points){
             setDisable(true)
@@ -48,7 +48,7 @@ export default function AddQuestion(props){
                 }
             }).catch(err => console.log(err))
         }
-    }
+    },[examCode, pic, points, props.socket, question])
 
     return (
         <div className="container text-center rounded mb-3">

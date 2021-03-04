@@ -10,15 +10,15 @@ export default function RenderContent(props) {
     const [disable, setDisable] = useState(false)
     const [finished, setFinished] = useState(false)
 
-    function createImage(picture) {
+    const createImage = useCallback(picture => {
         const arrayBufferView = new Uint8Array(picture)
         const blob = new Blob([arrayBufferView], { type: 'image/jpeg' })
         const urlCreator = window.URL || window.webkitURL
 
         return urlCreator.createObjectURL(blob)
-    }
+    },[])
 
-    function handleChange(event, qId, aId) {
+    const handleChange = useCallback((event, qId, aId) => {
         const answersCopy = answers.slice()
         if (event.target.checked) {
             const index = answersCopy.findIndex(value => value.id === qId)
@@ -35,13 +35,13 @@ export default function RenderContent(props) {
             }
         }
         setAnswers(answersCopy)
-    }
+    },[answers])
 
-    function handleSubmit(event) {
+    const handleSubmit = useCallback(event => {
         event.preventDefault()
         socket.emit('exam-finished', answers, props.exam)
         setDisable(true)
-    }
+    },[answers, props.exam, socket])
 
     const handleExamProcessed = useCallback(() => setFinished(true), [])
 
@@ -50,6 +50,11 @@ export default function RenderContent(props) {
             socket.emit('exam-finished', answers, props.exam)
         }
     }, [answers, disable, props.exam, socket])
+
+    const warnUser = useCallback(event => {
+        event.preventDefault()
+        event.returnValue = 'Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva.'
+    }, [])
 
     useEffect(() => {
         window.addEventListener('beforeunload', warnUser)
@@ -65,7 +70,7 @@ export default function RenderContent(props) {
 
             socket.off('exam-processed', handleExamProcessed)
         }
-    }, [list, disable, handleExamProcessed, socket, submitExam])
+    }, [list, disable, handleExamProcessed, socket, submitExam, warnUser])
 
     useEffect(() => {
         const temp = []
@@ -75,11 +80,6 @@ export default function RenderContent(props) {
         })
         setAnswers(temp)
     }, [list])
-
-    const warnUser = (event) => {
-        event.preventDefault()
-        event.returnValue = 'Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva.'
-    }
 
     return (
         <div className="page mt-3">

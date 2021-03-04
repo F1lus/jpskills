@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import API from '../../BackendAPI'
@@ -12,7 +12,7 @@ export default function AddAnswer(props) {
     const [isCorrect, setCorrect] = useState(1)
 
 
-    function handleChange(event) {
+    const handleChange = useCallback(event => {
         switch (event.target.name) {
             case 'answer':
                 setAnswer(event.target.value)
@@ -23,9 +23,9 @@ export default function AddAnswer(props) {
             default:
                 return
         }
-    }
+    },[])
 
-    function handleSubmit(event) {
+    const handleSubmit = useCallback(event => {
         event.preventDefault()
         if (props.questionId && answer && isCorrect) {
             setDisableButton(true)
@@ -38,7 +38,7 @@ export default function AddAnswer(props) {
                     }
                 })
         }
-    }
+    },[answer, isCorrect, param.examName, props.questionId, props.socket])
 
     return (
         <div>

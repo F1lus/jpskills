@@ -31,13 +31,13 @@ export default function Home(props) {
 
 
 
-    function needHelp(event, index) {
+    const needHelp = useCallback((event, index) => {
         if (event.target.checked) {
             document.getElementById('help').innerHTML = Adminnak[index].valasz
         } else {
             document.getElementById('help').innerHTML = null
         }
-    }
+    },[])
 
     return (
         <div className="container mb-3 mt-3 page">

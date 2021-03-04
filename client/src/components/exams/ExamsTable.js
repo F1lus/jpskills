@@ -38,7 +38,7 @@ export default function ExamsTable(props) {
         
     },[props.exams, toLink])
 
-    function search(event) {
+    const search = useCallback((event) => {
         if (workData.length > 0) {
             const filterBySearch = workData.filter(exam => {
                 const value = event.target.value.toLowerCase().trim()
@@ -46,7 +46,7 @@ export default function ExamsTable(props) {
             } )
             setData(filterBySearch)
         }
-    }
+    },[workData])
 
     const columns = [
         {

@@ -1,7 +1,7 @@
 const userState = {
     loggedIn: false,
-    name: 'John Doe',
-    permission: 'operátor'
+    name: '',
+    permission: ''
 }
 
 const LOGIN_STATUS = 'LOGIN_STATUS'

@@ -13,10 +13,10 @@ export default function ExamResults() {
     const [result, setResult] = useState({})
     const [redirect, setRedirect] = useState(false)
 
-    function handleClick(event) {
+    const handleClick = useCallback(event => {
         event.preventDefault()
         setRedirect(true)
-    }
+    },[])
 
     const handleExamFinalized = useCallback(skill => setResult(model(skill)), [])
 

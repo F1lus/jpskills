@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import {useParams} from 'react-router-dom'
 
 import API from '../../BackendAPI'
@@ -24,14 +24,14 @@ export default function Modifier(props){
         }
     },[props.value, index])
 
-    function handleChange(event){
+    const handleChange = useCallback(event => {
         if(event.target.value === 'Állapotváltás...'){
             return
         }
         setValue(event.target.value)
-    }
+    },[])
 
-    function handleSubmit(event){
+    const handleSubmit = useCallback(event => {
         event.preventDefault()
         setDisableButton(true)
         if(index && value){
@@ -59,9 +59,9 @@ export default function Modifier(props){
                 })
             }
         }
-    }
+    },[index, isAnswer, param.examName, props.socket, type, value])
 
-    function renderInput(){
+    const renderInput = useCallback(() => {
         if(type === 'number' || type === 'text'){
             return (
                 <form onSubmit={handleSubmit}>
@@ -87,7 +87,7 @@ export default function Modifier(props){
                 </form>
             )
         }
-    }
+    }, [disableButton, handleChange, handleSubmit, type, value])
 
     return (
     <div>
