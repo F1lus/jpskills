@@ -20,20 +20,19 @@ import Profile from './components/user_management/Profile'
 import Examination from './components/exams/examination/Examination'
 import ExamResults from './components/exams/examination/ExamResults'
 import LoginHandler from './components/user_management/handlers/LoginHandler'
+import Routing from './components/user_management/handlers/Routing'
 
 export default function App() {
 
   const socket = useContext(SocketContext)
 
   const [loggedIn, setLoggedIn] = useState(false)
-  const [user, setUser] = useState(null)
   const [permission, setPermission] = useState(null)
   const location = useLocation()
 
   const handleLoginInfo = useCallback((username, perm) => {
     setLoggedIn(username && perm)
     if (loggedIn) {
-      setUser(username)
       setPermission(perm)
     }
   }, [loggedIn])
@@ -56,55 +55,23 @@ export default function App() {
             classNames="fade"
             >
             <Switch location={location}>
-              <Route exact path='/' component={() => (
-                <LoginHandler login={true} loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                  <Login />
-                </LoginHandler>
-              )} />
+              <Routing exact path='/' login={true} component={Login} />
 
-              <Route exact path='/home' component={() => (
-                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                  <Home user={user} permission={permission} />
-                </LoginHandler>
-              )} />
+              <Routing exact path='/home' component={Home} />
 
-              <Route exact path='/exams' component={() => (
-                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                  <ExamWrapper permission={permission} />
-                </LoginHandler>
-              )} />
+              <Routing exact path='/exams' component={ExamWrapper} />
 
-              <Route exact path='/exams/modify/:examName' component={() => (
-                <LoginHandler loggedIn={loggedIn} allowed={['admin', 'superuser']} permission={permission}>
-                  <ExamModify />
-                </LoginHandler>
-              )} />
+              <Routing exact path='/exams/modify/:examName' component={ExamModify} />
 
-              <Route exact path='/exams/learn/:examCode' component={() => (
-                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                  <ExamDocument permission={permission} />
-                </LoginHandler>
-              )} />
+              <Routing exact path='/exams/learn/:examCode' component={ExamDocument} />
 
-              <Route exact path='/exams/:examCode' component={() => (
-                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                  <Examination />
-                </LoginHandler>
-              )} />
+              <Routing exact path='/exams/:examCode' component={Examination} />
 
-              <Route exact path='/exams/result/:examCode/' component={() => (
-                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                  <ExamResults />
-                </LoginHandler>
-              )} />
+              <Routing exact path='/exams/result/:examCode/' component={ExamResults} />
 
-              <Route exact path='/profile' component={() => (
-                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                  <Profile user={user} permission={permission} />
-                </LoginHandler>
-              )} />
+              <Routing exact path='/profile' component={Profile} />
 
-              <Route exact path='/logout' component={() => (
+              <Route exact path='/logout' render={() => (
                 <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
                   {
                     API.post('/logout', { cmd: 'jp-logout' })

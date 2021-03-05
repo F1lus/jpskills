@@ -29,6 +29,9 @@ const getLoginInfo = require('./users/GetLoginInfo')
  */
 module.exports = (socket) => {
 
+    //Login
+    getLoginInfo(socket)
+
     //Lekérdezések regisztrálása
     getExamContent(socket)
     getExams(socket)
@@ -41,7 +44,6 @@ module.exports = (socket) => {
     updatePoints(socket)
 
     //Felhasználói művelet(ek) regisztrálása
-    getLoginInfo(socket)
     processExam(socket)
 
     //Vizsgaeredmény eseményének regisztrálása

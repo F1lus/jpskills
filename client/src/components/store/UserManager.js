@@ -1,6 +1,6 @@
 const userState = {
     loggedIn: false,
-    name: '',
+    user: '',
     permission: ''
 }
 
@@ -15,10 +15,10 @@ export function setStatus(status) {
     }
 }
 
-export function setName(name) {
+export function setName(user) {
     return {
         type: UPDATE_NAME,
-        name
+        user
     }
 }
 
@@ -34,19 +34,19 @@ export default function userReducer(state = userState, action) {
         case LOGIN_STATUS:
             return {
                 loggedIn: action.status,
-                name: state.name,
+                user: state.user,
                 permission: state.permission
             }
         case UPDATE_NAME:
             return {
                 loggedIn: state.loggedIn,
-                name: action.name,
+                user: action.user,
                 permission: state.permission
             }
         case UPDATE_PERM:
             return {
                 loggedIn: state.loggedIn,
-                name: state.name,
+                user: state.user,
                 permission: action.permission
             }
         default:

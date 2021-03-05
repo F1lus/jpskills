@@ -1,10 +1,8 @@
 //Külső modulok
 const express = require('express')
 const cors = require('cors')
-const bodyParser = require('body-parser')
 const http = require('http')
 const socketio = require('socket.io')
-const sharedSession = require('express-socket.io-session')
 const fileUpload = require('express-fileupload')
 const helmet = require('helmet')
 
@@ -30,7 +28,9 @@ const server = http.createServer(app)
 
 const PORT = config.server_port
 
-const io = socketio(server, {
+const socketSession = middleware => (socket, next) => middleware(socket.handshake, {}, next)
+
+const io = socketio(server, { 
     cors:{
         origin: config.client,
         methods: ['GET', 'POST'],
@@ -41,6 +41,8 @@ const io = socketio(server, {
 
 //Middleware-ek
 app.use(helmet())
+
+app.use(express.json())
 
 app.use(cors({
     origin: config.client,
@@ -53,12 +55,9 @@ app.use(fileUpload({
     limits: { fileSize: 2 * 1024 * 1024 * 1024 }
 }))
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-
 app.use(session)
 
-io.use(sharedSession(session, {autoSave: true}))
+io.use(socketSession(session))
 
 //Valós idejű kommunikáció
 io.on('connection', socketWrapper)

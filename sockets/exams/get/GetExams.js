@@ -32,6 +32,7 @@ module.exports = (socket) => {
             dateFormat(('' + result.created))
             ])
         })
+
         socket.emit('exams-get-emitter', examResult)
     }
 

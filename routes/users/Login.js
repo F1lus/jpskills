@@ -36,7 +36,7 @@ login.post('/login', async (req, res) => {
                     } else {
                         req.session.perm = userData[1]
                     }
-                    res.json({ access: true })
+                    res.status(200).json({ access: true }).end()
                 } else {
                     res.json({ access: false })
                 }
