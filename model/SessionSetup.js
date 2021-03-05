@@ -15,8 +15,8 @@ const sessionStore = new mysqlStore({
 const sessionSetup = session({
     secret: 'jp5k1ll-$eCRet-#749',
     store: sessionStore,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
 })
 
 module.exports = sessionSetup
