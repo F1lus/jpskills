@@ -19,11 +19,15 @@ export default function Routing({ component: Component, allowed, ...rest }) {
 
     const handleLoginInfo = useCallback((username, permission) => {
         setStatusHandler(store, username != null && permission != null)
-        setNameHandler(store, username)
-        setPermHandler(store, permission)
-    }, [store])
+        if(status){
+            setNameHandler(store, username)
+            setPermHandler(store, permission)
+        }
+    }, [store, status])
 
     useEffect(() => {
+        window.scrollTo(0, 0)
+        
         socket.emit('request-login-info')
         socket.on('login-info', handleLoginInfo)
 
@@ -32,10 +36,11 @@ export default function Routing({ component: Component, allowed, ...rest }) {
 
     return (
         <Route {...rest} render={(props) => {
-            if (path === '/') {
-                return status ? <Redirect to='/home' /> : <Component {...props} />
-            } else if (path === '/logout') {
-                if (status) {
+            if (!status && path === '/') {
+                return <Component {...props} />
+            } else if(status && path === '/'){
+                return <Redirect to='/home' />
+            }else if (status && path === '/logout') {
                     return (
                         <div>
                             <Component />
@@ -49,15 +54,14 @@ export default function Routing({ component: Component, allowed, ...rest }) {
                             }
                         </div>
                     )
-                } else {
-                    return <Redirect to='/' />
-                }
-            } else {
-                if (status && allowed.findIndex(perm => perm === '*' || perm === permission) !== -1) {
+            } else if(status){
+                if (allowed.findIndex(perm => perm === '*' || perm === permission) !== -1) {
                     return <Component {...props} user={user} permission={permission} />
                 } else {
-                    return <Redirect to='/' />
+                    return <Redirect to='/home' />
                 }
+            }else{
+                return <Redirect to='/' />
             }
         }}/>
     )

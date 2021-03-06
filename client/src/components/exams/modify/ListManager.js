@@ -52,7 +52,7 @@ export default function ListManager(props){
                                     <span className="float-left"><b>{kerdesIndex+1}.</b></span>
                                     <li>
                                         <button disabled={disableButton}
-                                            className="btn btn-warning float-right" 
+                                            className="btn btn-danger float-right" 
                                             onClick={e =>{remove(e, inner)}}>
                                                 Törlés
                                         </button>
@@ -81,6 +81,7 @@ export default function ListManager(props){
                             */
                             return (
                             <div key={index}>
+                                <hr/>
                                 <ListManager socket={socket} questionId={el[0]} 
                                     list={inner} isAnswer={true} disable={disableButton}/>
                             </div>)
@@ -107,9 +108,11 @@ export default function ListManager(props){
                     })}</ul>
                 })    
             }
+            
             <AddAnswer socket={props.socket} questionId={questionId} display={display}  disable={disableButton}/>
             {props.isAnswer ? 
                 <li>
+                    <hr/>
                     <button onClick={modifyDisplay} className="btn btn-warning">
                         {!display ? 'Válasz hozzáadása' : 'Mégse'}
                     </button>

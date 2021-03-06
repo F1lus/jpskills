@@ -60,7 +60,7 @@ export default function ModifyPic(props) {
 
     return (
         <div className="container">
-            <button className="btn btn-warning m-3" onClick={open}>
+            <button className="btn btn-primary m-3" onClick={open}>
                 Kép módosítása
             </button>
 

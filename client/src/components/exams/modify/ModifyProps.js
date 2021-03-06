@@ -120,7 +120,7 @@ export default function ModifyProps(props) {
                 <p>A jelenlegi maximális pontszám {maxPoints}, az elvégzéshez pedig {Math.round(maxPoints * (examProps[3] / 100))} pont szükséges</p>
                 <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
             </form>
-
+            <hr/>
             <form onSubmit={statusChange}>
                 <p>A vizsga jelenleg {status ?
                     <span className="text-success">Aktív</span> : <span className="text-danger">Inaktív</span>
