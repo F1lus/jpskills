@@ -21,7 +21,7 @@ export default function Login(){
             }
 
             if(password.length < 8 || password.length > 16){
-                setAlert('A jelszó legalább 8, legfeljebb 16 karakter hosszúnak kell lennie!')
+                setAlert('A jelszó legalább 8, legfeljebb 16 karakter hosszú legyen!')
                 return
             }
 
@@ -81,6 +81,30 @@ export default function Login(){
                 setCardNum(event.target.value)
                 break
             case 'password':
+                if(event.target.value.length >= 8 && event.target.value.length <= 16){
+                    document.getElementById('hossz').classList.remove('text-danger')
+                    document.getElementById('hossz').classList.add('text-success')
+                }else{
+                    document.getElementById('hossz').classList.add('text-danger')
+                    document.getElementById('hossz').classList.remove('text-success')
+                }
+
+                if(event.target.value.toLowerCase() !== event.target.value){
+                    document.getElementById('nagybetu').classList.remove('text-danger')
+                    document.getElementById('nagybetu').classList.add('text-success')
+                }else{
+                    document.getElementById('nagybetu').classList.add('text-danger')
+                    document.getElementById('nagybetu').classList.remove('text-success')
+                }
+
+                if(event.target.value.split('').some(letter => !isNaN(letter))){
+                    document.getElementById('szam').classList.remove('text-danger')
+                    document.getElementById('szam').classList.add('text-success')
+                }else{
+                    document.getElementById('szam').classList.add('text-danger')
+                    document.getElementById('szam').classList.remove('text-success')
+                }
+
                 setPassword(event.target.value)
                 break
             case 'password2':
@@ -102,8 +126,16 @@ export default function Login(){
     return (
         <div className="d-flex container text-center align-items-center justify-content-center vh-100 w-50">
             <div className="container shadow rounded bg-light p-3">
-                {register ? <h1 className="text-center"><p>Kérjük adja meg adatait!</p></h1> : <h1 className="text-center"><p>Kérjük jelentkezzen be!</p></h1>}
+                {register ? <h1><p>Kérjük adja meg adatait!</p></h1> : <h1><p>Kérjük jelentkezzen be!</p></h1>}
                 {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : null}
+                {register && (
+                    <div><h6>A jelszó tartalma:</h6>
+                        <ul>
+                            <li id='hossz' className='text-danger'>8-16 karakter hosszú</li>
+                            <li id='szam' className='text-danger'>Minimum egy szám</li>
+                            <li id='nagybetu' className='text-danger'>Minimum egy nagybetű</li>
+                        </ul>
+                    </div>)}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto">
                         <input type="text" name="cardNum" autoComplete="off" value={cardNum || ''} onChange={handleChange} required/>
@@ -118,7 +150,7 @@ export default function Login(){
                         <input type="password" name="password" autoComplete="off" value={password || ''} onChange={handleChange} required/>
                         <label htmlFor="password" className="label-name">
                             <span className="content-name">
-                                Jelszó{register && ("*")}
+                                Jelszó
                             </span>
                         </label>
                     </div>
@@ -131,7 +163,7 @@ export default function Login(){
                             <input type="password" name="password2" autoComplete="off" value={password2 || ''} onChange={handleChange} required/>
                             <label htmlFor="password" className="label-name">
                                 <span className="content-name">
-                                    Jelszó újra
+                                    Jelszó megerősítése
                                 </span>
                             </label>
                         </div>
@@ -152,7 +184,6 @@ export default function Login(){
                         Pipálja be, ha még nincs fiókja!
                     </label>
                 </div>
-                {register && (<small>* A jelszó formai követelményei: 8-16 karakter, minimum egy számot tartalmaznia kell, minimum egy nagy betűnek szerepelnie kell benne</small>)}
             </div>
         </div>
     )

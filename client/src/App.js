@@ -49,7 +49,7 @@ export default function App() {
 
               <Routing exact path='/profile' allowed={['*']} component={Profile} />
 
-              <Routing exact path='/logout' allowed={['*']}/>
+              <Routing exact path='/logout' allowed={['*']} component={null}/>
             </Switch>
           </CSSTransition>
         </TransitionGroup>
