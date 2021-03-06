@@ -104,7 +104,7 @@ export default function ModifyProps(props) {
                     <input type='text' name='examNotes' value={examProps[1] || ''} onChange={handleChange} autoComplete="off" />
                     <label htmlFor="examNotes" className="label-name">
                         <span className="content-name">
-                            A vizsga megjegyzése
+                            A vizsga megjegyzése (ha van)
                         </span>
                     </label>
                 </div>

@@ -49,7 +49,7 @@ export default function App() {
 
               <Routing exact path='/profile' allowed={['*']} component={Profile} />
 
-              <Routing exact path='/logout' allowed={['*']} component={Logout}/>
+              <Routing exact path='/logout' allowed={['*']} component={LogoutPlaceholder}/>
             </Switch>
           </CSSTransition>
         </TransitionGroup>
@@ -58,7 +58,7 @@ export default function App() {
 
 }
 
-const Logout =() => (
+const LogoutPlaceholder = () => (
   <div>
     Pillanat türelmet...
   </div>

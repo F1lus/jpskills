@@ -6,8 +6,8 @@ import API from '../BackendAPI'
 export default function Login() {
 
     const [cardNum, setCardNum] = useState(null)
-    const [password, setPassword] = useState(null)
-    const [password2, setPassword2] = useState(null)
+    const [password, setPassword] = useState('')
+    const [password2, setPassword2] = useState('')
     const [alert, setAlert] = useState(null)
     const [register, setRegister] = useState(false)
 
@@ -81,8 +81,8 @@ export default function Login() {
                 setCardNum(event.target.value)
                 break
             case 'password':
-                if (register) {
-                    if (event.target.value.length >= 8 && event.target.value.length <= 16) {
+                if (register && password.length > 0) {
+                    if (event.target.value.length >= 8 && event.target.value.length <= 17) {
                         document.getElementById('hossz').classList.remove('text-danger')
                         document.getElementById('hossz').classList.add('text-success')
                     } else {
@@ -106,16 +106,19 @@ export default function Login() {
                         document.getElementById('szam').classList.remove('text-success')
                     }
                 }
-
-                setPassword(event.target.value)
+                if(event.target.value.length <= 16){
+                    setPassword(event.target.value)
+                }
                 break
             case 'password2':
-                setPassword2(event.target.value)
+                if(event.target.value.length <= 16){
+                    setPassword2(event.target.value)
+                }
                 break
             default:
                 return
         }
-    }, [register])
+    }, [register, password.length])
 
     const newUser = useCallback(event => {
         if (event.target.checked) {
@@ -130,14 +133,6 @@ export default function Login() {
             <div className="container shadow rounded bg-light p-3">
                 {register ? <h1><p>Kérjük adja meg adatait!</p></h1> : <h1><p>Kérjük jelentkezzen be!</p></h1>}
                 {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : null}
-                {register && (
-                    <div><h6>A jelszó tartalma:</h6>
-                        <ul>
-                            <li id='hossz' className='text-danger'>8-16 karakter hosszú</li>
-                            <li id='szam' className='text-danger'>Minimum egy szám</li>
-                            <li id='nagybetu' className='text-danger'>Minimum egy nagybetű</li>
-                        </ul>
-                    </div>)}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto">
                         <input type="text" name="cardNum" autoComplete="off" value={cardNum || ''} onChange={handleChange} required />
@@ -156,6 +151,15 @@ export default function Login() {
                             </span>
                         </label>
                     </div>
+                    {register && password.length > 0 ? (
+                    <div className='alert alert-primary ml-5 w-50 text-justify'>
+                        <h6>A jelszó tartalma:</h6>
+                        <ul>
+                            <li id='hossz' className='text-danger'>- 8-16 karakter hosszú</li>
+                            <li id='szam' className='text-danger'>- Minimum egy szám</li>
+                            <li id='nagybetu' className='text-danger'>- Minimum egy nagybetű</li>
+                        </ul>
+                    </div>) : null}
 
 
 
@@ -183,7 +187,7 @@ export default function Login() {
                 <div className="container mt-3">
                     <label className="checkbox-label">
                         <input type="checkbox" name="regisztráció" onChange={e => newUser(e)} className="m-2" />
-                        Pipálja be, ha még nincs fiókja!
+                        {register ? 'Vegye ki a pipát, ha már van fiókja!' : 'Pipálja be, ha még nincs fiókja!'}
                     </label>
                 </div>
             </div>

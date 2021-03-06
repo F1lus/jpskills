@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { useParams, Redirect } from 'react-router-dom'
+import {useSelector} from 'react-redux'
 
 import ListManager from './ListManager'
 import AddQuestion from './AddQuestion'
@@ -12,6 +13,7 @@ export default function ExamModify() {
 
     const examCode = useParams()
     const socket = useContext(SocketContext)
+    const permission = useSelector(state => state.userReducer.permission)
 
     const [questions, setQuestions] = useState([])
     const [maxPoints, setMaxPoints] = useState(0)
@@ -65,6 +67,7 @@ export default function ExamModify() {
 
     return (
         <div className="container text-center mb-3">
+            {permission !== 'admin' ? <Redirect to='/exams' /> : null}
             {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
             <ModifyProps socket={socket} points={maxPoints} exam={examCode} />
             {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}
@@ -76,7 +79,7 @@ export default function ExamModify() {
 
                 <button onClick={setDisplay} className="btn btn-warning m-2">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
                 <br />
-                <button onClick={removeExam} className="btn btn-warning m-3">A vizsga törlése</button>
+                <button onClick={removeExam} className="btn btn-danger m-3">A vizsga törlése</button>
             </div>
         </div>
     )

@@ -145,7 +145,7 @@ export default function CreateTest(props) {
                 <div className="container text-center mb-2">
                     <div className="row">
                         <div className="col-md-4">
-                            <select name="type" className="w-50 rounded" onChange={handleChange}>
+                            <select name="type" className="w-75 rounded" onChange={handleChange}>
                                 <option defaultValue={-1}>A termék gyártója</option>
                                 {types.length === 0 ? <></> : types.map((elem, index) => {
                                     return (
@@ -154,11 +154,10 @@ export default function CreateTest(props) {
                                 })}
                             </select>
                         </div>
-
                         <div className="col-md-8">
                             <select name="item" className="w-75 rounded" onChange={handleChange}>
                                 <option defaultValue={-1}>{items.length === 0 ? 'Válasszon gyártót először' : 'A vizsga terméke'}</option>
-                                {items.length === 0 ? <></> : items.map((elem, index) => {
+                                {items.length === 0 ? null : items.map((elem, index) => {
                                     return (
                                         <option key={index} value={elem[1]}>{elem[0]} || {elem[1]}</option>
                                     )

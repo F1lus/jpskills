@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { NavLink } from 'react-router-dom'
+import {useSelector} from 'react-redux'
 
 import { SocketContext } from '../GlobalSocket'
 import { Admin, User } from '../user_management/handlers/PermissionHandler'
@@ -7,11 +8,11 @@ import { Admin, User } from '../user_management/handlers/PermissionHandler'
 import { Adminnak, Usernek } from './Helpdesk'
 import { ChevronRightIcon } from '@primer/octicons-react'
 
-export default function Home(props) {
+export default function Home() {
 
     const socket = useContext(SocketContext)
 
-    const nev = props.user
+    const [user, permission] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
 
     const [vanVizsga, setVanVizsga] = useState(false)
 
@@ -42,15 +43,15 @@ export default function Home(props) {
     const welcomeText = useCallback(() => {
         const timeOfDay = new Date().getHours()
         if(timeOfDay >= 6 && timeOfDay < 10){
-            return 'Jó reggelt, '+nev+'!'
+            return 'Jó reggelt, '+user+'!'
         }else if(timeOfDay >= 10 && timeOfDay < 18){
-            return 'Jó napot, '+nev+'!'
-        }else if(timeOfDay >= 18 && timeOfDay < 6){
-            return 'Jó estét, '+nev+'!'
+            return 'Jó napot, '+user+'!'
+        }else if(timeOfDay >= 18 || timeOfDay < 6){
+            return 'Jó estét, '+user+'!'
         }else{
-            return 'Üdvözöljük, '+nev+'!'
+            return 'Üdvözöljük, '+user+'!'
         }
-    }, [nev])
+    }, [user])
 
     return (
         <div className="container mb-3 mt-3 page">
@@ -60,7 +61,7 @@ export default function Home(props) {
                         <span id="nev">{welcomeText()}</span>
                         <hr className="w-75" />
                     </div>
-                    <Admin permission={props.permission}>
+                    <Admin permission={permission}>
                         <div>
                             <NavLink to="/profile">
                                 <button type="button" className="btn btn-warning m-2" >
@@ -75,7 +76,7 @@ export default function Home(props) {
                             </NavLink>
                         </div>
                     </Admin>
-                    <User permission={props.permission}>
+                    <User permission={permission}>
                         {
                             vanVizsga ?
                                 <NavLink to="/exams">
@@ -95,9 +96,8 @@ export default function Home(props) {
             </div>
 
             <div className="container shadow rounded p-3 bg-light mb-3">
-                <h1 className="text-center"><p>Segítség a használathoz</p></h1>
-                <Admin permission={props.permission}>
-                    <p className="ml-2">Segítségnyújtás adminoknak</p>
+                <h1 className="text-center"><p>Használati útmutató</p></h1>
+                <Admin permission={permission}>
                     <div className="container">
                         <div className="row">
                             <div className="col-sm-6 col-8">
@@ -120,8 +120,7 @@ export default function Home(props) {
                         </div>
                     </div>
                 </Admin>
-                <User permission={props.permission}>
-                <p className="ml-2">Segítségnyújtás vizsgázóknak</p>
+                <User permission={permission}>
                     <div className="container">
                         <div className="row">
                         <div className="col-sm-6 col-8">

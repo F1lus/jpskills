@@ -28,7 +28,7 @@ export default function Routing({ component: Component, allowed, ...rest }) {
         socket.on('login-info', handleLoginInfo)
 
         return () => socket.off('login-info', handleLoginInfo)
-    }, [path, handleLoginInfo, socket])
+    }, [handleLoginInfo, socket])
 
     return (
         <Route {...rest} render={(props) => {
@@ -38,6 +38,7 @@ export default function Routing({ component: Component, allowed, ...rest }) {
                 if (status) {
                     return (
                         <div>
+                            <Component />
                             {
                                 API.post('/logout', { cmd: 'jp-logout' })
                                     .then(response => {

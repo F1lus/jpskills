@@ -118,9 +118,7 @@ export default function DetailTable(props) {
             setDisplayList(list)
             setWorkingList(props.results.filter(skill => skill.examCode === examCode))
         }
-
-        // eslint-disable-next-line
-    }, [examCode, props.results])
+    }, [examCode, props.results, filterByExam, props.permission])
 
     const handleChange = useCallback(event => {
         if (!event.target.value || event.target.value === 'Vizsga kiválasztása') {
@@ -134,7 +132,7 @@ export default function DetailTable(props) {
         if (examCode && workingList.length > 0) {
             const stats = examStats(workingList)
             return (
-                <div>
+                <div className='alert alert-primary w-50 mx-auto text-justify'>
                     <p>Átlagos teljesítési idő: {stats.avgTime.avgMins + " perc " + stats.avgTime.avgSecs + " másodperc"}</p>
                     <p>Átlagosan elért pontszám: {stats.avgScore}</p>
                     <p>Sikerességi arány: {stats.completionRate + "%"}</p>

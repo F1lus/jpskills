@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
+import {useSelector} from 'react-redux'
 
 import Learn from '../exams/learn/Learn'
 import DetailTable from './DataTable'
@@ -8,10 +9,9 @@ import globalStats from './models/GlobalStatistics'
 import {SocketContext} from '../GlobalSocket'
 import { Admin, User } from './handlers/PermissionHandler'
 
-export default function Profile(props) {
+export default function Profile() {
 
-    const nev = props.user
-    const csoport = props.permission
+    const [nev, csoport] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
 
     const socket = useContext(SocketContext)
 
@@ -52,7 +52,7 @@ export default function Profile(props) {
     const renderGlobalStats = useCallback(() => {
         if(stats != null){
             return (
-                <div className="alert alert-success my-2 w-75 mx-auto">
+                <div className="alert alert-success text-justify my-2 w-50 mx-auto">
                     <p>Az eddigi vizsgáihoz szükséges átlag idő: {renderStatsObject('time') || 'Nincs adat'}</p>
                     <p>Az eddigi vizsgáin elért átlagos pontszám: {renderStatsObject('score') || 'Nincs adat'}</p>
                     <p>A vizsgák sikerességi aránya: {renderStatsObject('completion') || 'Nincs adat'}</p>
@@ -67,7 +67,6 @@ export default function Profile(props) {
         <div className="container text-center page">
             <div className="container shadow rounded text-center bg-light mb-3 mt-3">
                 <span id="nev"><p>{nev}</p></span>
-                <hr className="w-75" id="customline"/>
                 
                 <h2>Besorolás: {csoport}</h2>
 

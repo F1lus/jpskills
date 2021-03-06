@@ -21,8 +21,7 @@ export default function Learn() {
         socket.on('exams-learn-emitter', handleExams)
 
         return () => socket.off('exams-learn-emitter', handleExams)
-        // eslint-disable-next-line
-    }, [])
+    }, [handleExams, socket])
 
     return (
         <div className="container text-center p-3 mb-3">
