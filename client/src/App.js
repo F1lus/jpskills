@@ -1,14 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Switch, Route, useLocation } from 'react-router-dom'
+import React from 'react'
+import { Switch, useLocation } from 'react-router-dom'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-
-import { SocketContext } from './components/GlobalSocket'
-
-import API from './components/BackendAPI'
 
 import Login from './components/user_management/Login'
 import ExamWrapper from './components/exams/ExamWrapper'
@@ -19,31 +15,13 @@ import ExamDocument from './components/exams/learn/ExamDocument'
 import Profile from './components/user_management/Profile'
 import Examination from './components/exams/examination/Examination'
 import ExamResults from './components/exams/examination/ExamResults'
-import LoginHandler from './components/user_management/handlers/LoginHandler'
 import Routing from './components/user_management/handlers/Routing'
+import { useSelector } from 'react-redux'
 
 export default function App() {
 
-  const socket = useContext(SocketContext)
-
-  const [loggedIn, setLoggedIn] = useState(false)
-  const [permission, setPermission] = useState(null)
+  const loggedIn = useSelector(state => state.userReducer.loggedIn)
   const location = useLocation()
-
-  const handleLoginInfo = useCallback((username, perm) => {
-    setLoggedIn(username && perm)
-    if (loggedIn) {
-      setPermission(perm)
-    }
-  }, [loggedIn])
-
-  useEffect(() => {
-    socket.emit('request-login-info')
-
-    socket.on('login-info', handleLoginInfo)
-
-    return () => socket.off('login-info', handleLoginInfo)
-  }, [loggedIn, socket, handleLoginInfo])
 
   return (
     <React.Fragment>
@@ -55,34 +33,23 @@ export default function App() {
             classNames="fade"
             >
             <Switch location={location}>
-              <Routing exact path='/' login={true} component={Login} />
+              <Routing exact path='/' allowed={['*']} component={Login} />
 
-              <Routing exact path='/home' component={Home} />
+              <Routing exact path='/home' allowed={['*']} component={Home} />
 
-              <Routing exact path='/exams' component={ExamWrapper} />
+              <Routing exact path='/exams' allowed={['*']} component={ExamWrapper} />
 
-              <Routing exact path='/exams/modify/:examName' component={ExamModify} />
+              <Routing exact path='/exams/modify/:examName' allowed={['admin', 'superuser']} component={ExamModify} />
 
-              <Routing exact path='/exams/learn/:examCode' component={ExamDocument} />
+              <Routing exact path='/exams/learn/:examCode' allowed={['*']} component={ExamDocument} />
 
-              <Routing exact path='/exams/:examCode' component={Examination} />
+              <Routing exact path='/exams/:examCode' allowed={['*']} component={Examination} />
 
-              <Routing exact path='/exams/result/:examCode/' component={ExamResults} />
+              <Routing exact path='/exams/result/:examCode/' allowed={['*']} component={ExamResults} />
 
-              <Routing exact path='/profile' component={Profile} />
+              <Routing exact path='/profile' allowed={['*']} component={Profile} />
 
-              <Route exact path='/logout' render={() => (
-                <LoginHandler loggedIn={loggedIn} allowed={['*']} permission={permission}>
-                  {
-                    API.post('/logout', { cmd: 'jp-logout' })
-                      .then(response => {
-                        if (response.data.success) {
-                          window.location.reload()
-                        }
-                      }).catch(err => console.log(err))
-                  }
-                </LoginHandler>
-              )} />
+              <Routing exact path='/logout' allowed={['*']}/>
             </Switch>
           </CSSTransition>
         </TransitionGroup>

@@ -39,12 +39,25 @@ export default function Home(props) {
         }
     },[])
 
+    const welcomeText = useCallback(() => {
+        const timeOfDay = new Date().getHours()
+        if(timeOfDay >= 6 && timeOfDay < 10){
+            return 'Jó reggelt, '+nev+'!'
+        }else if(timeOfDay >= 10 && timeOfDay < 18){
+            return 'Jó napot, '+nev+'!'
+        }else if(timeOfDay >= 18 && timeOfDay < 6){
+            return 'Jó estét, '+nev+'!'
+        }else{
+            return 'Üdvözöljük, '+nev+'!'
+        }
+    }, [nev])
+
     return (
         <div className="container mb-3 mt-3 page">
             <div className="container shadow rounded p-3 bg-light mb-3">
                 <div className="container text-center">
                     <div className="container text-center m-3">
-                        <span id="nev">Kedves {nev}!</span>
+                        <span id="nev">{welcomeText()}</span>
                         <hr className="w-75" />
                     </div>
                     <Admin permission={props.permission}>

@@ -11,7 +11,6 @@ export default function Login(){
     const [alert, setAlert] = useState(null)
     const [register, setRegister] = useState(false)
 
-
     const handleSubmit = useCallback(event => {
         event.preventDefault()
         let data = null
