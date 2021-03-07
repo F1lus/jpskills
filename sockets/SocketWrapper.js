@@ -14,7 +14,7 @@ const getSkillStatistics = require('./exams/get/GetSkillStatistics')
 //Vizsga frissítés
 const removeExam = require('./exams/update/RemoveExam')
 const removeExamElement = require('./exams/update/RemoveExamElement')
-const updatePoints = require('./exams/update/UpdatePoints')
+const updater = require('./exams/update/Updater')
 
 //Felhasználó kezelés
 const getLoginInfo = require('./users/GetLoginInfo')
@@ -41,7 +41,7 @@ module.exports = (socket) => {
     //Frissítések regisztrálása
     removeExam(socket)
     removeExamElement(socket)
-    updatePoints(socket)
+    updater(socket)
 
     //Felhasználói művelet(ek) regisztrálása
     processExam(socket)

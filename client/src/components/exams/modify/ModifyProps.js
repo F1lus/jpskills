@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
-import API from '../../BackendAPI'
-
 export default function ModifyProps(props) {
 
     const socket = props.socket
@@ -62,26 +60,20 @@ export default function ModifyProps(props) {
 
     const statusChange = useCallback(event => {
         event.preventDefault()
-        if (examProps[2] != null) {
-            API.post(`/exams/modify/${examCode.examName}`, { status: examProps[2] })
-                .then(response => {
-                    if (response.data.updated) {
-                        socket.emit('exam-modified')
-                    }
-                }).catch(err => console.log(err))
-        }
+        if(examProps[2] != null)
+        socket.emit('update-status', {examCode: examCode.examName, status: examProps[2]})
     },[examCode.examName, examProps, socket])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
         if (examProps != null) {
-            API.post(`/exams/modify/${examCode.examName}`,
-                { examName: examProps[0], notes: examProps[1], points: (examProps[3] / 100) })
-                .then(response => {
-                    if (response.data.updated) {
-                        socket.emit('exam-modified')
-                    }
-                }).catch(err => console.log(err))
+            socket.emit('update-exam-props', 
+                {
+                    examCode: examCode.examName, 
+                    examName: examProps[0],
+                    notes: examProps[1],
+                    points: (examProps[3] / 100)
+                })
         }
     },[examCode.examName, examProps, socket])
 

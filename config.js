@@ -6,5 +6,6 @@ module.exports = {
         db: 'jpskills'
     },
     client: 'http://localhost:3000',
+    server_host: 'localhost',
     server_port: process.env.PORT || 5000
 }

@@ -602,7 +602,7 @@ class Connection {
      * Használt táblák: results
      */
 
-    updateAnswer = async (user, examCode, answerId, value, isBoolean) => {
+    updateAnswer = async (user, examCode, answerId, value) => {
         let success = false
         try {
             await this.con.transaction(async trx => {
@@ -614,21 +614,17 @@ class Connection {
                         .first().transacting(trx)
 
                     let update = null
-                    if (result && !isBoolean) {
-                        if (result.result_text !== value) {
-                            update = await this.con('results').update({
-                                result_text: value
-                            }).where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
-                        }
-                    } else if (result && isBoolean) {
-                        if (result.correct !== value) {
-                            update = await this.con('results').update({
-                                correct: value
-                            }).where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
-                        }
+                    if (result && !(value === '0' || value === '1') && typeof value !== 'boolean') {
+                        update = await this.con('results').update({
+                            result_text: value
+                        }).where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
+                    } else if (result && value === '0' || value === '1' || typeof value === 'boolean') {
+                        update = await this.con('results').update({
+                            correct: value
+                        }).where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
                     }
 
-                    if (update) {
+                    if (update != null) {
                         success = await this.updateExamModify(user, examCode, trx)
                     }
                 }
@@ -651,7 +647,7 @@ class Connection {
      * Használt táblák: questions
      */
 
-    updateQuestion = async (user, examCode, questionId, value, isNumber) => {
+    updateQuestion = async (user, examCode, questionId, value) => {
         let success = false
         try {
             await this.con.transaction(async trx => {
@@ -663,21 +659,17 @@ class Connection {
                         .first().transacting(trx)
 
                     let update = null
-                    if (question && !isNumber) {
-                        if (question.question_name !== value) {
-                            update = await this.con('questions').update({
-                                question_name: value
-                            }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
-                        }
-                    } else if (question && isNumber) {
-                        if (question.points !== value) {
-                            update = await this.con('questions').update({
-                                points: value
-                            }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
-                        }
+                    if (question && typeof value === 'string') {
+                        update = await this.con('questions').update({
+                            question_name: value
+                        }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+                    } else if (question && typeof value === 'number' || typeof value === 'bigint') {
+                        update = await this.con('questions').update({
+                            points: value
+                        }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
                     }
 
-                    if (update) {
+                    if (update != null) {
                         success = await this.updateExamModify(user, examCode, trx)
                     }
                 }

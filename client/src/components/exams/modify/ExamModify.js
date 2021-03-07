@@ -32,7 +32,11 @@ export default function ExamModify() {
     }, [])
 
     const handleServerAccept = useCallback(() => setUpdater(count => ++count), [])
-
+    const handleUpdate = useCallback(updated => {
+        if(updated){
+            setUpdater(count => ++count)
+        }
+    }, [])
     const handleExamRemoved = useCallback(() => setRemoved(true), [])
 
     useEffect(() => {
@@ -42,16 +46,17 @@ export default function ExamModify() {
         socket.on('exam-content', handleContent)
 
         socket.on('server-accept', handleServerAccept)
-
+        socket.on('updated', handleUpdate)
         socket.on('removed-exam', handleExamRemoved)
 
         return () => {
             socket.off('exam-content', handleContent)
             socket.off('server-accept', handleServerAccept)
             socket.off('removed-exam', handleExamRemoved)
+            socket.off('updated', handleUpdate)
         }
         
-    }, [updater, examCode.examName, handleContent, handleExamRemoved, handleServerAccept, socket])
+    }, [updater, examCode.examName, handleUpdate, handleContent, handleExamRemoved, handleServerAccept, socket])
 
     const setDisplay = useCallback(event => {
         event.preventDefault()

@@ -1,9 +1,7 @@
-import React, {useState, useEffect, useCallback} from 'react'
-import {useParams} from 'react-router-dom'
+import React, { useState, useEffect, useCallback } from 'react'
+import { useParams } from 'react-router-dom'
 
-import API from '../../BackendAPI'
-
-export default function Modifier(props){
+export default function Modifier(props) {
 
     const param = useParams()
 
@@ -15,67 +13,62 @@ export default function Modifier(props){
 
     useEffect(() => {
         let valueType = typeof props.value
-        if(valueType === 'number' || valueType === 'bigint'){
+        if (valueType === 'number' || valueType === 'bigint') {
             setType('number')
-        }else if(valueType === 'boolean'){
+        } else if (valueType === 'boolean') {
             setType('bool')
-        }else if(valueType === 'string'){
+        } else if (valueType === 'string') {
             setType('text')
         }
-    },[props.value, index])
+    }, [props.value, index])
 
     const handleChange = useCallback(event => {
-        if(event.target.value === 'Állapotváltás...'){
+        if (event.target.value === 'Állapotváltás...') {
             return
         }
         setValue(event.target.value)
-    },[])
+    }, [])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
-        setDisableButton(true)
-        if(index && value){
-            if(!isAnswer){
-                API.post(`/exams/modify/${param.examName}`, 
-                    {questionId: index, value: value, isNumber: type === 'number'})
-                .then(response  => {
-                    if(response){
-                        props.socket.emit('exam-modified')
-                    }
-                }).catch(err => {
-                    setDisableButton(false)
-                    console.log(err)
-                })
-            }else{
-                API.post(`/exams/modify/${param.examName}`, 
-                    {answerId: index, value: value, isBoolean: type === 'bool'})
-                .then(response  => {
-                    if(response){
-                        props.socket.emit('exam-modified')
-                    }
-                }).catch(err => {
-                    setDisableButton(false)
-                    console.log(err)
-                })
+        try {
+            if (index && value) {
+                setDisableButton(true)
+                if (!isAnswer) {
+                    props.socket.emit('update-question', {
+                        examCode: param.examName,
+                        questionId: index,
+                        value: value
+                    })
+                } else {
+                    props.socket.emit('update-answer', {
+                        examCode: param.examName,
+                        answerId: index,
+                        value: value
+                    })
+                }
             }
+        } catch (error) {
+            setDisableButton(false)
+            console.log(error.message)
         }
-    },[index, isAnswer, param.examName, props.socket, type, value])
+    }, [index, isAnswer, param.examName, props.socket, value])
 
     const renderInput = useCallback(() => {
-        if(type === 'number' || type === 'text'){
+        if (type === 'number' || type === 'text') {
             return (
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto">
-                        <input name='modify' type={type || 'text'} value={value || ''} onChange={handleChange} required autoComplete="off"/>
+                        <input name='modify' type={type || 'text'} value={value || ''} onChange={handleChange} required autoComplete="off" />
                         <label htmlFor="modify" className="label-name">
                             <span className="content-name">
-                                {type === 'number' ? "Helyes válaszonként adható egész pontszám":"A szöveg megadása"}
+                                {type === 'number' ? "Helyes válaszonként adható egész pontszám" : "A szöveg megadása"}
                             </span>
                         </label>
                     </div>
                     <button disabled={disableButton} className="btn btn-warning m-2">Módosítás!</button>
                 </form>)
-        }else if(type === 'bool'){
+        } else if (type === 'bool') {
             return (
                 <form onSubmit={handleSubmit}>
                     <select name='modify' className="rounded pl-3 w-25" onChange={handleChange}>
@@ -90,7 +83,7 @@ export default function Modifier(props){
     }, [disableButton, handleChange, handleSubmit, type, value])
 
     return (
-    <div>
-        {renderInput()}
-    </div>)
+        <div>
+            {renderInput()}
+        </div>)
 }

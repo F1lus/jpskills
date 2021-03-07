@@ -1,8 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import API from '../../BackendAPI'
-
 export default function AddAnswer(props) {
 
     const param = useParams()
@@ -29,14 +27,13 @@ export default function AddAnswer(props) {
         event.preventDefault()
         if (props.questionId && answer && isCorrect) {
             setDisableButton(true)
-            API.post(`/exams/modify/${param.examName}`,
-                { questionId: props.questionId, answerText: answer, value: isCorrect })
-                .then(result => {
-                    if (result) {
-                        props.socket.emit('exam-modified')
-                        setAnswer(null)
-                    }
-                })
+            props.socket.emit('insert-answer', {
+                examCode: param.examName,
+                questionId: props.questionId,
+                answerText: answer,
+                value: isCorrect
+            })
+            setAnswer(null)
         }
     },[answer, isCorrect, param.examName, props.questionId, props.socket])
 

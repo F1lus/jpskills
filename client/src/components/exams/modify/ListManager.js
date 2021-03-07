@@ -31,13 +31,18 @@ export default function ListManager(props){
     }, [examCode, props.isAnswer, socket])
 
     const handleServerAccept = useCallback(() => setDisableButton(false), [])
+    const handleUpdate = useCallback(update => setDisableButton(false), [])
 
     useEffect(() =>{
         setList(props.list)
         socket.on('server-accept', handleServerAccept)
+        socket.on('updated', handleUpdate)
 
-        return () => socket.off('server-accept', handleServerAccept)
-    }, [props.list, socket, handleServerAccept])
+        return () => {
+            socket.off('server-accept', handleServerAccept)
+            socket.off('updated', handleUpdate)
+        }
+    }, [props.list, socket, handleServerAccept, handleUpdate])
 
     return (
         <div className="container">
