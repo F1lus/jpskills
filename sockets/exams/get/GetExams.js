@@ -25,11 +25,12 @@ module.exports = (socket) => {
         let examResult = []
 
         exams.forEach(result => {
-            examResult.push([result.examName,
-            result.itemCode,
-            result.comment,
-            result.status,
-            dateFormat(('' + result.created))
+            examResult.push([
+                result.examName,
+                result.itemCode,
+                result.comment,
+                result.status,
+                dateFormat(('' + result.created))
             ])
         })
 

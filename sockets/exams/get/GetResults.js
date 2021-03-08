@@ -1,8 +1,8 @@
 const dbconnect = require('../../../model/DbConnect')
 
-module.exports = (socket) => {
+module.exports = socket => {
 
-    const getResult = async (examCode) => {
+    const getResult = async examCode => {
         socket.emit('exam-finalized', await dbconnect.selectSkill(examCode, socket.handshake.session.cardNum))
     }
 

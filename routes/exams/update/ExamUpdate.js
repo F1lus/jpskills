@@ -9,11 +9,12 @@ update.post('/exams/modify/:examCode', async (req,res) => {
             const examCode = req.params.examCode
 
             if(req.body.questionName && req.body.questionPoints){
-                //Kérdés beszúrása
+                //Kérdés beszúrása, ha nincs kép
                 if(!req.files || !req.files.picture){
                     res.json({updated: await dbconnect.insertQuestion(user, examCode, 
                         req.body.questionName, req.body.questionPoints, null)})
 
+                //Kérdés beszúrása, ha van kép
                 }else if(!['.png', '.jpeg', '.jpg'].some(value => req.files.picture.name.toLowerCase().endsWith(value))){
                     res.json({error: 'invalid_mime'})
                     return
