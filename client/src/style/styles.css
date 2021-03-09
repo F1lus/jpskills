@@ -28,6 +28,9 @@ ul {
 
 /*home*/
 #help {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 35vh;
     overflow-y: scroll;
 }
