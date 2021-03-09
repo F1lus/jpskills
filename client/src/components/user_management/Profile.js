@@ -53,8 +53,8 @@ export default function Profile() {
         if(stats != null){
             return (
                 <div className="alert alert-success text-justify my-2 w-50 mx-auto">
-                    <h3 className='text-center'>Az Ön vizsgáiról általánosságban:</h3>
-                    <br/>
+                    <h2 className='text-center'>Az Ön vizsgáiról általánosságban</h2>
+                    <hr/>
                     <h5>A vizsgáin eltöltött átlag idő: {renderStatsObject('time') || 'Nincs adat'}</h5>
                     <h5>A vizsgáin elért átlagos pontszám: {renderStatsObject('score') || 'Nincs adat'}</h5>
                     <h5>A vizsgáin a sikerességi arány: {renderStatsObject('completion') || 'Nincs adat'}</h5>

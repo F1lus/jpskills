@@ -179,7 +179,7 @@ export default function CreateTest(props) {
                     <input type="text" name="comment" onChange={handleChange} value={comment || ''} autoComplete="off" />
                     <label htmlFor="comment" className="label-name">
                         <span className="content-name">
-                            Megjegyzés (ha van):
+                            Megjegyzés (ha nincs hagyja üresen):
                         </span>
                     </label>
                 </div>

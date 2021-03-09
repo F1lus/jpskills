@@ -17,14 +17,13 @@ const handleLogout = require('./routes/users/Logout')
 const uploadExam = require('./routes/exams/update/UploadExam')
 const updater = require('./routes/exams/update/ExamUpdate')
 
-//Session előkészítés
-const session = require('./model/SessionSetup')
-
 //Előkészítés
 const config = require('./config')
 
 const app = express()
 const server = http.createServer(app)
+
+const session = require('./model/SessionSetup')
 
 const socketSession = middleware => (socket, next) => middleware(socket.handshake, {}, next)
 
