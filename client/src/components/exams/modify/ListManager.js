@@ -44,58 +44,62 @@ export default function ListManager(props) {
         }
     }, [props.list, socket, handleServerAccept, handleUpdate])
 
+    const listMapper = useCallback((el, kerdesIndex) => {
+        return (
+            <ul key={kerdesIndex} className='container text-center border border-warning rounded w-75 shadow bg-light p-3 mb-3'>
+                <div className="container">
+                    <span className="float-left"><b>{kerdesIndex + 1}.</b></span>
+                    <li>
+                        <button disabled={disableButton}
+                            className="btn btn-danger float-right"
+                            onClick={e => { remove(e, el.id) }}>
+                            Törlés
+                        </button>
+                    </li>
+                </div>
+                {
+                    props.isAnswer ?
+                        <div>
+                            <li>
+                                <Modifier socket={socket} index={el.id}
+                                    value={el.text} isAnswer={true} disable={disableButton} />
+                            </li>
+                            <li><b>{el.correct ? <span className="text-success">Helyes</span> : <span className="text-danger">Helytelen</span>}</b>
+                                <Modifier socket={socket} index={el.id}
+                                    value={el.correct} isAnswer={true} disable={disableButton} />
+                            </li>
+                        </div>
+                        :
+                        <div>
+                            <li>
+                                <Modifier socket={socket} index={el.id} value={el.name} disable={disableButton} />
+                            </li>
+
+                            <li>
+                                <Modifier socket={socket} index={el.id} value={el.points} disable={disableButton} />
+                            </li>
+
+                            <li>
+                                <ModifyPic picture={el.pic} socket={socket} questionId={el.id} exam={examCode} />
+                            </li>
+                            <div>
+                                <hr />
+                                <ListManager socket={socket} questionId={el.id}
+                                    list={el.answers} isAnswer={true} disable={disableButton} />
+                            </div>
+                        </div>
+                }
+            </ul>
+        )
+    }, [disableButton, examCode, props.isAnswer, remove, socket])
+
     return (
         <div className="container">
             {
-                !list || list.length === 0 ? <h6 className="alert alert-danger my-2 w-50 ml-auto mr-auto">Erre a kérdésre még nincs válasz!</h6> :
-                    list.map((el, kerdesIndex) => {
-                        return (
-                            <ul key={kerdesIndex} className='container text-center border border-warning rounded w-75 shadow bg-light p-3 mb-3'>
-                                <div className="container">
-                                    <span className="float-left"><b>{kerdesIndex + 1}.</b></span>
-                                    <li>
-                                        <button disabled={disableButton}
-                                            className="btn btn-danger float-right"
-                                            onClick={e => { remove(e, el.id) }}>
-                                            Törlés
-                                        </button>
-                                    </li>
-                                </div>
-                                {
-                                    props.isAnswer ?
-                                        <div>
-                                            <li>
-                                                <Modifier socket={socket} index={el.id}
-                                                    value={el.text} isAnswer={true} disable={disableButton} />
-                                            </li>
-                                            <li><b>{el.correct ? <span className="text-success">Helyes</span> : <span className="text-danger">Helytelen</span>}</b>
-                                                <Modifier socket={socket} index={el.id}
-                                                    value={el.correct} isAnswer={true} disable={disableButton} />
-                                            </li>
-                                        </div>
-                                        :
-                                        <div>
-                                            <li>
-                                                <Modifier socket={socket} index={el.id} value={el.name} disable={disableButton} />
-                                            </li>
-
-                                            <li>
-                                                <Modifier socket={socket} index={el.id} value={el.points} disable={disableButton} />
-                                            </li>
-
-                                            <li>
-                                                <ModifyPic picture={el.pic} socket={socket} questionId={el.id} exam={examCode} />
-                                            </li>
-                                            <div>
-                                                <hr />
-                                                <ListManager socket={socket} questionId={el.id}
-                                                    list={el.answers} isAnswer={true} disable={disableButton} />
-                                            </div>
-                                        </div>
-                                }
-                            </ul>
-                        )
-                    })
+                !list || list.length === 0 ? 
+                    <h6 className="alert alert-danger my-2 w-50 ml-auto mr-auto">Erre a kérdésre még nincs válasz!</h6> 
+                :
+                    list.map(listMapper)
             }
 
             <AddAnswer socket={props.socket} questionId={questionId} display={display} disable={disableButton} />
