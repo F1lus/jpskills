@@ -100,7 +100,7 @@ export default function Home() {
                 <Admin permission={permission}>
                     <div className="container">
                         <div className="row">
-                            <div className="col-sm-6 col-8">
+                            <div className="container col-sm-6 col-8" id="questions">
                                 {Adminnak.map((value, index) => {
                                     return (
                                         <div className="container radio" key={index}>

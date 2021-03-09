@@ -26,6 +26,17 @@ ul {
     background-color: #ffc107;
 }
 
+/*home*/
+#help {
+    height: 35vh;
+    overflow-y: scroll;
+}
+
+#questions {
+    height: 35vh;
+    overflow-y: scroll;
+}
+
 /*navbar*/
 #hatter {
     height: 43px;
