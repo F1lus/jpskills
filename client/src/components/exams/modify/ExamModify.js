@@ -79,7 +79,7 @@ export default function ExamModify() {
 
                 <AddQuestion socket={socket} display={displayQuestion} />
 
-                <button onClick={setDisplay} className="btn btn-warning m-2">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
+                <button onClick={setDisplay} className="btn btn-primary my-1">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
                 <br />
                 <hr/>
                 <button onClick={removeExam} className="btn btn-danger m-3">A vizsga törlése</button>

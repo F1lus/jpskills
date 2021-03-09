@@ -33,12 +33,20 @@ export default function Home() {
 
 
     const needHelp = useCallback((event, index) => {
-        if (event.target.checked) {
-            document.getElementById('help').innerHTML = Adminnak[index].valasz
-        } else {
-            document.getElementById('help').innerHTML = null
+        if(permission === 'admin'){
+            if (event.target.checked) {
+                document.getElementById('help').innerHTML = Adminnak[index].valasz
+            } else {
+                document.getElementById('help').innerHTML = null
+            }
+        }else{
+            if (event.target.checked) {
+                document.getElementById('help').innerHTML = Usernek[index].valasz
+            } else {
+                document.getElementById('help').innerHTML = null
+            }
         }
-    },[])
+    },[permission])
 
     const welcomeText = useCallback(() => {
         const timeOfDay = new Date().getHours()

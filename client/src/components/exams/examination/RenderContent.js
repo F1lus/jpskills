@@ -16,7 +16,7 @@ export default function RenderContent(props) {
         const urlCreator = window.URL || window.webkitURL
 
         return urlCreator.createObjectURL(blob)
-    },[])
+    }, [])
 
     const handleChange = useCallback((event, qId, aId) => {
         const answersCopy = answers.slice()
@@ -35,18 +35,18 @@ export default function RenderContent(props) {
             }
         }
         setAnswers(answersCopy)
-    },[answers])
+    }, [answers])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
         socket.emit('exam-finished', answers, props.exam)
         setDisable(true)
-    },[answers, props.exam, socket])
+    }, [answers, props.exam, socket])
 
     const handleExamProcessed = useCallback(() => setFinished(true), [])
 
     const submitExam = useCallback(() => {
-        if(!disable){
+        if (!disable) {
             socket.emit('exam-finished', answers, props.exam)
         }
     }, [answers, disable, props.exam, socket])
@@ -60,7 +60,7 @@ export default function RenderContent(props) {
         window.addEventListener('beforeunload', warnUser)
         window.addEventListener('unload', submitExam)
 
-        if(disable){
+        if (disable) {
             socket.on('exam-processed', handleExamProcessed)
         }
 
@@ -75,7 +75,7 @@ export default function RenderContent(props) {
     useEffect(() => {
         const temp = []
         list.forEach(question => {
-            const answerObj = { id: question[0], answers: [] }
+            const answerObj = { id: question.id, answers: [] }
             temp.push(answerObj)
         })
         setAnswers(temp)
@@ -85,38 +85,31 @@ export default function RenderContent(props) {
         <div className="page mt-3">
             {finished ? <Redirect to={`/exams/result/${props.exam}`} /> : null}
             {list.map((question, qId) => {
-                return <ul key={qId} className="container bg-white rounded shadow py-3 mb-3 text-center">
-                    {question.map((content, innerIndex) => {
-                        if (innerIndex === 1) {
-                            return (
-                                <li key={innerIndex} className="container-fluid mb-2 mt-3">
-                                    <b><span>{qId + 1}. </span> {content} ({question[2]} pont)</b>
-                                </li>)
-                        } else if (innerIndex === 3 && content != null) {
-                            return (
-                                <li key={innerIndex}>
-                                    <img className='rounded img-fluid' src={createImage(content)} alt='' />
+                return (
+                    <ul key={qId} className="container bg-white rounded shadow py-3 mb-3 text-center">
+                        <li className="container-fluid mb-2 mt-3">
+                            <b><span>{qId + 1}. </span> {question.name} ({question.points} pont)</b>
+                        </li>
+                        {
+                            question.pic ?
+                                <li>
+                                    <img className='rounded img-fluid' src={createImage(question.pic)} alt='' />
                                 </li>
-                            )
-                        } else if (innerIndex === 4) {
-                            return (
-                                <li key={innerIndex}>
-                                    {content.map((text, index) => {
-                                        return (
-                                            <div className="my-2" key={index}>
-                                                <label htmlFor={index} className="checkbox-label"> 
-                                                    <input type="checkbox" className="m-2" name={index} onChange={e => {handleChange(e, question[0], text[0])}} />
-                                                    {text[1]}
-                                                </label>
-                                            </div>
-                                        )
-                                    })}
-                                </li>
-                            )
-                        } else {
-                            return null
+                                : null
                         }
-                    })}</ul>
+                        <li>
+                            {question.answers.map((text, index) => {
+                                return (
+                                    <div className="my-2" key={index}>
+                                        <label htmlFor={index} className="checkbox-label">
+                                            <input type="checkbox" className="m-2" name={index} onChange={e => { handleChange(e, question.id, text.id) }} />
+                                            {text.text}
+                                        </label>
+                                    </div>
+                                )
+                            })}
+                        </li>
+                    </ul>)
             })}
             <div className="container text-center rounded bg-light shadow p-3 mb-3">
                 <button className="btn btn-warning" onClick={handleSubmit} disabled={disable}>Leadás</button>
@@ -128,14 +121,14 @@ export default function RenderContent(props) {
                     const confirm = window.confirm('Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva, és ez a művelet visszafordíthatatlan!')
                     if (confirm) {
                         submitExam()
-                    }else{
+                    } else {
                         setDisable(false)
                     }
                     return confirm
-                }}/>
-                
+                }} />
+
             </React.Fragment>
-            
+
         </div>
     )
 }

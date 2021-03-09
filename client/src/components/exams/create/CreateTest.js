@@ -156,7 +156,7 @@ export default function CreateTest(props) {
                         </div>
                         <div className="col-md-8">
                             <select name="item" className="w-75 rounded" onChange={handleChange}>
-                                <option defaultValue={-1}>{items.length === 0 ? 'Válasszon gyártót először' : 'A vizsga terméke'}</option>
+                                <option defaultValue={-1}>{items.length === 0 ? 'Először válasszon gyártot!' : 'A vizsga terméke'}</option>
                                 {items.length === 0 ? null : items.map((elem, index) => {
                                     return (
                                         <option key={index} value={elem[1]}>{elem[0]} || {elem[1]}</option>

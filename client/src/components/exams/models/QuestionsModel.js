@@ -1,28 +1,19 @@
 export default (rawQuestions) => {
-    let list = []
     let examPoints = 0
-    
-    if(rawQuestions || rawQuestions.length > 0){
-        rawQuestions.forEach((question) => {
-            let answers = []
-            if(question.answers){
-                question.answers.forEach(answer => {
-                    if(answer.correct){
-                        examPoints += question.points
-                    }
-                    answers.push([answer.id, answer.text, answer.correct])
-                })
-                answers.sort((a, b) => a[0] - b[0])
-            }
 
-            list.push([question.id, question.name, question.points, question.pic, answers])
+    //Kérdés { id, name, points, pic, answers}
+    //Válasz { id, text, correct}
+
+    if (rawQuestions || rawQuestions.length > 0) {
+        rawQuestions.forEach((question) => {
+            question.answers.forEach(answer => examPoints += answer.correct ? question.points : 0)
+            question.answers.sort((a, b) => a.id - b.id)
         })
-        
-        list.sort((a, b) => a[0] - b[0])
+        rawQuestions.sort((a, b) => a.id - b.id)
     }
 
     return {
-        questions: list,
+        questions: rawQuestions,
         points: examPoints
     }
 }

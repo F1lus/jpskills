@@ -53,13 +53,15 @@ export default function Profile() {
         if(stats != null){
             return (
                 <div className="alert alert-success text-justify my-2 w-50 mx-auto">
-                    <p>Az eddigi vizsgáihoz szükséges átlag idő: {renderStatsObject('time') || 'Nincs adat'}</p>
-                    <p>Az eddigi vizsgáin elért átlagos pontszám: {renderStatsObject('score') || 'Nincs adat'}</p>
-                    <p>A vizsgák sikerességi aránya: {renderStatsObject('completion') || 'Nincs adat'}</p>
+                    <h3 className='text-center'>Az Ön vizsgáiról általánosságban:</h3>
+                    <br/>
+                    <h5>A vizsgáin eltöltött átlag idő: {renderStatsObject('time') || 'Nincs adat'}</h5>
+                    <h5>A vizsgáin elért átlagos pontszám: {renderStatsObject('score') || 'Nincs adat'}</h5>
+                    <h5>A vizsgáin a sikerességi arány: {renderStatsObject('completion') || 'Nincs adat'}</h5>
                 </div>
             )
         }else{
-            return <p className="alert alert-danger my-2">Nincs megjeleníthető tartalom</p>
+            return <h5 className="alert alert-danger my-2">Az Ön vizsgáiról még nem készíthető statisztika!</h5>
         }
     }, [renderStatsObject, stats])
     
@@ -71,13 +73,14 @@ export default function Profile() {
                 <h2>Besorolás: {csoport}</h2>
 
                 <hr className="w-75" id="customline"/>
-                <h3>Az Ön vizsgáiról általánosságban:</h3>
-                <br/>
                 {renderGlobalStats()}
                 <br/>
             </div>
 
             <div>
+                <div className="container shadow rounded text-center bg-light mb-3">
+                    <Learn />
+                </div>
                 <Admin permission={csoport}>
                     <div className="container shadow rounded text-center bg-light mb-3 py-3">
                         <DetailTable permission={csoport} results={renderStatsObject('skills')}/>
@@ -86,9 +89,6 @@ export default function Profile() {
                 
                 <User permission={csoport}>
                     <div>
-                        <div className="container shadow rounded text-center bg-light mb-3">
-                            <Learn />
-                        </div>
                         <div className="container shadow rounded text-center bg-light mb-3 pt-3">
                             <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')}/>
                         </div>
