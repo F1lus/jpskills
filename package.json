@@ -1,13 +1,13 @@
 {
   "name": "jpskills",
   "version": "1.1.0",
-  "description": "",
+  "description": "JP Skill Mátrix szerveroldal",
   "main": "index.js",
   "scripts": {
     "start": "concurrently \"nodemon --ignore temp_files/user_timer/*.json index.js\" \"cd client && npm start\""
   },
   "keywords": [],
-  "author": "",
+  "author": "Filimon Márk",
   "license": "ISC",
   "dependencies": {
     "concurrently": "^5.3.0",
