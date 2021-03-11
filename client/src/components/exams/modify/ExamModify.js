@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react'
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react'
 import { useParams, Redirect } from 'react-router-dom'
 
 import ListManager from './ListManager'
@@ -11,6 +11,7 @@ import { SocketContext } from '../../GlobalSocket'
 export default function ExamModify() {
 
     const examCode = useParams()
+    const timeout = useRef()
     const socket = useContext(SocketContext)
 
     const [questions, setQuestions] = useState([])
@@ -18,6 +19,7 @@ export default function ExamModify() {
     const [displayQuestion, setDisplayQuestion] = useState(false)
     const [updater, setUpdater] = useState(0)
 
+    const [callTimeout, setCallTimeout] = useState(false)
     const [removed, setRemoved] = useState(false)
 
     const handleContent = useCallback(questionList => {
@@ -32,14 +34,33 @@ export default function ExamModify() {
     }, [])
 
     const handleServerAccept = useCallback(() => setUpdater(count => ++count), [])
+
+    const timeoutCb = useCallback(() => {
+        const modify = document.getElementById('modify')
+        modify.classList.remove('alert-danger', 'alert-success')
+        modify.innerHTML = null
+
+        setCallTimeout(false)
+    }, [])
+
     const handleUpdate = useCallback(updated => {
+        const modify = document.getElementById('modify')
         if(updated){
+            modify.classList.add('alert-success')
+            modify.innerHTML = 'A módosításokat elmentettük!'
             setUpdater(count => ++count)
+            setCallTimeout(true)
+        }else{
+            modify.classList.add('alert-danger')
+            modify.innerHTML = 'A módosításokat nem tudtuk elmenteni!'
+            setCallTimeout(true)
         }
     }, [])
+
     const handleExamRemoved = useCallback(() => setRemoved(true), [])
 
     useEffect(() => {
+
         socket.emit('request-exam-content', examCode.examName)
         socket.emit('request-exam-props', examCode.examName)
 
@@ -54,9 +75,17 @@ export default function ExamModify() {
             socket.off('server-accept', handleServerAccept)
             socket.off('removed-exam', handleExamRemoved)
             socket.off('updated', handleUpdate)
+
+            clearTimeout(timeout.current)
         }
         
     }, [updater, examCode.examName, handleUpdate, handleContent, handleExamRemoved, handleServerAccept, socket])
+
+    useEffect(() => {
+        if(callTimeout){
+            timeout.current = setTimeout(timeoutCb, 5000)
+        }
+    }, [callTimeout, timeoutCb])
 
     const setDisplay = useCallback(event => {
         event.preventDefault()
@@ -70,7 +99,7 @@ export default function ExamModify() {
 
     return (
         <div className="container text-center mb-3">
-            <div className="alert alert-danger w-25" id="modify">asd</div>
+            <div className="alert w-25" id="modify"></div>
             {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
             <ModifyProps socket={socket} points={maxPoints} exam={examCode} />
             {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}
