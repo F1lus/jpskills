@@ -106,12 +106,12 @@ export default function Login() {
                         document.getElementById('szam').classList.remove('text-success')
                     }
                 }
-                if(event.target.value.length <= 16){
+                if (event.target.value.length <= 16) {
                     setPassword(event.target.value)
                 }
                 break
             case 'password2':
-                if(event.target.value.length <= 16){
+                if (event.target.value.length <= 16) {
                     setPassword2(event.target.value)
                 }
                 break
@@ -152,14 +152,14 @@ export default function Login() {
                         </label>
                     </div>
                     {register && password.length > 0 ? (
-                    <div className='alert alert-primary ml-5 w-50 text-justify'>
-                        <h6>A jelszó tartalma:</h6>
-                        <ul>
-                            <li id='hossz' className='text-danger'>- 8-16 karakter hosszú</li>
-                            <li id='szam' className='text-danger'>- Minimum egy szám</li>
-                            <li id='nagybetu' className='text-danger'>- Minimum egy nagybetű</li>
-                        </ul>
-                    </div>) : null}
+                        <div className='alert alert-primary ml-5 w-50 text-justify'>
+                            <h6>A jelszó tartalma:</h6>
+                            <ul>
+                                <li id='hossz' className='text-danger'>- 8-16 karakter hosszú</li>
+                                <li id='szam' className='text-danger'>- Minimum egy szám</li>
+                                <li id='nagybetu' className='text-danger'>- Minimum egy nagybetű</li>
+                            </ul>
+                        </div>) : null}
 
 
 

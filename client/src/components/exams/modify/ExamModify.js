@@ -48,11 +48,11 @@ export default function ExamModify() {
         timeoutCb()
 
         const modify = document.getElementById('modify')
-        if(updated){
+        if (updated) {
             modify.classList.add('alert-success')
             modify.innerHTML = 'A módosítás elmentve! &#10003;'
             setUpdater(count => ++count)
-        }else{
+        } else {
             modify.classList.add('alert-danger')
             modify.innerHTML = 'A módosítás mentése sikertelen! &#10540;'
         }
@@ -80,11 +80,11 @@ export default function ExamModify() {
 
             clearTimeout(timeout.current)
         }
-        
+
     }, [updater, examCode.examName, handleUpdate, handleContent, handleExamRemoved, handleServerAccept, socket])
 
     useEffect(() => {
-        if(callTimeout){
+        if (callTimeout) {
             timeout.current = setTimeout(timeoutCb, 5000)
         }
     }, [callTimeout, timeoutCb])
@@ -97,11 +97,11 @@ export default function ExamModify() {
     const removeExam = useCallback(event => {
         event.preventDefault()
         socket.emit('remove-test', examCode.examName)
-    },[examCode.examName, socket])
+    }, [examCode.examName, socket])
 
     return (
         <div className="container text-center mb-3">
-            <div className="alert w-25" id="modify"/>
+            <div className="alert w-25" id="modify" />
             {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
             <ModifyProps socket={socket} points={maxPoints} exam={examCode} />
             {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}
@@ -113,7 +113,7 @@ export default function ExamModify() {
 
                 <button onClick={setDisplay} className="btn btn-primary my-1">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
                 <br />
-                <hr/>
+                <hr />
                 <button onClick={removeExam} className="btn btn-danger m-3">A vizsga törlése</button>
             </div>
         </div>

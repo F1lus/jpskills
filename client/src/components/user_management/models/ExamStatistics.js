@@ -3,7 +3,7 @@ export default (exams) => {
     let avgScore = 0
     let rate = 0
 
-    if(exams || exams.length > 0){
+    if (exams || exams.length > 0) {
         exams.forEach(exam => {
             avgTime += exam.time
             avgScore += exam.score
@@ -12,16 +12,16 @@ export default (exams) => {
 
         avgScore /= exams.length
         avgTime /= exams.length
-        rate = (rate / exams.length)*100
+        rate = (rate / exams.length) * 100
     }
 
     return {
-        avgTime:{
+        avgTime: {
             avgMins: Math.floor(avgTime / 60),
             avgSecs: Math.round(avgTime % 60)
         },
         avgScore: Math.round(avgScore),
-        completionRate: rate.toString().substring(0,5)
+        completionRate: rate.toString().substring(0, 5)
     }
 
 }

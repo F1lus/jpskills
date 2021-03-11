@@ -1,12 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
+import { Provider } from 'react-redux'
 import stateStore from './components/store/Store'
 
 import { BrowserRouter as Router } from 'react-router-dom'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
-import {socket, SocketContext} from './components/GlobalSocket'
+import { socket, SocketContext } from './components/GlobalSocket'
 
 ReactDOM.render(
   <Router>

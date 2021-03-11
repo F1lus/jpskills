@@ -26,7 +26,7 @@ export default function Modifier(props) {
         }
 
         return () => props.socket.off('updated', handleUpdate)
-        
+
     }, [props.value, index, props.socket, handleUpdate])
 
     const handleChange = useCallback(event => {

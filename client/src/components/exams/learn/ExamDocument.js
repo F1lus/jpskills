@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 
-import {SocketContext} from '../../GlobalSocket'
+import { SocketContext } from '../../GlobalSocket'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
@@ -23,7 +23,7 @@ export default function ExamDocument(props) {
 
     const onDocumentLoadSuccess = useCallback(numPages => {
         setPageNum(numPages)
-    },[])
+    }, [])
 
     const nextPage = useCallback(event => {
         event.preventDefault()
@@ -36,7 +36,7 @@ export default function ExamDocument(props) {
                 }
             })
         }
-    },[pageNum])
+    }, [pageNum])
 
     const prevPage = useCallback(event => {
         event.preventDefault()
@@ -49,7 +49,7 @@ export default function ExamDocument(props) {
                 }
             })
         }
-    },[pageNum])
+    }, [pageNum])
 
     const handleExamDoc = useCallback((status, document) => {
         setExamDoc(document)

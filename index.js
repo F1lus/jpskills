@@ -27,8 +27,8 @@ const session = require('./model/SessionSetup')
 
 const socketSession = middleware => (socket, next) => middleware(socket.handshake, {}, next)
 
-const io = socketio(server, { 
-    cors:{
+const io = socketio(server, {
+    cors: {
         origin: config.client,
         methods: ['GET', 'POST'],
         allowedHeaders: 'Content-Type',

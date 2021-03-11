@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect, useState} from 'react'
-import {useParams} from 'react-router-dom'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import API from '../../BackendAPI'
 
-export default function AddQuestion(props){
+export default function AddQuestion(props) {
 
     const examCode = useParams().examName
 
@@ -13,7 +13,7 @@ export default function AddQuestion(props){
     const [pic, setPic] = useState(null)
 
     const handleChange = useCallback(event => {
-        switch(event.target.name){
+        switch (event.target.name) {
             case 'question':
                 setQuestion(event.target.value)
                 break
@@ -30,28 +30,28 @@ export default function AddQuestion(props){
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
-        if(question && points){
+        if (question && points) {
             setDisable(true)
             const data = new FormData()
             data.append('questionName', question)
             data.append('questionPoints', points)
             data.append('picture', pic)
-            
-            API.post(`/exams/modify/${examCode}`, data, {headers: {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}})
-            .then(result => {
-                if(result){
-                    setQuestion(null)
-                    setPoints(null)
-                    setPic(null)
+
+            API.post(`/exams/modify/${examCode}`, data, { headers: { 'Content-Type': `multipart/form-data; boundary=${data._boundary}` } })
+                .then(result => {
+                    if (result) {
+                        setQuestion(null)
+                        setPoints(null)
+                        setPic(null)
+                        setDisable(false)
+                        props.socket.emit('exam-modified')
+                    }
+                }).catch(err => {
+                    console.log(err.message)
                     setDisable(false)
-                    props.socket.emit('exam-modified')
-                }
-            }).catch(err => {
-                console.log(err.message)
-                setDisable(false)
-            })
+                })
         }
-    },[examCode, pic, points, props.socket, question])
+    }, [examCode, pic, points, props.socket, question])
 
     const handleUpdate = useCallback(() => setDisable(false), [])
 
@@ -63,10 +63,10 @@ export default function AddQuestion(props){
 
     return (
         <div className="container text-center rounded mb-3">
-           { props.display ? 
+            { props.display ?
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto mb-3">
-                        <input type='text' name='question' value={question || ''} onChange={handleChange} required autoComplete="off"/>
+                        <input type='text' name='question' value={question || ''} onChange={handleChange} required autoComplete="off" />
                         <label htmlFor="question" className="label-name">
                             <span className="content-name">
                                 A kérdés szövege
@@ -75,7 +75,7 @@ export default function AddQuestion(props){
                     </div>
 
                     <div className="form-group m-auto">
-                        <input type='number' name='points' value={points || ''} onChange={handleChange} required autoComplete="off"/>
+                        <input type='number' name='points' value={points || ''} onChange={handleChange} required autoComplete="off" />
                         <label htmlFor="points" className="label-name">
                             <span className="content-name">
                                 Pontszám
@@ -84,14 +84,14 @@ export default function AddQuestion(props){
                     </div>
 
                     <div className="container float-center">
-                        <input type="file" name='pic' onChange={handleChange} accept="image/jpeg, image/jpg, image/png"/>
+                        <input type="file" name='pic' onChange={handleChange} accept="image/jpeg, image/jpg, image/png" />
                     </div>
 
                     <div className="container text-center">
                         <button className="btn btn-warning my-3" disabled={disable}>Feltöltés</button>
                     </div>
                 </form>
-            : null} 
+                : null}
         </div>
     )
 }

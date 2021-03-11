@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
-export function Admin(props){
+export function Admin(props) {
 
     const [permissions,] = useState(['admin', 'superuser'])
 
@@ -11,7 +11,7 @@ export function Admin(props){
     )
 }
 
-export function User(props){
+export function User(props) {
 
     const [permissions,] = useState(['admin'])
 

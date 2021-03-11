@@ -26,33 +26,33 @@ export default function App() {
   return (
     <React.Fragment>
       {loggedIn ? <CustomNavbar /> : null}
-        <TransitionGroup>
-          <CSSTransition
-            key={location.key}
-            timeout={500}
-            classNames="fade"
-            >
-            <Switch location={location}>
-              <Routing exact path='/' allowed={['*']} component={Login} />
+      <TransitionGroup>
+        <CSSTransition
+          key={location.key}
+          timeout={500}
+          classNames="fade"
+        >
+          <Switch location={location}>
+            <Routing exact path='/' allowed={['*']} component={Login} />
 
-              <Routing exact path='/home' allowed={['*']} component={Home} />
+            <Routing exact path='/home' allowed={['*']} component={Home} />
 
-              <Routing exact path='/exams' allowed={['*']} component={ExamWrapper} />
+            <Routing exact path='/exams' allowed={['*']} component={ExamWrapper} />
 
-              <Routing exact path='/exams/modify/:examName' allowed={['admin', 'superuser']} component={ExamModify} />
+            <Routing exact path='/exams/modify/:examName' allowed={['admin', 'superuser']} component={ExamModify} />
 
-              <Routing exact path='/exams/learn/:examCode' allowed={['*']} component={ExamDocument} />
+            <Routing exact path='/exams/learn/:examCode' allowed={['*']} component={ExamDocument} />
 
-              <Routing exact path='/exams/:examCode' allowed={['*']} component={Examination} />
+            <Routing exact path='/exams/:examCode' allowed={['*']} component={Examination} />
 
-              <Routing exact path='/exams/result/:examCode/' allowed={['*']} component={ExamResults} />
+            <Routing exact path='/exams/result/:examCode/' allowed={['*']} component={ExamResults} />
 
-              <Routing exact path='/profile' allowed={['*']} component={Profile} />
+            <Routing exact path='/profile' allowed={['*']} component={Profile} />
 
-              <Routing exact path='/logout' allowed={['*']} component={LogoutPlaceholder}/>
-            </Switch>
-          </CSSTransition>
-        </TransitionGroup>
+            <Routing exact path='/logout' allowed={['*']} component={LogoutPlaceholder} />
+          </Switch>
+        </CSSTransition>
+      </TransitionGroup>
     </React.Fragment>
   )
 

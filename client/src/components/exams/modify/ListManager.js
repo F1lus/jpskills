@@ -98,9 +98,9 @@ export default function ListManager(props) {
     return (
         <div className="container">
             {
-                !list || list.length === 0 ? 
-                    <h6 className="alert alert-danger my-2 w-50 ml-auto mr-auto">A kérdéshez még nem tartozik válasz!</h6> 
-                :
+                !list || list.length === 0 ?
+                    <h6 className="alert alert-danger my-2 w-50 ml-auto mr-auto">A kérdéshez még nem tartozik válasz!</h6>
+                    :
                     list.map(listMapper)
             }
 

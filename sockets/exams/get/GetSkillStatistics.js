@@ -4,9 +4,9 @@ module.exports = (socket) => {
 
     const statistics = async () => {
         const session = socket.handshake.session
-        if(session.perm === 'admin'){
+        if (session.perm === 'admin') {
             socket.emit('sending-statistics', await dbconnect.globalStatisticsForAdmin(session.cardNum))
-        }else{
+        } else {
             socket.emit('sending-statistics', await dbconnect.globalStatisticsForUser(session.cardNum))
         }
     }

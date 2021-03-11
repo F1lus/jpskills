@@ -7,10 +7,10 @@ module.exports = socket => {
 
     //Status
     const updateStatus = async data => {
-        if(!isAdmin){
+        if (!isAdmin) {
             return
         }
-        if(data && data.examCode && data.status != null || data.status != undefined){
+        if (data && data.examCode && data.status != null || data.status != undefined) {
             socket.emit('updated', await dbconnect.updateExamStatus(user, data.examCode, data.status))
         }
     }
@@ -18,11 +18,11 @@ module.exports = socket => {
 
     //ExamProps
     const updateExamProps = async data => {
-        if(!isAdmin){
+        if (!isAdmin) {
             return
         }
-        if(data && data.examCode && data.examName && data.points != null){
-            socket.emit('updated', await dbconnect.updateExam(user, data.examName, 
+        if (data && data.examCode && data.examName && data.points != null) {
+            socket.emit('updated', await dbconnect.updateExam(user, data.examName,
                 data.examCode, data.notes, data.points))
         }
     }
@@ -30,10 +30,10 @@ module.exports = socket => {
 
     //Question Modify
     const modifyQuestion = async data => {
-        if(!isAdmin){
+        if (!isAdmin) {
             return
         }
-        if(data && data.examCode && data.questionId && data.value != null){
+        if (data && data.examCode && data.questionId && data.value != null) {
             socket.emit('updated', await dbconnect.updateQuestion(user, data.examCode,
                 data.questionId, data.value))
         }
@@ -42,10 +42,10 @@ module.exports = socket => {
 
     //Answer Modify
     const modifyAnswer = async data => {
-        if(!isAdmin){
+        if (!isAdmin) {
             return
         }
-        if(data && data.examCode && data.answerId && data.value != null){
+        if (data && data.examCode && data.answerId && data.value != null) {
             socket.emit('updated', await dbconnect.updateAnswer(user, data.examCode,
                 data.answerId, data.value))
         }
@@ -54,10 +54,10 @@ module.exports = socket => {
 
     //Insert Question
     const insertAnswer = async data => {
-        if(!isAdmin){
+        if (!isAdmin) {
             return
         }
-        if(data && data.examCode && data.questionId && data.answerText && data.value != null){
+        if (data && data.examCode && data.questionId && data.answerText && data.value != null) {
             socket.emit('updated', await dbconnect.insertAnswer(user, data.examCode, data.questionId,
                 data.answerText, data.value))
         }

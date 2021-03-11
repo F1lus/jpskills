@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 import model from '../models/ExamsModel'
 
-import {SocketContext} from '../../GlobalSocket'
+import { SocketContext } from '../../GlobalSocket'
 
 export default function Learn() {
 

@@ -1,5 +1,5 @@
 const session = require('express-session')
-const mysqlStore = require ('express-mysql-session')(session)
+const mysqlStore = require('express-mysql-session')(session)
 const config = require('../config')
 
 const sessionStore = new mysqlStore({

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { NavLink } from 'react-router-dom'
-import {useSelector} from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import { SocketContext } from '../GlobalSocket'
 import { Admin, User } from '../user_management/handlers/PermissionHandler'
@@ -33,31 +33,31 @@ export default function Home() {
 
 
     const needHelp = useCallback((event, index) => {
-        if(permission === 'admin'){
+        if (permission === 'admin') {
             if (event.target.checked) {
                 document.getElementById('help').innerHTML = Adminnak[index].valasz
             } else {
                 document.getElementById('help').innerHTML = null
             }
-        }else{
+        } else {
             if (event.target.checked) {
                 document.getElementById('help').innerHTML = Usernek[index].valasz
             } else {
                 document.getElementById('help').innerHTML = null
             }
         }
-    },[permission])
+    }, [permission])
 
     const welcomeText = useCallback(() => {
         const timeOfDay = new Date().getHours()
-        if(timeOfDay >= 6 && timeOfDay < 10){
-            return 'Jó reggelt, '+user+'!'
-        }else if(timeOfDay >= 10 && timeOfDay < 18){
-            return 'Jó napot, '+user+'!'
-        }else if(timeOfDay >= 18 || timeOfDay < 6){
-            return 'Jó estét, '+user+'!'
-        }else{
-            return 'Üdvözöljük, '+user+'!'
+        if (timeOfDay >= 6 && timeOfDay < 10) {
+            return 'Jó reggelt, ' + user + '!'
+        } else if (timeOfDay >= 10 && timeOfDay < 18) {
+            return 'Jó napot, ' + user + '!'
+        } else if (timeOfDay >= 18 || timeOfDay < 6) {
+            return 'Jó estét, ' + user + '!'
+        } else {
+            return 'Üdvözöljük, ' + user + '!'
         }
     }, [user])
 
@@ -131,7 +131,7 @@ export default function Home() {
                 <User permission={permission}>
                     <div className="container">
                         <div className="row">
-                        <div className="col-sm-6 col-8">
+                            <div className="col-sm-6 col-8">
                                 {Usernek.map((value, index) => {
                                     return (
                                         <div className="container radio" key={index}>

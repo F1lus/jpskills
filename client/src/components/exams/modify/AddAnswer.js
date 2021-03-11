@@ -21,7 +21,7 @@ export default function AddAnswer(props) {
             default:
                 return
         }
-    },[])
+    }, [])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
@@ -35,7 +35,7 @@ export default function AddAnswer(props) {
             })
             setAnswer(null)
         }
-    },[answer, isCorrect, param.examName, props.questionId, props.socket])
+    }, [answer, isCorrect, param.examName, props.questionId, props.socket])
 
     const handleUpdate = useCallback(updated => setDisableButton(false), [])
 
@@ -43,7 +43,7 @@ export default function AddAnswer(props) {
         props.socket.on('updated', handleUpdate)
 
         return () => props.socket.off('updated', handleUpdate)
-        
+
     }, [props.socket, handleUpdate])
 
     return (

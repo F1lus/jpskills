@@ -4,7 +4,7 @@ import { Redirect, useParams } from 'react-router-dom'
 import RenderContent from './RenderContent'
 import model from '../models/QuestionsModel'
 
-import {SocketContext} from '../../GlobalSocket'
+import { SocketContext } from '../../GlobalSocket'
 
 export default function Examination() {
 

@@ -7,10 +7,10 @@ module.exports = socket => {
 
     //Answer
     const removeAnswer = async (answerId, examCode) => {
-        if(!isAdmin){
+        if (!isAdmin) {
             return
         }
-        if(examCode && answerId){
+        if (examCode && answerId) {
             socket.emit('updated', await dbconnect.removeAnswer(session.cardNum, answerId, examCode))
         }
     }
@@ -18,10 +18,10 @@ module.exports = socket => {
 
     //Question
     const removeQuestion = async (questionId, examCode) => {
-        if(!isAdmin){
+        if (!isAdmin) {
             return
         }
-        if(examCode && questionId){
+        if (examCode && questionId) {
             socket.emit('updated', await dbconnect.removeQuestion(session.cardNum, questionId, examCode))
         }
     }
@@ -29,12 +29,12 @@ module.exports = socket => {
 
     //Exam
     const removeTest = async examCode => {
-        if(!isAdmin){
+        if (!isAdmin) {
             return
         }
-        if(session.user && examCode){
+        if (session.user && examCode) {
             const removed = await dbconnect.removeTest(session.cardNum, examCode)
-            if(removed){
+            if (removed) {
                 socket.emit('removed-exam')
             }
         }

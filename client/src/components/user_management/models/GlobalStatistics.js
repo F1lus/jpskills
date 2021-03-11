@@ -4,7 +4,7 @@ export default (rawSkillMatrix) => {
     let avgTime = 0
     let completedCount = 0
 
-    if(rawSkillMatrix || rawSkillMatrix.length > 0){
+    if (rawSkillMatrix || rawSkillMatrix.length > 0) {
         rawSkillMatrix.forEach(skillVector => {
             skills.push({
                 examName: skillVector[0],
@@ -17,7 +17,7 @@ export default (rawSkillMatrix) => {
             })
         })
 
-        skills.sort((a,b) => b.score - a.score)
+        skills.sort((a, b) => b.score - a.score)
 
         skills.forEach(skill => {
             avgScore += skill.score
@@ -27,16 +27,16 @@ export default (rawSkillMatrix) => {
 
         avgScore /= skills.length
         avgTime /= skills.length
-        completedCount = (completedCount / skills.length)*100
+        completedCount = (completedCount / skills.length) * 100
     }
 
     return {
         skills: skills,
         avgScore: Math.round(avgScore),
-        avgTime:{
+        avgTime: {
             avgMins: Math.floor(avgTime / 60),
             avgSecs: Math.round(avgTime % 60)
         },
-        completedRate: completedCount.toString().substring(0,5)
+        completedRate: completedCount.toString().substring(0, 5)
     }
 }

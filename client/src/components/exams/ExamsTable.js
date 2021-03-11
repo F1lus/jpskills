@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback}  from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 import DataTable, { createTheme } from 'react-data-table-component'
 
@@ -14,9 +14,9 @@ export default function ExamsTable(props) {
         props.exams.forEach((value, index) => {
             data.push(
                 {
-                    id: index+1,
-                    name: 
-                        <NavLink to={props.permission === "admin" ? `/exams/modify/${value.itemcode}`:`/exams/${value.itemcode}`}>
+                    id: index + 1,
+                    name:
+                        <NavLink to={props.permission === "admin" ? `/exams/modify/${value.itemcode}` : `/exams/${value.itemcode}`}>
                             <button disabled={props.permission !== 'admin' ? value.status === 'Inaktív' : false} className="btn btn-outline-blue m-2">
                                 {value.name}
                             </button>
@@ -35,18 +35,18 @@ export default function ExamsTable(props) {
         const links = toLink()
         setData(links)
         setWorkData(links)
-        
-    },[props.exams, toLink])
+
+    }, [props.exams, toLink])
 
     const search = useCallback((event) => {
         if (workData.length > 0) {
             const filterBySearch = workData.filter(exam => {
                 const value = event.target.value.toLowerCase().trim()
                 return exam.workName.toLowerCase().includes(value) || exam.itemcode.includes(value) || exam.date.includes(value)
-            } )
+            })
             setData(filterBySearch)
         }
-    },[workData])
+    }, [workData])
 
     const columns = [
         {
@@ -76,12 +76,12 @@ export default function ExamsTable(props) {
         }
     })
 
-    const customText={ 
-        rowsPerPageText: 'Sorok száma oldalanként:', 
-        rangeSeparatorText: '/', 
-        noRowsPerPage: false, 
-        selectAllRowsItem: false, 
-        selectAllRowsItemText: 'Összes' 
+    const customText = {
+        rowsPerPageText: 'Sorok száma oldalanként:',
+        rangeSeparatorText: '/',
+        noRowsPerPage: false,
+        selectAllRowsItem: false,
+        selectAllRowsItemText: 'Összes'
     }
 
     const conditionalRowStyles = [
@@ -107,7 +107,7 @@ export default function ExamsTable(props) {
 
             <form className="mb-3 w-50">
                 <div className="form-group m-auto">
-                    <input type="text" name="search" onChange={search} autoComplete="off" required/>
+                    <input type="text" name="search" onChange={search} autoComplete="off" required />
                     <label htmlFor="search" className="label-name">
                         <span className="content-name">
                             Keresés vizsganév, dátum, vagy cikkszám alapján

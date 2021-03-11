@@ -32,13 +32,13 @@ export default function ModifyProps(props) {
         const list = examProps.slice()
         switch (event.target.name) {
             case 'examName':
-                if(list[0].length < 100){
+                if (list[0].length < 100) {
                     list[0] = event.target.value
                     setExamProps(list)
                 }
                 break
             case 'examNotes':
-                if(list[1].length < 200){
+                if (list[1].length < 200) {
                     list[1] = event.target.value
                     setExamProps(list)
                 }
@@ -69,25 +69,25 @@ export default function ModifyProps(props) {
         event.preventDefault()
         setDisable(true)
 
-        if(examProps[2] != null){
-            socket.emit('update-status', {examCode: examCode.examName, status: examProps[2]})
+        if (examProps[2] != null) {
+            socket.emit('update-status', { examCode: examCode.examName, status: examProps[2] })
         }
-    },[examCode.examName, examProps, socket])
+    }, [examCode.examName, examProps, socket])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
         setDisable(true)
 
         if (examProps != null) {
-            socket.emit('update-exam-props', 
+            socket.emit('update-exam-props',
                 {
-                    examCode: examCode.examName, 
+                    examCode: examCode.examName,
                     examName: examProps[0],
                     notes: examProps[1],
                     points: (examProps[3] / 100)
                 })
         }
-    },[examCode.examName, examProps, socket])
+    }, [examCode.examName, examProps, socket])
 
 
     return (
@@ -124,7 +124,7 @@ export default function ModifyProps(props) {
                 <p>A jelenlegi maximális pontszám {maxPoints}, az elvégzéshez pedig {Math.round(maxPoints * (examProps[3] / 100))} pont szükséges</p>
                 <button name='Módosítás' className="btn btn-warning m-2" disabled={disable}>Módosítás!</button>
             </form>
-            <hr/>
+            <hr />
             <form onSubmit={statusChange}>
                 <p>A vizsga jelenleg {status ?
                     <span className="text-success">Aktív</span> : <span className="text-danger">Inaktív</span>

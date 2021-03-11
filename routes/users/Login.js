@@ -8,8 +8,8 @@ login.post('/login', async (req, res) => {
         const cardNum = CryptoJS.AES.decrypt(req.body.cardNum, 'RcdNum@jp-$k-s3c#r3t').toString(CryptoJS.enc.Utf8)
         const password = CryptoJS.AES.decrypt(req.body.password, 'Rpw@jp-$k-s3c#r3t').toString(CryptoJS.enc.Utf8)
 
-        if(password.length < 8 || password.length > 16 || password.toLowerCase() === password || !password.split('').some(letter => !isNaN(letter))){
-            res.json({error: 'A szerver elutasította a jelszót a követelmények hiánya miatt!'})
+        if (password.length < 8 || password.length > 16 || password.toLowerCase() === password || !password.split('').some(letter => !isNaN(letter))) {
+            res.json({ error: 'A szerver elutasította a jelszót a követelmények hiánya miatt!' })
             return
         }
 

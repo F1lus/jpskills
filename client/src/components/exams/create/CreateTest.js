@@ -26,9 +26,9 @@ export default function CreateTest(props) {
     }, [])
 
     const handleProducts = useCallback(products => {
-        if(products){
+        if (products) {
             setItems(products)
-        }else{
+        } else {
             setItems([])
         }
     }, [])
@@ -48,10 +48,10 @@ export default function CreateTest(props) {
     const handleChange = useCallback(event => {
         switch (event.target.name) {
             case 'type':
-                if(event.target.value === 'A termék gyártója'){
+                if (event.target.value === 'A termék gyártója') {
                     setItems([])
                     break
-                }else{
+                } else {
                     socket.emit('get-products', event.target.value)
                     break
                 }
@@ -63,12 +63,12 @@ export default function CreateTest(props) {
                     break
                 }
             case 'examName':
-                if(examName.length < 100){
+                if (examName.length < 100) {
                     setExamName(event.target.value)
                 }
                 break
             case 'comment':
-                if(comment.length < 200){
+                if (comment.length < 200) {
                     setComment(event.target.value)
                 }
                 break
@@ -78,7 +78,7 @@ export default function CreateTest(props) {
             default:
                 break
         }
-    },[comment.length, examName.length, socket])
+    }, [comment.length, examName.length, socket])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
@@ -135,7 +135,7 @@ export default function CreateTest(props) {
                 }
             })
             .catch(err => console.log(err))
-    },[comment, examDoc, examName, item, permission])
+    }, [comment, examDoc, examName, item, permission])
 
     return (
         <div className="container shadow rounded p-3 bg-light mt-3">

@@ -3,7 +3,7 @@ import { useParams, Redirect } from 'react-router-dom'
 
 import model from '../models/ResultModel'
 
-import {SocketContext} from '../../GlobalSocket'
+import { SocketContext } from '../../GlobalSocket'
 
 export default function ExamResults() {
 
@@ -16,7 +16,7 @@ export default function ExamResults() {
     const handleClick = useCallback(event => {
         event.preventDefault()
         setRedirect(true)
-    },[])
+    }, [])
 
     const handleExamFinalized = useCallback(skill => setResult(model(skill)), [])
 
@@ -27,7 +27,7 @@ export default function ExamResults() {
         socket.on('exam-finalized', handleExamFinalized)
 
         return () => socket.off('exam-finalized', handleExamFinalized)
-        
+
     }, [exam, handleExamFinalized, socket])
 
     return (
