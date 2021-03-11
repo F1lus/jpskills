@@ -8,12 +8,13 @@ import Modifier from './Modifier'
 export default function ListManager(props) {
 
     const examCode = useParams().examName
+
     const socket = props.socket
     const questionId = props.questionId
 
     const [list, setList] = useState([])
     const [display, setDisplay] = useState(false)
-    const [disableButton, setDisableButton] = useState(props.disable || false)
+    const [disableButton, setDisableButton] = useState(false)
 
     const modifyDisplay = useCallback(event => {
         event.preventDefault()
@@ -34,6 +35,7 @@ export default function ListManager(props) {
     const handleUpdate = useCallback(update => setDisableButton(false), [])
 
     useEffect(() => {
+
         setList(props.list)
         socket.on('server-accept', handleServerAccept)
         socket.on('updated', handleUpdate)
@@ -62,21 +64,21 @@ export default function ListManager(props) {
                         <div>
                             <li>
                                 <Modifier socket={socket} index={el.id}
-                                    value={el.text} isAnswer={true} disable={disableButton} />
+                                    value={el.text} isAnswer={true} />
                             </li>
                             <li><b>{el.correct ? <span className="text-success">Helyes</span> : <span className="text-danger">Helytelen</span>}</b>
                                 <Modifier socket={socket} index={el.id}
-                                    value={el.correct} isAnswer={true} disable={disableButton} />
+                                    value={el.correct} isAnswer={true} />
                             </li>
                         </div>
                         :
                         <div>
                             <li>
-                                <Modifier socket={socket} index={el.id} value={el.name} disable={disableButton} />
+                                <Modifier socket={socket} index={el.id} value={el.name} />
                             </li>
 
                             <li>
-                                <Modifier socket={socket} index={el.id} value={el.points} disable={disableButton} />
+                                <Modifier socket={socket} index={el.id} value={el.points} />
                             </li>
 
                             <li>
@@ -85,7 +87,7 @@ export default function ListManager(props) {
                             <div>
                                 <hr />
                                 <ListManager socket={socket} questionId={el.id}
-                                    list={el.answers} isAnswer={true} disable={disableButton} />
+                                    list={el.answers} isAnswer={true} />
                             </div>
                         </div>
                 }
@@ -97,12 +99,12 @@ export default function ListManager(props) {
         <div className="container">
             {
                 !list || list.length === 0 ? 
-                    <h6 className="alert alert-danger my-2 w-50 ml-auto mr-auto">Erre a kérdésre még nincs válasz!</h6> 
+                    <h6 className="alert alert-danger my-2 w-50 ml-auto mr-auto">A kérdéshez még nem tartozik válasz!</h6> 
                 :
                     list.map(listMapper)
             }
 
-            <AddAnswer socket={props.socket} questionId={questionId} display={display} disable={disableButton} />
+            <AddAnswer socket={props.socket} questionId={questionId} display={display} />
             {props.isAnswer ?
                 <li>
                     <hr />

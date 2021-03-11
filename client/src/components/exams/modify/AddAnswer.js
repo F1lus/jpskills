@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 export default function AddAnswer(props) {
 
     const param = useParams()
 
-    const [disableButton, setDisableButton] = useState(props.disable || false)
+    const [disableButton, setDisableButton] = useState(false)
     const [answer, setAnswer] = useState(null)
     const [isCorrect, setCorrect] = useState(1)
 
@@ -36,6 +36,15 @@ export default function AddAnswer(props) {
             setAnswer(null)
         }
     },[answer, isCorrect, param.examName, props.questionId, props.socket])
+
+    const handleUpdate = useCallback(updated => setDisableButton(false), [])
+
+    useEffect(() => {
+        props.socket.on('updated', handleUpdate)
+
+        return () => props.socket.off('updated', handleUpdate)
+        
+    }, [props.socket, handleUpdate])
 
     return (
         <div>

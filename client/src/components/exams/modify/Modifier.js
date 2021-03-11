@@ -11,7 +11,11 @@ export default function Modifier(props) {
     const [isAnswer,] = useState(props.isAnswer || false)
     const [disableButton, setDisableButton] = useState(props.disable || false)
 
+    const handleUpdate = useCallback(updated => setDisableButton(false), [])
+
     useEffect(() => {
+        props.socket.on('updated', handleUpdate)
+
         let valueType = typeof props.value
         if (valueType === 'number' || valueType === 'bigint') {
             setType('number')
@@ -20,7 +24,10 @@ export default function Modifier(props) {
         } else if (valueType === 'string') {
             setType('text')
         }
-    }, [props.value, index])
+
+        return () => props.socket.off('updated', handleUpdate)
+        
+    }, [props.value, index, props.socket, handleUpdate])
 
     const handleChange = useCallback(event => {
         if (event.target.value === 'Állapotváltás...') {

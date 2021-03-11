@@ -8,6 +8,7 @@ export default function ModifyProps(props) {
 
     const [examProps, setExamProps] = useState([])
     const [status, setStatus] = useState(null)
+    const [disable, setDisable] = useState(false)
 
     const handleProps = useCallback(examProps => {
         setExamProps([examProps[0], examProps[1] === 'null' ? '' : examProps[1], examProps[2], examProps[3] * 100])
@@ -15,10 +16,16 @@ export default function ModifyProps(props) {
         setStatus(examProps[2])
     }, [])
 
+    const handleUpdate = useCallback(updated => setDisable(false), [])
+
     useEffect(() => {
         socket.on('exam-props', handleProps)
+        socket.on('updated', handleUpdate)
 
-        return () => socket.off('exam-props', handleProps)
+        return () => {
+            socket.off('exam-props', handleProps)
+            socket.off('updated', handleUpdate)
+        }
     })
 
     const handleChange = useCallback(event => {
@@ -60,12 +67,17 @@ export default function ModifyProps(props) {
 
     const statusChange = useCallback(event => {
         event.preventDefault()
-        if(examProps[2] != null)
-        socket.emit('update-status', {examCode: examCode.examName, status: examProps[2]})
+        setDisable(true)
+
+        if(examProps[2] != null){
+            socket.emit('update-status', {examCode: examCode.examName, status: examProps[2]})
+        }
     },[examCode.examName, examProps, socket])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
+        setDisable(true)
+
         if (examProps != null) {
             socket.emit('update-exam-props', 
                 {
@@ -110,7 +122,7 @@ export default function ModifyProps(props) {
                     </label>
                 </div>
                 <p>A jelenlegi maximális pontszám {maxPoints}, az elvégzéshez pedig {Math.round(maxPoints * (examProps[3] / 100))} pont szükséges</p>
-                <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
+                <button name='Módosítás' className="btn btn-warning m-2" disabled={disable}>Módosítás!</button>
             </form>
             <hr/>
             <form onSubmit={statusChange}>
@@ -124,7 +136,7 @@ export default function ModifyProps(props) {
                     <option value={0}>Inaktív</option>
                 </select>
 
-                <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
+                <button name='Módosítás' className="btn btn-warning m-2" disabled={disable}>Módosítás!</button>
             </form>
         </div>
     )

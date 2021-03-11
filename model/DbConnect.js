@@ -21,17 +21,21 @@ class Connection {
     constructor() {
         const config = require('../config')
 
-        this.con = require('knex')({
-            client: 'mysql',
-            connection: {
-                host: config.database.host,
-                user: config.database.user,
-                password: config.database.password,
-                database: config.database.db,
-                multipleStatements: true
-            },
-            pool: { min: 0, max: 7 }
-        })
+        try {
+            this.con = require('knex')({
+                client: 'mysql',
+                connection: {
+                    host: config.database.host,
+                    user: config.database.user,
+                    password: config.database.password,
+                    database: config.database.db,
+                    multipleStatements: true
+                },
+                pool: { min: 0, max: 7 }
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
     }
 
     globalStatisticsForAdmin = async (cardNum) => {

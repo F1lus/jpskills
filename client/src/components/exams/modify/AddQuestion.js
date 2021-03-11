@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom'
 
 import API from '../../BackendAPI'
@@ -46,9 +46,20 @@ export default function AddQuestion(props){
                     setDisable(false)
                     props.socket.emit('exam-modified')
                 }
-            }).catch(err => console.log(err))
+            }).catch(err => {
+                console.log(err.message)
+                setDisable(false)
+            })
         }
     },[examCode, pic, points, props.socket, question])
+
+    const handleUpdate = useCallback(() => setDisable(false), [])
+
+    useEffect(() => {
+        props.socket.on('server-accept', handleUpdate)
+
+        return () => props.socket.off('server-accept', handleUpdate)
+    }, [props.socket, handleUpdate])
 
     return (
         <div className="container text-center rounded mb-3">

@@ -23,8 +23,6 @@ export default function ExamModify() {
     const [removed, setRemoved] = useState(false)
 
     const handleContent = useCallback(questionList => {
-        setQuestions([])
-
         const questionsModel = Qmodel(questionList)
 
         if (questionsModel.questions.length > 0) {
@@ -32,8 +30,6 @@ export default function ExamModify() {
         }
         setMaxPoints(questionsModel.points)
     }, [])
-
-    const handleServerAccept = useCallback(() => setUpdater(count => ++count), [])
 
     const timeoutCb = useCallback(() => {
         const modify = document.getElementById('modify')
@@ -43,19 +39,25 @@ export default function ExamModify() {
         setCallTimeout(false)
     }, [])
 
+    const handleServerAccept = useCallback(() => {
+        setUpdater(count => ++count)
+    }, [])
+
     const handleUpdate = useCallback(updated => {
+        clearTimeout(timeout.current)
+        timeoutCb()
+
         const modify = document.getElementById('modify')
         if(updated){
             modify.classList.add('alert-success')
-            modify.innerHTML = 'A módosításokat elmentettük!'
+            modify.innerHTML = 'A módosítás elmentve!'
             setUpdater(count => ++count)
-            setCallTimeout(true)
         }else{
             modify.classList.add('alert-danger')
-            modify.innerHTML = 'A módosításokat nem tudtuk elmenteni!'
-            setCallTimeout(true)
+            modify.innerHTML = 'A módosítás mentése sikertelen!'
         }
-    }, [])
+        setCallTimeout(true)
+    }, [timeoutCb])
 
     const handleExamRemoved = useCallback(() => setRemoved(true), [])
 
