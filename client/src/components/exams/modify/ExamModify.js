@@ -50,11 +50,11 @@ export default function ExamModify() {
         const modify = document.getElementById('modify')
         if(updated){
             modify.classList.add('alert-success')
-            modify.innerHTML = 'A módosítás elmentve!'
+            modify.innerHTML = 'A módosítás elmentve! &#10003;'
             setUpdater(count => ++count)
         }else{
             modify.classList.add('alert-danger')
-            modify.innerHTML = 'A módosítás mentése sikertelen!'
+            modify.innerHTML = 'A módosítás mentése sikertelen! &#10540;'
         }
         setCallTimeout(true)
     }, [timeoutCb])
