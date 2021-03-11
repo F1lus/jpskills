@@ -78,7 +78,7 @@ export default function ModifyPic(props) {
                 }
             }>
                 <button type="button" className="close" aria-label="Close" onClick={close}>
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true">&#10540;</span>
                 </button>
                 {picture == null ? 'Nincs feltöltött kép' : <img className='img-fluid' src={createImage()} alt=''/>}
                 <form onSubmit={handleSubmit}>
