@@ -132,7 +132,7 @@ export default function DetailTable(props) {
         if (examCode && workingList.length > 0) {
             const stats = examStats(workingList)
             return (
-                <div className='alert alert-primary w-50 mx-auto py-2 text-justify'>
+                <div className='alert alert-primary w-75 mx-auto py-2 text-justify'>
                     <h5>Átlagos teljesítési idő: {stats.avgTime.avgMins + " perc " + stats.avgTime.avgSecs + " másodperc"}</h5>
                     <h5>Átlagosan elért pontszám: {stats.avgScore}</h5>
                     <h5>Sikerességi arány: {stats.completionRate + "%"}</h5>
