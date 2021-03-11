@@ -101,7 +101,7 @@ export default function ExamModify() {
 
     return (
         <div className="container text-center mb-3">
-            <div className="alert w-25" id="modify"></div>
+            <div className="alert w-25" id="modify"/>
             {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
             <ModifyProps socket={socket} points={maxPoints} exam={examCode} />
             {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}

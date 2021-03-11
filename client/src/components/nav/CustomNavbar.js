@@ -3,7 +3,7 @@ import {Elemek} from './navItems';
 import {NavLink} from 'react-router-dom';
 
 export default () => (
-        <div>
+        <div id="navbar">
             <section id="hatter"/>
             <ul className="nav nav-fill mb-3">
             {Elemek.map((elem,index)=>{
