@@ -37,7 +37,7 @@ export default function Routing({ component: Component, allowed, ...rest }) {
     return (
         <Route {...rest} render={(props) => {
             if (!status && path === '/') {
-                return <Component {...props} />
+                return <Component  {...props} />
             } else if(status && path === '/'){
                 return <Redirect to='/home' />
             }else if (status && path === '/logout') {
