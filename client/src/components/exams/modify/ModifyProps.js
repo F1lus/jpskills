@@ -91,55 +91,53 @@ export default function ModifyProps(props) {
 
 
     return (
-        <div className="container text-center rounded w-75 mb-3 p-3 shadow bg-light">
-            <div className="container mt-3">
-                <h3><p>A vizsga jellemzői:</p></h3>
+        <div className="container text-center rounded w-75 mb-5 p-3 shadow bg-light">
+            <h3><p>A vizsga jellemzői:</p></h3>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group m-auto">
-                        <input type='text' name='examName' value={examProps[0] || ''} onChange={handleChange} required autoComplete="off" />
-                        <label htmlFor="examName" className="label-name">
-                            <span className="content-name">
-                                A vizsga neve
-                            </span>
-                        </label>
-                    </div>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group m-auto">
+                    <input type='text' name='examName' value={examProps[0] || ''} onChange={handleChange} required autoComplete="off" />
+                    <label htmlFor="examName" className="label-name">
+                        <span className="content-name">
+                            A vizsga neve
+                        </span>
+                    </label>
+                </div>
 
-                    <div className="form-group m-auto">
-                        <input type='text' name='examNotes' value={examProps[1] || ''} onChange={handleChange} autoComplete="off" />
-                        <label htmlFor="examNotes" className="label-name">
-                            <span className="content-name">
-                                A vizsga megjegyzése (ha van)
-                            </span>
-                        </label>
-                    </div>
+                <div className="form-group m-auto">
+                    <input type='text' name='examNotes' value={examProps[1] || ''} onChange={handleChange} autoComplete="off" />
+                    <label htmlFor="examNotes" className="label-name">
+                        <span className="content-name">
+                            A vizsga megjegyzése (ha van)
+                        </span>
+                    </label>
+                </div>
 
-                    <div className="form-group m-auto">
-                        <input type='number' name='examMinPoints' value={examProps[3] || ''} onChange={handleChange} required />
-                        <label htmlFor="examMinPoints" className="label-name">
-                            <span className="content-name">
-                                A vizsga elvégzéséhez szükséges százalék
-                            </span>
-                        </label>
-                    </div>
-                    <p>A jelenlegi maximális pontszám {maxPoints}, az elvégzéshez pedig {Math.round(maxPoints * (examProps[3] / 100))} pont szükséges</p>
-                    <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
-                </form>
-                <hr/>
-                <form onSubmit={statusChange}>
-                    <p>A vizsga jelenleg {status ?
-                        <span className="text-success">Aktív</span> : <span className="text-danger">Inaktív</span>
-                    }</p>
+                <div className="form-group m-auto">
+                    <input type='number' name='examMinPoints' value={examProps[3] || ''} onChange={handleChange} required />
+                    <label htmlFor="examMinPoints" className="label-name">
+                        <span className="content-name">
+                            A vizsga elvégzéséhez szükséges százalék
+                        </span>
+                    </label>
+                </div>
+                <p>A jelenlegi maximális pontszám {maxPoints}, az elvégzéshez pedig {Math.round(maxPoints * (examProps[3] / 100))} pont szükséges</p>
+                <button name='Módosítás' className="btn btn-warning m-2" disabled={disable}>Módosítás!</button>
+            </form>
+            <hr/>
+            <form onSubmit={statusChange}>
+                <p>A vizsga jelenleg {status ?
+                    <span className="text-success">Aktív</span> : <span className="text-danger">Inaktív</span>
+                }</p>
 
-                    <select name='examStatus' className="rounded pl-2 w-25 mb-3" onChange={handleChange}>
-                        <option value={null}>Állapotváltás...</option>
-                        <option value={1}>Aktív</option>
-                        <option value={0}>Inaktív</option>
-                    </select>
+                <select name='examStatus' className="rounded pl-2 w-25 mb-3" onChange={handleChange}>
+                    <option value={null}>Állapotváltás...</option>
+                    <option value={1}>Aktív</option>
+                    <option value={0}>Inaktív</option>
+                </select>
 
-                    <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
-                </form>
-            </div>
+                <button name='Módosítás' className="btn btn-warning m-2" disabled={disable}>Módosítás!</button>
+            </form>
         </div>
     )
 }
