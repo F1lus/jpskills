@@ -123,7 +123,7 @@ export default function ModifyProps(props) {
                         </label>
                     </div>
                     <p>A jelenlegi maximális pontszám {maxPoints}, az elvégzéshez pedig {Math.round(maxPoints * (examProps[3] / 100))} pont szükséges</p>
-                    <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
+                    <button name='Módosítás' className="btn btn-warning m-2" disabled={disable}>Módosítás!</button>
                 </form>
                 <hr/>
                 <form onSubmit={statusChange}>
@@ -137,7 +137,7 @@ export default function ModifyProps(props) {
                         <option value={0}>Inaktív</option>
                     </select>
 
-                    <button name='Módosítás' className="btn btn-warning m-2">Módosítás!</button>
+                    <button name='Módosítás' className="btn btn-warning m-2" disabled={disable}>Módosítás!</button>
                 </form>
             </div>
         </div>
