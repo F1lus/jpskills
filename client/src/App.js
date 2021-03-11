@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useRef} from 'react'
 import { Switch, useLocation } from 'react-router-dom'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -22,6 +22,7 @@ export default function App() {
 
   const loggedIn = useSelector(state => state.userReducer.loggedIn)
   const location = useLocation()
+  const refNode = useRef()
 
   return (
     <React.Fragment>
@@ -31,6 +32,7 @@ export default function App() {
             key={location.key}
             timeout={500}
             classNames="fade"
+            nodeRef={refNode}
             >
             <Switch location={location}>
               <Routing exact path='/' allowed={['*']} component={Login} />
