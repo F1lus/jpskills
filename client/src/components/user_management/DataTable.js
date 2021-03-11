@@ -8,6 +8,7 @@ import examStats from './models/ExamStatistics'
 export default function DetailTable(props) {
 
     const [exams, setExams] = useState([])
+    const [examSelector, setExamSelector] = useState([])
     const [examCode, setExamCode] = useState(null)
     const [workingList, setWorkingList] = useState([])
     const [results, setResults] = useState([])
@@ -104,6 +105,7 @@ export default function DetailTable(props) {
                 }
             })
             setExams(array)
+            setExamSelector(array)
         }
     }, [props.results])
 
@@ -143,7 +145,7 @@ export default function DetailTable(props) {
         }
     }, [examCode, workingList])
 
-    const search = useCallback(event => {
+    const searchUser = useCallback(event => {
         if (props.permission === 'admin') {
             if (examCode && results.length > 0) {
                 const filterBySearch = results.filter(exam => exam.worker.toLowerCase().includes(event.target.value.toLowerCase().trim()))
@@ -152,6 +154,17 @@ export default function DetailTable(props) {
         }
 
     }, [examCode, props.permission, results])
+
+    const searchExam = useCallback(event => {
+        if (exams.length > 0) {
+            const filterBySearch = exams.filter(exam => {
+                const search = event.target.value.toLowerCase().trim()
+                return exam.key.toLowerCase().includes(search) || exam.value.toLowerCase().includes(search)
+            })
+            setExamSelector(filterBySearch)
+        }
+
+    }, [exams])
 
     const conditionalRowStyles = [
         {
@@ -189,19 +202,32 @@ export default function DetailTable(props) {
         <div className="container">
             <h1><p>{props.permission === 'admin' ? 'Vizsgánkénti statisztika' : 'Vizsga eredmények'}</p></h1>
 
+            {exams.length > 0 ?
+                <form className="mb-3 w-50">
+                    <div className="form-group m-auto">
+                        <input type="text" name="search" onChange={searchExam} autoComplete="off" required />
+                        <label htmlFor="search" className="label-name">
+                            <span className="content-name">
+                                Vizsga keresése név, vagy cikkszám alapján
+                            </span>
+                        </label>
+                    </div>
+                </form> : null
+            }
+
             <select onChange={handleChange} className="mb-3 rounded" id="tableselect">
                 <option value={null}>Vizsga kiválasztása</option>
-                {exams.length > 0 ? exams.map((exam, index) => {
+                {examSelector.length > 0 ? examSelector.map((exam, index) => {
                     return <option key={index} value={exam.value}>{exam.key + " || " + exam.value}</option>
                 }) : null}
             </select>
 
             <Admin permission={props.permission}>
                 {examStatistics()}
-                {examCode ? 
+                {examCode ?
                     <form className="mb-3 w-50">
                         <div className="form-group m-auto">
-                            <input type="text" name="search" onChange={search} autoComplete="off" required />
+                            <input type="text" name="search" onChange={searchUser} autoComplete="off" required />
                             <label htmlFor="search" className="label-name">
                                 <span className="content-name">
                                     Vizsgázó keresése

@@ -39,7 +39,7 @@ class Connection {
         try {
             const exams = await this.con('exams')
                 .select(['exams.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed', 'worker_id'])
-                .innerJoin(this.con.raw('skills ON exams.exam_id = skills.exam_id')).where('exam_creator', cardNum)
+                .innerJoin('skills', 'exams.exam_id', 'skills.exam_id').where('exam_creator', cardNum)
 
             for (const exam of exams) {
                 const worker = await this.con('workers').select('worker_name')
