@@ -134,6 +134,13 @@ input[type="file"] {
     margin-top: 15px;
 }
 
+#modify {
+    position: fixed;
+    z-index: 5;
+    bottom: 0;
+    left: 15px;
+}
+
 /*form animation*/
 .form-group {
     width: 90%;
