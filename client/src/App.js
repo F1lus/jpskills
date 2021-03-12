@@ -17,15 +17,16 @@ import Examination from './components/exams/examination/Examination'
 import ExamResults from './components/exams/examination/ExamResults'
 import Routing from './components/user_management/handlers/Routing'
 import { useSelector } from 'react-redux'
+import Management from './components/user_management/superuser/Management'
 
 export default function App() {
 
-  const loggedIn = useSelector(state => state.userReducer.loggedIn)
+  const [loggedIn, permission] = useSelector(state => [state.userReducer.loggedIn, state.userReducer.permission])
   const location = useLocation()
 
   return (
     <React.Fragment>
-      {loggedIn ? <CustomNavbar /> : null}
+      {loggedIn && permission !== 'superuser' ? <CustomNavbar /> : null}
       <TransitionGroup>
         <CSSTransition
           key={location.key}
@@ -48,6 +49,8 @@ export default function App() {
             <Routing exact path='/exams/result/:examCode/' allowed={['*']} component={ExamResults} />
 
             <Routing exact path='/profile' allowed={['*']} component={Profile} />
+
+            <Routing exact path='/management' allowed={['superuser']} component={Management} />
 
             <Routing exact path='/logout' allowed={['*']} component={LogoutPlaceholder} />
           </Switch>

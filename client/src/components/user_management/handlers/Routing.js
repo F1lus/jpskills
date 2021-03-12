@@ -55,10 +55,18 @@ export default function Routing({ component: Component, allowed, ...rest }) {
                     </div>
                 )
             } else if (status) {
-                if (allowed.findIndex(perm => perm === '*' || perm === permission) !== -1) {
-                    return <Component {...props} user={user} permission={permission} />
-                } else {
-                    return <Redirect to='/home' />
+                if (permission !== 'superuser') {
+                    if (allowed.findIndex(perm => perm === '*' || perm === permission) !== -1) {
+                        return <Component {...props} user={user} permission={permission} />
+                    } else {
+                        return <Redirect to='/home' />
+                    }
+                }else{
+                    if(path !== '/management'){
+                        return <Redirect to='/management' />
+                    }else{
+                        return <Component {...props} user={user} permission={permission} />
+                    }
                 }
             } else {
                 return <Redirect to='/' />
