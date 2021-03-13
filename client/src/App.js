@@ -1,5 +1,6 @@
 import React from 'react'
 import { Switch, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
@@ -16,7 +17,6 @@ import Profile from './components/user_management/Profile'
 import Examination from './components/exams/examination/Examination'
 import ExamResults from './components/exams/examination/ExamResults'
 import Routing from './components/user_management/handlers/Routing'
-import { useSelector } from 'react-redux'
 import Management from './components/user_management/superuser/Management'
 
 export default function App() {
@@ -40,7 +40,7 @@ export default function App() {
 
             <Routing exact path='/exams' allowed={['*']} component={ExamWrapper} />
 
-            <Routing exact path='/exams/modify/:examName' allowed={['admin', 'superuser']} component={ExamModify} />
+            <Routing exact path='/exams/modify/:examName' allowed={['admin']} component={ExamModify} />
 
             <Routing exact path='/exams/learn/:examCode' allowed={['*']} component={ExamDocument} />
 

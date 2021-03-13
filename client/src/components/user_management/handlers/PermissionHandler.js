@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 export function Admin(props) {
 
-    const [permissions,] = useState(['admin', 'superuser'])
+    const [permissions,] = useState(['admin'])
 
     return (
         <div>

@@ -4,7 +4,7 @@
   "description": "JP Skill Mátrix szerveroldal",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"nodemon --ignore temp_files/user_timer/*.json index.js\" \"cd client && npm start\""
+    "start": "concurrently \"nodemon --ignore temp_files/* index.js\" \"cd client && npm start\""
   },
   "keywords": [],
   "author": "Filimon Márk",
