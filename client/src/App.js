@@ -52,6 +52,8 @@ export default function App() {
 
             <Routing exact path='/management' allowed={['superuser']} component={Management} />
 
+            <Routing exact path='/management/:user' allowed={['superuser']} component={Management} />
+
             <Routing exact path='/logout' allowed={['*']} component={LogoutPlaceholder} />
           </Switch>
         </CSSTransition>

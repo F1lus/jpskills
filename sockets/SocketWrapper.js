@@ -17,6 +17,7 @@ const updater = require('./exams/update/Updater')
 
 //Felhasználó kezelés
 const getLoginInfo = require('./users/GetLoginInfo')
+const getUsers = require('./users/GetUsers')
 
 /**
  * Socket kapcsolat kezelése
@@ -41,8 +42,9 @@ module.exports = (socket) => {
     remover(socket)
     updater(socket)
 
-    //Felhasználói művelet(ek) regisztrálása
+    //Felhasználói művelet(ek)
     processExam(socket)
+    getUsers(socket)
 
     //Vizsgaeredmény eseményének regisztrálása
     getResults(socket)

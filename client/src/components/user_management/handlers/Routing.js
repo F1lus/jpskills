@@ -52,7 +52,7 @@ export default function Routing({ component: Component, allowed, ...rest }) {
                         }
                     </div>
                 )
-            } else if (status && path === '/management') {
+            } else if (status && path.includes('/management')) {
                 if (permission === 'superuser') {
                     return <Component {...props} />
                 } else {

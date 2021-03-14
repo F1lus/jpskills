@@ -8,7 +8,11 @@ export default () => (
         <ul className="nav nav-fill mb-3">
             {Elemek.map((elem, index) => {
                 return (
-                    <NavLink exact to={elem.url} className="nav-link" key={index} activeClassName="current">
+                    <NavLink 
+                        exact to={elem.url} 
+                        className={elem.url === '/logout' ? "nav-link text-danger" : "nav-link"} 
+                        key={index} activeClassName="current"
+                    >
                         {elem.title}
                     </NavLink>
                 )

@@ -45,13 +45,12 @@ class Connection {
             const existingUsers = await this.con('admin_login')
                 .select(['cardcode', 'worker_name', 'worker_usergroup', 'worker_active'])
                 .innerJoin('workers', 'cardcode', 'worker_cardcode').whereNot('worker_usergroup', 'superuser')
-
             existingUsers.forEach(user => {
                 users.push({
                     name: user.worker_name,
-                    permission: user.worker_usergroup,
+                    group: user.worker_usergroup,
                     cardcode: user.cardcode,
-                    isActive: user.worker_active
+                    isActive: user.worker_active === 1
                 })
             })
         } catch (error) {

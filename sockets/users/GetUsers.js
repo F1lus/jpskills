@@ -4,7 +4,7 @@ module.exports = socket => {
 
     const session = socket.handshake.session
 
-    const getExistingUsers = () => {
+    const getExistingUsers = async () => {
         if(session.perm === 'superuser'){
             socket.emit('existing-users', await DbConnect.getExistingUsers())
         }
