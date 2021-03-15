@@ -72,8 +72,25 @@ export default function Management() {
         const filterBySearch = users.filter(user => {
             return user.name.toLowerCase().includes(value) || user.group.toLowerCase().includes(value)
         })
+        const tempList = []
 
-        setDisplayList(filterBySearch)
+        filterBySearch.forEach(element => {
+            const cardcode = element.cardcode
+            tempList.push({
+                name: element.name,
+                cardcode: (
+                    <NavLink to={`/management/${cardcode}`}>
+                        <button className='btn btn-outline-blue'>
+                            Kezelés
+                        </button>
+                    </NavLink>
+                ),
+                group: element.group,
+                isActive: element.isActive ? 'Aktív' : 'Inaktív'
+            })
+        })
+
+        setDisplayList(tempList)
     }, [users])
 
     useEffect(() => {

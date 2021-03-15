@@ -16,6 +16,7 @@ export default function CreateTest(props) {
     const [items, setItems] = useState([])
     const [types, setTypes] = useState([])
     const [uploaded, setUploaded] = useState(false)
+    const [disable, setDisable] = useState(false)
 
     const handleTypes = useCallback(types => {
         if (types) {
@@ -82,6 +83,7 @@ export default function CreateTest(props) {
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
+        setDisable(true)
 
         if (permission !== 'admin') {
             setResult('Parancs megtagadva! Nincs megfelelő jogosultsága!')
@@ -106,12 +108,12 @@ export default function CreateTest(props) {
         setResult(null)
         API.post('/exams/upload', data, { headers: { 'Content-Type': `multipart/form-data; boundary=${data._boundary}` } })
             .then(res => {
+                setDisable(false)
                 switch (res.data.result) {
                     case 'invalid_file_type':
                         setResult('A fájl kiterjesztése nem PDF!')
                         break
                     case 200:
-                        setResult('A vizsga felvétele sikeres volt!')
                         setUploaded(true)
                         break
                     case 'invalid_file_size':
@@ -134,7 +136,10 @@ export default function CreateTest(props) {
                         return
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+                setDisable(false)
+            })
     }, [comment, examDoc, examName, item, permission])
 
     return (
@@ -187,7 +192,9 @@ export default function CreateTest(props) {
                     <input type="file" onChange={handleChange} name="examDoc" />
                 </div>
                 <div className="container text-center">
-                    <button type="submit" className="btn btn-warning mt-3" value="Létrehozás">Feltöltés!</button>
+                    <button type="submit" className="btn btn-warning mt-3" value="Létrehozás" disabled={disable}>
+                        Feltöltés!
+                    </button>
                 </div>
             </form>
             {result ? <h3 className="alert alert-secondary mt-3 text-center" role="alert">{result}</h3> : <></>}
