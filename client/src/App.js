@@ -18,6 +18,7 @@ import Examination from './components/exams/examination/Examination'
 import ExamResults from './components/exams/examination/ExamResults'
 import Routing from './components/user_management/handlers/Routing'
 import Management from './components/user_management/superuser/Management'
+import UserManager from './components/user_management/superuser/UserManager'
 
 export default function App() {
 
@@ -52,7 +53,7 @@ export default function App() {
 
             <Routing exact path='/management' allowed={['superuser']} component={Management} />
 
-            <Routing exact path='/management/:user' allowed={['superuser']} component={Management} />
+            <Routing exact path='/management/:user' allowed={['superuser']} component={UserManager} />
 
             <Routing exact path='/logout' allowed={['*']} component={LogoutPlaceholder} />
           </Switch>

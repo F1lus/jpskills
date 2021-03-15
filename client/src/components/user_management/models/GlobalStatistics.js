@@ -1,22 +1,10 @@
 export default (rawSkillMatrix) => {
-    const skills = []
+    const skills = rawSkillMatrix
     let avgScore = 0
     let avgTime = 0
     let completedCount = 0
 
-    if (rawSkillMatrix || rawSkillMatrix.length > 0) {
-        rawSkillMatrix.forEach(skillVector => {
-            skills.push({
-                examName: skillVector[0],
-                examCode: skillVector[1],
-                minScore: skillVector[2],
-                score: skillVector[3],
-                time: skillVector[4],
-                completed: skillVector[5],
-                worker: skillVector[6]
-            })
-        })
-
+    if (skills || skills.length > 0) {
         skills.sort((a, b) => b.score - a.score)
 
         skills.forEach(skill => {

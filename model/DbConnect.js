@@ -38,6 +38,10 @@ class Connection {
         }
     }
 
+    getSpecificUser = async cardcode => {
+        return (await this.getExistingUsers()).filter(user => user.cardcode == cardcode)
+    }
+
     getExistingUsers = async () => {
         const users = []
 
@@ -72,8 +76,15 @@ class Connection {
                     .where('worker_id', [exam.worker_id]).first()
 
                 if (worker) {
-                    stats.push([exam.exam_name, exam.exam_itemcode, exam.points_required,
-                    exam.points, exam.time, exam.completed === 1, worker.worker_name])
+                    stats.push({
+                        examName: exam.exam_name, 
+                        examCode: exam.exam_itemcode, 
+                        minScore: exam.points_required,
+                        score: exam.points, 
+                        time: exam.time, 
+                        completed: exam.completed === 1, 
+                        worker: worker.worker_name
+                    })
                 }
             }
         } catch (error) {
@@ -85,7 +96,8 @@ class Connection {
     globalStatisticsForUser = async (cardNum) => {
         const stats = []
         try {
-            const worker = await this.con('workers').select('worker_id').where('worker_cardcode', [cardNum]).first()
+            const worker = await this.con('workers').select(['worker_id', 'worker_name'])
+                .where('worker_cardcode', [cardNum]).first()
 
             if (worker) {
                 const skills = await this.con('skills').select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
@@ -93,8 +105,15 @@ class Connection {
                     .where('worker_id', [worker.worker_id])
 
                 skills.forEach(skill => {
-                    stats.push([skill.exam_name, skill.exam_itemcode, skill.points_required,
-                    skill.points, skill.time, skill.completed === 1])
+                    stats.push({
+                        examName: skill.exam_name, 
+                        examCode: skill.exam_itemcode, 
+                        minScore: skill.points_required,
+                        score: skill.points, 
+                        time: skill.time, 
+                        completed: skill.completed === 1,
+                        worker: worker.worker_name
+                    })
                 })
             }
         } catch (error) {

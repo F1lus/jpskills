@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Redirect, NavLink} from 'react-router-dom'
+import { Redirect, NavLink } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 
 import { SocketContext } from '../../GlobalSocket'
 
-export default function Management(){
+export default function Management() {
 
     const [user] = useSelector(state => [state.userReducer.user])
     const socket = useContext(SocketContext)
@@ -52,7 +52,7 @@ export default function Management(){
             const cardcode = element.cardcode
             tempList.push({
                 name: element.name,
-                cardcode : (
+                cardcode: (
                     <NavLink to={`/management/${cardcode}`}>
                         <button className='btn btn-outline-blue'>
                             Kezelés
@@ -68,7 +68,7 @@ export default function Management(){
 
     const search = useCallback(event => {
         const value = event.target.value.toLowerCase().trim()
-        
+
         const filterBySearch = users.filter(user => {
             return user.name.toLowerCase().includes(value) || user.group.toLowerCase().includes(value)
         })
@@ -84,33 +84,33 @@ export default function Management(){
         socket.on('existing-users', handleUsers)
 
         return () => socket.off('existing-users', handleUsers)
-    },[socket, handleUsers, displayList, users])
+    }, [socket, handleUsers, displayList, users])
 
     const logout = useCallback(event => {
         event.preventDefault()
         setRedirect(true)
     }, [])
-    
-    return(
+
+    return (
         <div className='container-fluid m-auto bg-light text-center py-3'>
-            {redirect? <Redirect to='/logout' /> : null}
+            {redirect ? <Redirect to='/logout' /> : null}
             <button className='btn btn-danger float-right' onClick={logout}>Kilépés</button>
             <h2>Üdvözöljük, {user}</h2>
 
             <h3>A képzettségi mátrixban létező felhasználók száma: {users.length} fő</h3>
 
             <form className="mb-3 w-50">
-                    <div className="form-group m-auto">
-                        <input type="text" name="search" onChange={search} autoComplete="off" required />
-                        <label htmlFor="search" className="label-name">
-                            <span className="content-name">
-                                Keresés név, vagy csoport alapján
+                <div className="form-group m-auto">
+                    <input type="text" name="search" onChange={search} autoComplete="off" required />
+                    <label htmlFor="search" className="label-name">
+                        <span className="content-name">
+                            Keresés név, vagy csoport alapján
                             </span>
-                        </label>
-                    </div>
-                </form>
+                    </label>
+                </div>
+            </form>
 
-            <DataTable 
+            <DataTable
                 columns={dataColumns}
                 data={displayList}
                 pagination={true}
