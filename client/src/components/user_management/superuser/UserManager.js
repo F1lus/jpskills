@@ -54,8 +54,8 @@ export default function UserManager() {
             tempList.push({
                 operations: (
                     <div>
-                        <button>Törlés</button>
-                        <button>Archiválás</button>
+                        <button className="btn btn-outline-blue mx-2">Törlés</button>
+                        <button className="btn btn-outline-blue mx-2">Archiválás</button>
                     </div>
                 ),
                 examName: element.examName,
@@ -78,9 +78,9 @@ export default function UserManager() {
     }, [socket, handleExams])
 
     return (
-        <div className='container-fluid m-auto bg-light text-center py-3'>
+        <div className='container-fluid m-auto bg-light text-center py-3 page'>
             <NavLink to='/management'>
-                <button className='btn btn-outline-primary float-left'>{'<- Vissza'}</button>
+                <button className='btn btn-outline-blue float-left'>{'<- Vissza'}</button>
             </NavLink>
             <h2>Felhasználó: {userInfo}</h2>
 

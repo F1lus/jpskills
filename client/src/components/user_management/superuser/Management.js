@@ -109,7 +109,7 @@ export default function Management() {
     }, [])
 
     return (
-        <div className='container-fluid m-auto bg-light text-center py-3'>
+        <div className='container-fluid m-auto bg-light text-center py-3 page'>
             {redirect ? <Redirect to='/logout' /> : null}
             <button className='btn btn-danger float-right' onClick={logout}>Kilépés</button>
             <h2>Üdvözöljük, {user}</h2>
@@ -122,7 +122,7 @@ export default function Management() {
                     <label htmlFor="search" className="label-name">
                         <span className="content-name">
                             Keresés név, vagy csoport alapján
-                            </span>
+                        </span>
                     </label>
                 </div>
             </form>
