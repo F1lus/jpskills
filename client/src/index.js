@@ -10,13 +10,11 @@ import { socket, SocketContext } from './components/GlobalSocket'
 
 ReactDOM.render(
   <Router>
-    <React.StrictMode>
-      <Provider store={stateStore}>
-        <SocketContext.Provider value={socket}>
-          <App />
-        </SocketContext.Provider>
-      </Provider>
-    </React.StrictMode>
+    <Provider store={stateStore}>
+      <SocketContext.Provider value={socket}>
+        <App />
+      </SocketContext.Provider>
+    </Provider>
   </Router>
   ,
   document.getElementById('root')
