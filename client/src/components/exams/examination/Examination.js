@@ -35,7 +35,7 @@ export default function Examination() {
     }, [exam, handleContent, handleProps, socket])
 
     return (
-        <div>
+        <div className="page mt-3">
             {examProps[2] === 0 ? <Redirect to='/exams' /> : null}
             <div className='container bg-white rounded shadow py-3 mb-3 text-center'>
                 <h2>

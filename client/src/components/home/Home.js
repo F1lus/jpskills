@@ -7,6 +7,8 @@ import { Admin, User } from '../user_management/handlers/PermissionHandler'
 
 import { Adminnak, Usernek } from './Helpdesk'
 import { ChevronRightIcon } from '@primer/octicons-react'
+import OverlayScrollbars from 'overlayscrollbars'
+import 'overlayscrollbars/css/OverlayScrollbars.css'
 
 export default function Home() {
 
@@ -60,6 +62,11 @@ export default function Home() {
             return 'Üdvözöljük, ' + user + '!'
         }
     }, [user])
+
+    useEffect(() => {
+        OverlayScrollbars(document.getElementById('questions'), {className: "os-theme-dark"});
+        OverlayScrollbars(document.getElementById('helpcontainer'), {className: "os-theme-dark"});
+    },[])
 
     return (
         <div className="container mb-3 mt-3 page">
@@ -122,7 +129,7 @@ export default function Home() {
                                     )
                                 })}
                             </div>
-                            <div className="col-sm-6 col-4">
+                            <div className="col-sm-6 col-4" id="helpcontainer">
                                 <p id="help" />
                             </div>
                         </div>
@@ -131,7 +138,7 @@ export default function Home() {
                 <User permission={permission}>
                     <div className="container">
                         <div className="row">
-                            <div className="col-sm-6 col-8">
+                            <div className="col-sm-6 col-8" id="questions">
                                 {Usernek.map((value, index) => {
                                     return (
                                         <div className="container radio" key={index}>
@@ -144,7 +151,7 @@ export default function Home() {
                                     )
                                 })}
                             </div>
-                            <div className="col-sm-6 col-4">
+                            <div className="col-sm-6 col-4" id="helpcontainer">
                                 <p id="help" />
                             </div>
                         </div>

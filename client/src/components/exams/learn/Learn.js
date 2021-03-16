@@ -5,6 +5,9 @@ import model from '../models/ExamsModel'
 
 import { SocketContext } from '../../GlobalSocket'
 
+import OverlayScrollbars from 'overlayscrollbars'
+import 'overlayscrollbars/css/OverlayScrollbars.css'
+
 export default function Learn() {
 
     const socket = useContext(SocketContext)
@@ -23,8 +26,12 @@ export default function Learn() {
         return () => socket.off('exams-learn-emitter', handleExams)
     }, [handleExams, socket])
 
+    useEffect(() => {
+        OverlayScrollbars(document.getElementById("learn"), { className: "os-theme-dark" });
+    },[])
+
     return (
-        <div className="container text-center p-3 mb-3">
+        <div className="container text-center p-3 mb-3" id="learn">
             <h1><p>Elérhető tananyagok:</p></h1>
             <div className="container">
                 <div className="row">

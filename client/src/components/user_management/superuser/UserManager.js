@@ -78,22 +78,24 @@ export default function UserManager() {
     }, [socket, handleExams])
 
     return (
-        <div className='container-fluid m-auto bg-light text-center py-3 page'>
-            <NavLink to='/management'>
-                <button className='btn btn-outline-blue float-left'>{'<- Vissza'}</button>
-            </NavLink>
-            <h2>Felhasználó: {userInfo}</h2>
+        <div className="d-flex container align-items-center justify-content-center vh-100">
+            <div className='container-fluid m-auto bg-light text-center shadow rounded py-3 page mb-3'>
+                <NavLink to='/management'>
+                    <button className='btn btn-outline-blue float-left'>{'<- Vissza'}</button>
+                </NavLink>
+                <h2>Felhasználó: {userInfo}</h2>
 
-            <h3>Vizsga eredmények</h3>
+                <h3>Vizsga eredmények</h3>
 
-            <DataTable
-                columns={dataColumns}
-                data={displayList}
-                pagination={true}
-                fixedHeader={true}
-                noDataComponent={'Nincsenek megjeleníthető adatok.'}
-                paginationComponentOptions={customText}
-            />
+                <DataTable
+                    columns={dataColumns}
+                    data={displayList}
+                    pagination={true}
+                    fixedHeader={true}
+                    noDataComponent={'Nincsenek megjeleníthető adatok.'}
+                    paginationComponentOptions={customText}
+                />
+            </div>
         </div>
     )
 }

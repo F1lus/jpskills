@@ -27,10 +27,7 @@ ul {
 }
 
 /*home*/
-#help {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+#helpcontainer {
     height: 35vh;
     overflow-y: scroll;
 }
@@ -84,6 +81,11 @@ p::first-letter {
 
 p {
     font-weight: bold;
+}
+
+#learn {
+    max-height: 25%;
+    overflow-y: scroll;
 }
 
 /*profil*/

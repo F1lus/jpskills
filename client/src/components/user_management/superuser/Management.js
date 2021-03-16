@@ -109,32 +109,34 @@ export default function Management() {
     }, [])
 
     return (
-        <div className='container-fluid m-auto bg-light text-center py-3 page'>
-            {redirect ? <Redirect to='/logout' /> : null}
-            <button className='btn btn-danger float-right' onClick={logout}>Kilépés</button>
-            <h2>Üdvözöljük, {user}</h2>
+        <div className="d-flex container align-items-center justify-content-center vh-100">
+            <div className='container-fluid bg-light shadow rounded text-center py-3 page mb-3'>
+                {redirect ? <Redirect to='/logout' /> : null}
+                <button className='btn btn-danger float-right' onClick={logout}>Kilépés</button>
+                <h2>Üdvözöljük, {user}</h2>
 
-            <h3>A képzettségi mátrixban létező felhasználók száma: {users.length} fő</h3>
+                <h3>A képzettségi mátrixban létező felhasználók száma: {users.length} fő</h3>
 
-            <form className="mb-3 w-50">
-                <div className="form-group m-auto">
-                    <input type="text" name="search" onChange={search} autoComplete="off" required />
-                    <label htmlFor="search" className="label-name">
-                        <span className="content-name">
-                            Keresés név, vagy csoport alapján
-                        </span>
-                    </label>
-                </div>
-            </form>
+                <form className="mb-3 w-50">
+                    <div className="form-group m-auto">
+                        <input type="text" name="search" onChange={search} autoComplete="off" required />
+                        <label htmlFor="search" className="label-name">
+                            <span className="content-name">
+                                Keresés név, vagy csoport alapján
+                            </span>
+                        </label>
+                    </div>
+                </form>
 
-            <DataTable
-                columns={dataColumns}
-                data={displayList}
-                pagination={true}
-                fixedHeader={true}
-                noDataComponent={'Nincsenek megjeleníthető adatok.'}
-                paginationComponentOptions={customText}
-            />
+                <DataTable
+                    columns={dataColumns}
+                    data={displayList}
+                    pagination={true}
+                    fixedHeader={true}
+                    noDataComponent={'Nincsenek megjeleníthető adatok.'}
+                    paginationComponentOptions={customText}
+                />
+            </div>
         </div>
     )
 }

@@ -7,6 +7,9 @@ import './style/styles.css'
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
+import OverlayScrollbars from 'overlayscrollbars'
+import 'overlayscrollbars/css/OverlayScrollbars.css'
+
 import Login from './components/user_management/Login'
 import ExamWrapper from './components/exams/ExamWrapper'
 import ExamModify from './components/exams/modify/ExamModify'
@@ -24,6 +27,10 @@ export default function App() {
 
   const [loggedIn, permission] = useSelector(state => [state.userReducer.loggedIn, state.userReducer.permission])
   const location = useLocation()
+
+  document.addEventListener("DOMContentLoaded", function() {
+    OverlayScrollbars(document.querySelectorAll('body'), { className: "os-theme-dark" });
+  });
 
   return (
     <React.Fragment>
