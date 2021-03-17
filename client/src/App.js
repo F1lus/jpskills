@@ -39,7 +39,7 @@ export default function App() {
   })
 
   useEffect(() => {
-    setTimeout(() => setLoad(store, false), 5000)
+    setLoad(store, false)
   }, [store])
 
   return (

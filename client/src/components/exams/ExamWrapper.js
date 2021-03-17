@@ -16,7 +16,6 @@ export default function ExamWrapper() {
         if (permission === 'admin') {
             socket.emit('get-types')
         }
-
         socket.emit('exams-get-signal')
 
     }, [socket, permission])

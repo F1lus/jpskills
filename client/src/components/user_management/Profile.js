@@ -24,7 +24,7 @@ export default function Profile() {
         if (stats.length > 0) {
             setStats(globalStats(stats))
         }
-        setTimeout(() => setLoad(store, false), 5000)
+        setLoad(store, false)
     }, [store])
 
     useEffect(() => {
