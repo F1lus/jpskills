@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useStore } from 'react-redux'
+
+import { setLoad } from '../store/ActionHandler'
 
 import Learn from '../exams/learn/Learn'
 import DetailTable from './DataTable'
@@ -14,6 +16,7 @@ export default function Profile() {
     const [nev, csoport] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
 
     const socket = useContext(SocketContext)
+    const store = useStore()
 
     const [stats, setStats] = useState(null)
 
@@ -21,16 +24,18 @@ export default function Profile() {
         if (stats.length > 0) {
             setStats(globalStats(stats))
         }
-    }, [])
+        setLoad(store, false)
+    }, [store])
 
     useEffect(() => {
         socket.emit('requesting-statistics')
+        setLoad(store, true)
 
         socket.on('sending-statistics', handleStatistics)
 
         return () => socket.off('sending-statistics', handleStatistics)
         // eslint-disable-next-line
-    }, [])
+    }, [store])
 
     const renderStatsObject = useCallback(entry => {
         if (stats) {

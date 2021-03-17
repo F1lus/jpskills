@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Switch, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useStore } from 'react-redux'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
@@ -9,6 +9,8 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import OverlayScrollbars from 'overlayscrollbars'
 import 'overlayscrollbars/css/OverlayScrollbars.css'
+
+import {setLoad} from './components/store/ActionHandler'
 
 import Login from './components/user_management/Login'
 import ExamWrapper from './components/exams/ExamWrapper'
@@ -26,14 +28,22 @@ import UserManager from './components/user_management/superuser/UserManager'
 export default function App() {
 
   const [loggedIn, permission] = useSelector(state => [state.userReducer.loggedIn, state.userReducer.permission])
+  const loading = useSelector(state => state.loadReducer.loading)
+  
   const location = useLocation()
+  const store = useStore()
 
   document.addEventListener("DOMContentLoaded", function() {
     OverlayScrollbars(document.querySelectorAll('body'), { className: "os-theme-dark" });
-  });
+  })
+
+  useEffect(() => {
+    setLoad(store, false)
+  }, [store])
 
   return (
     <React.Fragment>
+      {loading ? console.log('loading...') : null}
       {loggedIn && permission !== 'superuser' ? <CustomNavbar /> : null}
       <TransitionGroup>
         <CSSTransition
