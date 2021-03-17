@@ -83,7 +83,7 @@ export default function App() {
 }
 
 const LogoutPlaceholder = () => (
-  <div>
+  <h5 className='text-light'>
     Pillanat türelmet...
-  </div>
+  </h5>
 )

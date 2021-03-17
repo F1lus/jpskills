@@ -11,7 +11,6 @@ const socketWrapper = require('./sockets/SocketWrapper')
 
 //Felhasználó kezelés
 const login = require('./routes/users/Login')
-const handleLogout = require('./routes/users/Logout')
 
 //Vizsgák kezeléséhez kapcsolódó műveletek
 const uploadExam = require('./routes/exams/update/UploadExam')
@@ -65,8 +64,6 @@ app.use(uploadExam)
 app.use(updater)
 
 app.use(login)
-
-app.use(handleLogout)
 
 //Szerver indítás
 server.listen(config.server_port, config.server_host, () => console.log('A szerver készen áll!'))

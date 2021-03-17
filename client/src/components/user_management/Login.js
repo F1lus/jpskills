@@ -1,9 +1,13 @@
 import React, { useCallback, useState } from 'react'
+import {useStore} from 'react-redux'
 import CryptoJS from 'crypto-js'
 
 import API from '../BackendAPI'
+import {setLoad} from '../store/ActionHandler'
 
 export default function Login() {
+
+    const store = useStore()
 
     const [cardNum, setCardNum] = useState(null)
     const [password, setPassword] = useState('')
@@ -40,6 +44,7 @@ export default function Login() {
                 return
             }
 
+            setLoad(store, true)
             data = {
                 cardNum: CryptoJS.AES.encrypt(cardNum, 'RcdNum@jp-$k-s3c#r3t').toString(),
                 password: CryptoJS.AES.encrypt(password, 'Rpw@jp-$k-s3c#r3t').toString(),
@@ -51,13 +56,16 @@ export default function Login() {
                 return
             }
 
+            setLoad(store, true)
             data = {
                 cardNum: CryptoJS.AES.encrypt(cardNum, 'LcdNum@jp-$k-s3c#r3t').toString(),
                 password: CryptoJS.AES.encrypt(password, 'Lpw@jp-$k-s3c#r3t').toString()
             }
         }
+
         API.post('/login', data)
             .then(result => {
+                setLoad(store, false)
                 if (result.data.access) {
                     window.location.reload()
                 } else if (result.data.error) {
@@ -70,10 +78,11 @@ export default function Login() {
                     }
                 }
             }).catch(err => {
+                setLoad(store, false)
                 setAlert('Hiba történt! Próbálja újra!')
                 console.log(err)
             })
-    }, [cardNum, password, password2, register])
+    }, [cardNum, password, password2, register, store])
 
     const handleChange = useCallback(event => {
         switch (event.target.name) {
