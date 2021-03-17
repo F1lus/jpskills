@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 
 import model from './models/ExamsModel'
 
+import {setLoad} from '../store/ActionHandler'
+
 import ExamsTable from './ExamsTable'
 import { Admin, User } from '../user_management/handlers/PermissionHandler'
 
@@ -11,7 +13,10 @@ export default function Exams(props) {
 
     const [exams, setExams] = useState([])
 
-    const handleExams = useCallback(dbExams => setExams(model(dbExams)), [])
+    const handleExams = useCallback(dbExams => {
+        setExams(model(dbExams))
+        setLoad(props.store, false)
+    }, [props.store])
 
     const handleProcessed = useCallback(() => socket.emit('exams-get-signal'), [socket])
 

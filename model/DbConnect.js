@@ -77,12 +77,12 @@ class Connection {
 
                 if (worker) {
                     stats.push({
-                        examName: exam.exam_name, 
-                        examCode: exam.exam_itemcode, 
+                        examName: exam.exam_name,
+                        examCode: exam.exam_itemcode,
                         minScore: exam.points_required,
-                        score: exam.points, 
-                        time: exam.time, 
-                        completed: exam.completed === 1, 
+                        score: exam.points,
+                        time: exam.time,
+                        completed: exam.completed === 1,
                         worker: worker.worker_name
                     })
                 }
@@ -106,11 +106,11 @@ class Connection {
 
                 skills.forEach(skill => {
                     stats.push({
-                        examName: skill.exam_name, 
-                        examCode: skill.exam_itemcode, 
+                        examName: skill.exam_name,
+                        examCode: skill.exam_itemcode,
                         minScore: skill.points_required,
-                        score: skill.points, 
-                        time: skill.time, 
+                        score: skill.points,
+                        time: skill.time,
                         completed: skill.completed === 1,
                         worker: worker.worker_name
                     })
@@ -866,16 +866,22 @@ class Connection {
         return filteredResults
     }
 
-    selectExamDoc = async (exam_itemcode, cardNum) => { //A vizsga tananyagának kiválasztása
+    selectExamDoc = async (exam_itemcode, cardNum, userIsAdmin) => { //A vizsga tananyagának kiválasztása
         let result = []
         try {
-            const exam = await this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+            if (!userIsAdmin) {
+                const exam = await this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
 
-            const skill = await this.con('workers').select('workers.worker_id')
-                .innerJoin('skills', 'workers.worker_id', 'skills.worker_id').where('worker_cardcode', [cardNum])
-                .andWhere('exam_id', [exam.exam_id])
+                const skill = await this.con('workers').select('workers.worker_id')
+                    .innerJoin('skills', 'workers.worker_id', 'skills.worker_id').where('worker_cardcode', [cardNum])
+                    .andWhere('exam_id', [exam.exam_id])
 
-            result.push(skill.length !== 0 ? 0 : exam.exam_status, exam.exam_docs)
+                result.push(skill.length !== 0 ? 0 : exam.exam_status, exam.exam_docs)
+            }else{
+                const exam = await this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+
+                result.push(0, exam.exam_docs)
+            }
 
         } catch (error) {
             console.log(error.message)
@@ -883,12 +889,25 @@ class Connection {
         return result
     }
 
-    selectLearnExams = async (userIsAdmin) => {
+    selectLearnExams = async (userIsAdmin, cardcode) => {
         let exams = []
         try {
             if (!userIsAdmin) {
                 const examList = await this.con('exams')
                     .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_creation_time'])
+
+                examList.forEach(result => {
+                    exams.push({
+                        examName: result.exam_name,
+                        itemCode: result.exam_itemcode,
+                        comment: result.exam_notes,
+                        created: result.exam_creation_time
+                    })
+                })
+            } else {
+                const examList = await this.con('exams')
+                    .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_creation_time'])
+                    .where('exam_creator', cardcode)
 
                 examList.forEach(result => {
                     exams.push({

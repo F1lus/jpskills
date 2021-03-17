@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { useParams, Redirect } from 'react-router-dom'
+import {useStore} from 'react-redux'
 
 import model from '../models/ResultModel'
+import {setLoad} from '../../store/ActionHandler'
 
 import { SocketContext } from '../../GlobalSocket'
 
@@ -9,6 +11,7 @@ export default function ExamResults() {
 
     const exam = useParams().examCode
     const socket = useContext(SocketContext)
+    const store = useStore()
 
     const [result, setResult] = useState({})
     const [redirect, setRedirect] = useState(false)
@@ -18,9 +21,13 @@ export default function ExamResults() {
         setRedirect(true)
     }, [])
 
-    const handleExamFinalized = useCallback(skill => setResult(model(skill)), [])
+    const handleExamFinalized = useCallback(skill => {
+        setResult(model(skill))
+        setLoad(store, false)
+    }, [store])
 
     useEffect(() => {
+        setLoad(store, true)
 
         socket.emit('request-results', exam)
 
@@ -28,7 +35,7 @@ export default function ExamResults() {
 
         return () => socket.off('exam-finalized', handleExamFinalized)
 
-    }, [exam, handleExamFinalized, socket])
+    }, [exam, handleExamFinalized, socket, store])
 
     return (
         <div className="container bg-white text-center rounded shadow p-3 mt-3 page">

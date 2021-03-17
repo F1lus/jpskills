@@ -4,7 +4,9 @@ const Buffer = require('safe-buffer').Buffer
 module.exports = socket => {
 
     const getExamDoc = async examCode => {
-        const result = await dbconnect.selectExamDoc(examCode, socket.handshake.session.cardNum)
+        const session = socket.handshake.session
+        
+        const result = await dbconnect.selectExamDoc(examCode, session.cardNum, session.perm === 'admin')
 
         socket.emit('examDoc-emitter', result[0], Buffer.from(result[1]))
     }

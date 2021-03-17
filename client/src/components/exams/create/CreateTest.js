@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Redirect } from 'react-router-dom'
 
 import API from '../../BackendAPI'
+import {setLoad} from '../../store/ActionHandler'
 
 export default function CreateTest(props) {
 
@@ -24,7 +25,8 @@ export default function CreateTest(props) {
         } else {
             setTypes([])
         }
-    }, [])
+        setLoad(props.store, false)
+    }, [props.store])
 
     const handleProducts = useCallback(products => {
         if (products) {
@@ -32,7 +34,8 @@ export default function CreateTest(props) {
         } else {
             setItems([])
         }
-    }, [])
+        setLoad(props.store, false)
+    }, [props.store])
 
     useEffect(() => {
         socket.on('types-emitter', handleTypes)
@@ -53,6 +56,7 @@ export default function CreateTest(props) {
                     setItems([])
                     break
                 } else {
+                    setLoad(props.store, true)
                     socket.emit('get-products', event.target.value)
                     break
                 }
@@ -79,11 +83,12 @@ export default function CreateTest(props) {
             default:
                 break
         }
-    }, [comment.length, examName.length, socket])
+    }, [comment.length, examName.length, socket, props.store])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
         setDisable(true)
+        setLoad(props.store, true)
 
         if (permission !== 'admin') {
             setResult('Parancs megtagadva! Nincs megfelelő jogosultsága!')
@@ -109,6 +114,7 @@ export default function CreateTest(props) {
         API.post('/exams/upload', data, { headers: { 'Content-Type': `multipart/form-data; boundary=${data._boundary}` } })
             .then(res => {
                 setDisable(false)
+                setLoad(props.store, false)
                 switch (res.data.result) {
                     case 'invalid_file_type':
                         setResult('A fájl kiterjesztése nem PDF!')
@@ -139,8 +145,9 @@ export default function CreateTest(props) {
             .catch(err => {
                 console.log(err)
                 setDisable(false)
+                setLoad(props.store, false)
             })
-    }, [comment, examDoc, examName, item, permission])
+    }, [comment, examDoc, examName, item, permission, props.store])
 
     return (
         <div className="container shadow rounded p-3 bg-light mt-3">

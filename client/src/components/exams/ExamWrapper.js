@@ -1,8 +1,9 @@
 import React, { useContext, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useStore } from 'react-redux'
 
 import { SocketContext } from '../GlobalSocket'
-
+import { setLoad } from '../store/ActionHandler'
+ 
 import Exams from './Exams'
 import CreateTest from './create/CreateTest'
 import { Admin } from '../user_management/handlers/PermissionHandler'
@@ -10,22 +11,26 @@ import { Admin } from '../user_management/handlers/PermissionHandler'
 export default function ExamWrapper() {
 
     const socket = useContext(SocketContext)
+    const store = useStore()
+
     const permission = useSelector(state => state.userReducer.permission)
 
     useEffect(() => {
+        setLoad(store, true)
+
         if (permission === 'admin') {
             socket.emit('get-types')
         }
         socket.emit('exams-get-signal')
 
-    }, [socket, permission])
+    }, [socket, permission, store])
 
     return (
         <div className="page">
             <Admin permission={permission}>
-                <CreateTest socket={socket} permission={permission} />
+                <CreateTest socket={socket} store={store} permission={permission} />
             </Admin>
-            <Exams socket={socket} permission={permission} />
+            <Exams socket={socket} store={store} permission={permission} />
         </div>
     )
 }

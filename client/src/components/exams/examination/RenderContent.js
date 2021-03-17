@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Redirect, Prompt } from 'react-router-dom'
 
+import {setLoad} from '../../store/ActionHandler'
+
 export default function RenderContent(props) {
 
     const list = props.list
@@ -41,15 +43,20 @@ export default function RenderContent(props) {
         event.preventDefault()
         socket.emit('exam-finished', answers, props.exam)
         setDisable(true)
-    }, [answers, props.exam, socket])
+        setLoad(props.store, true)
+    }, [answers, props.exam, socket, props.store])
 
-    const handleExamProcessed = useCallback(() => setFinished(true), [])
+    const handleExamProcessed = useCallback(() => {
+        setFinished(true)
+        setLoad(props.store, true)
+    }, [props.store])
 
     const submitExam = useCallback(() => {
         if (!disable) {
             socket.emit('exam-finished', answers, props.exam)
+            setLoad(props.store, true)
         }
-    }, [answers, disable, props.exam, socket])
+    }, [answers, disable, props.exam, socket, props.store])
 
     const warnUser = useCallback(event => {
         event.preventDefault()

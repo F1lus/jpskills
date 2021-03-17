@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect, useContext, useCallback } from 'react'
+import { NavLink } from 'react-router-dom'
+import { useStore } from 'react-redux'
 
 import model from '../models/ExamsModel'
+import {setLoad} from '../../store/ActionHandler'
 
 import { SocketContext } from '../../GlobalSocket'
 
@@ -11,20 +13,23 @@ import 'overlayscrollbars/css/OverlayScrollbars.css'
 export default function Learn() {
 
     const socket = useContext(SocketContext)
+    const store = useStore()
 
     const [exams, setExams] = useState([])
 
     const handleExams = useCallback(dbExams => {
         setExams(model(dbExams))
-    }, [])
+        setLoad(store, false)
+    }, [store])
 
     useEffect(() => {
+        setLoad(store, true)
         socket.emit('exams-learn-signal')
 
         socket.on('exams-learn-emitter', handleExams)
 
         return () => socket.off('exams-learn-emitter', handleExams)
-    }, [handleExams, socket])
+    }, [handleExams, socket, store])
 
     useEffect(() => {
         OverlayScrollbars(document.getElementById("learn"), { className: "os-theme-dark" });

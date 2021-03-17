@@ -19,8 +19,10 @@ function dateFormat(rawDate) {
 
 module.exports = (socket) => {
 
+    const session = socket.handshake.session
+
     const getExams = async () => {
-        const exams = await dbconnect.selectExams(socket.handshake.session.cardNum, socket.handshake.session.perm === 'admin')
+        const exams = await dbconnect.selectExams(session.cardNum, session.perm === 'admin')
 
         let examResult = []
 
@@ -40,7 +42,7 @@ module.exports = (socket) => {
     socket.on('exams-get-signal', getExams)
 
     const learnExams = async () => {
-        const results = await dbconnect.selectLearnExams(socket.handshake.session.perm === 'admin')
+        const results = await dbconnect.selectLearnExams(session.perm === 'admin', session.cardNum)
 
         let examResult = []
         results.forEach(result => {

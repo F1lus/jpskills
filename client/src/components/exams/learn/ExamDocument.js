@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react'
 import { useParams } from 'react-router-dom'
+import {useStore} from 'react-redux'
 
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 
 import { SocketContext } from '../../GlobalSocket'
+import {setLoad} from '../../store/ActionHandler'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
@@ -14,6 +16,7 @@ export default function ExamDocument(props) {
 
     const exam = useParams()
     const socket = useContext(SocketContext)
+    const store = useStore()
 
     const [examDoc, setExamDoc] = useState('/')
     const [pageNum, setPageNum] = useState(null);
@@ -54,15 +57,17 @@ export default function ExamDocument(props) {
     const handleExamDoc = useCallback((status, document) => {
         setExamDoc(document)
         setStatus(status === 0)
-    }, [])
+        setLoad(store, false)
+    }, [store])
 
     useEffect(() => {
+        setLoad(store, true)
         socket.emit('examDoc-signal', exam.examCode)
 
         socket.on('examDoc-emitter', handleExamDoc)
 
         return () => socket.off('examDoc-emitter', handleExamDoc)
-    }, [exam.examCode, socket, handleExamDoc])
+    }, [exam.examCode, socket, handleExamDoc, store])
 
     return (
         <div className="container text-center bg-light rounded shadow page mt-3">

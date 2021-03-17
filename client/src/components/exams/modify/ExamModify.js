@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useContext, useCallback, useRef } from 'react'
 import { useParams, Redirect } from 'react-router-dom'
 
+import { useStore } from 'react-redux'
+
+import {setLoad} from '../../store/ActionHandler'
+
 import ListManager from './ListManager'
 import AddQuestion from './AddQuestion'
 import Qmodel from '../models/QuestionsModel'
@@ -13,6 +17,7 @@ export default function ExamModify() {
     const examCode = useParams()
     const timeout = useRef()
     const socket = useContext(SocketContext)
+    const store = useStore()
 
     const [questions, setQuestions] = useState([])
     const [maxPoints, setMaxPoints] = useState(0)
@@ -29,7 +34,8 @@ export default function ExamModify() {
             setQuestions(questionsModel.questions)
         }
         setMaxPoints(questionsModel.points)
-    }, [])
+        setLoad(store, false)
+    }, [store])
 
     const timeoutCb = useCallback(() => {
         const modify = document.getElementById('modify')
@@ -60,6 +66,10 @@ export default function ExamModify() {
     }, [timeoutCb])
 
     const handleExamRemoved = useCallback(() => setRemoved(true), [])
+
+    useEffect(() => {
+        setLoad(store, true)
+    }, [store])
 
     useEffect(() => {
 

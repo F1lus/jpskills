@@ -1,8 +1,10 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Redirect, useParams } from 'react-router-dom'
+import {useStore} from 'react-redux'
 
 import RenderContent from './RenderContent'
 import model from '../models/QuestionsModel'
+import {setLoad} from '../../store/ActionHandler'
 
 import { SocketContext } from '../../GlobalSocket'
 
@@ -10,15 +12,21 @@ export default function Examination() {
 
     const socket = useContext(SocketContext)
     const exam = useParams().examCode
+    const store = useStore()
 
     const [examProps, setExamProps] = useState([])
     const [questions, setQuestions] = useState([])
 
-    const handleContent = useCallback(questionList => setQuestions(model(questionList).questions), [])
+    const handleContent = useCallback(questionList => {
+        setQuestions(model(questionList).questions)
+        setLoad(store, false)
+    }, [store])
 
     const handleProps = useCallback(examProps => setExamProps(examProps), [])
 
     useEffect(() => {
+        setLoad(store, true)
+
         socket.emit('request-exam-content', exam)
         socket.emit('request-exam-props', exam)
         socket.emit('begin-timer')
@@ -32,7 +40,7 @@ export default function Examination() {
 
             socket.off('exam-props', handleProps)
         }
-    }, [exam, handleContent, handleProps, socket])
+    }, [exam, handleContent, handleProps, socket, store])
 
     return (
         <div className="page mt-3">
@@ -45,7 +53,7 @@ export default function Examination() {
                     <p>{examProps[1] === 'null' ? null : `Megjegyzés: ${examProps[1]}`}</p>
                 </h3>
             </div>
-            <RenderContent socket={socket} list={questions} exam={exam} />
+            <RenderContent socket={socket} store={store} list={questions} exam={exam} />
         </div>
     )
 }
