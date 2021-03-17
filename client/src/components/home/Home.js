@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { NavLink } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useStore } from 'react-redux'
 
+import {setLoad} from '../store/ActionHandler'
 import { SocketContext } from '../GlobalSocket'
 import { Admin, User } from '../user_management/handlers/PermissionHandler'
 
@@ -13,6 +14,7 @@ import 'overlayscrollbars/css/OverlayScrollbars.css'
 export default function Home() {
 
     const socket = useContext(SocketContext)
+    const store = useStore()
 
     const [user, permission] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
 
@@ -20,19 +22,25 @@ export default function Home() {
 
     const handleExams = useCallback(dbExams => {
         setVanVizsga(dbExams.length > 0)
-    }, [])
+        setLoad(store, false)
+    }, [store])
 
     useEffect(() => {
-
-        socket.emit('exams-get-signal')
+        if(permission !== 'admin'){
+            setLoad(store, true)
+            socket.emit('exams-get-signal')
+        }
 
         socket.on('exams-get-emitter', handleExams)
 
         return () => socket.off('exams-get-emitter', handleExams)
         // eslint-disable-next-line
-    }, [])
+    }, [store])
 
-
+    useEffect(() => {
+        OverlayScrollbars(document.getElementById('questions'), {className: "os-theme-dark"})
+        OverlayScrollbars(document.getElementById('helpcontainer'), {className: "os-theme-dark"})
+    })
 
     const needHelp = useCallback((event, index) => {
         if (permission === 'admin') {
@@ -62,11 +70,6 @@ export default function Home() {
             return 'Üdvözöljük, ' + user + '!'
         }
     }, [user])
-
-    useEffect(() => {
-        OverlayScrollbars(document.getElementById('questions'), {className: "os-theme-dark"});
-        OverlayScrollbars(document.getElementById('helpcontainer'), {className: "os-theme-dark"});
-    },[])
 
     return (
         <div className="container mb-3 mt-3 page">

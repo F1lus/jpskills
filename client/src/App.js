@@ -35,10 +35,13 @@ export default function App() {
   const store = useStore()
 
   document.addEventListener("DOMContentLoaded", function() {
-    OverlayScrollbars(document.querySelectorAll('body'), { className: "os-theme-dark" });
+    if(!loading){
+      OverlayScrollbars(document.querySelectorAll('body'), { className: "os-theme-dark" });
+    }
   })
 
   useEffect(() => {
+    
     setLoad(store, false)
   }, [store])
 
