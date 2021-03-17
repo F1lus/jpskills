@@ -115,7 +115,7 @@ export default function Home() {
                 <Admin permission={permission}>
                     <div className="container">
                         <div className="row">
-                            <div className="container col-sm-6 col-8" id="questions">
+                            <div className="col-sm-6 col-8" id="questions">
                                 {Adminnak.map((value, index) => {
                                     return (
                                         <div className="container radio" key={index}>
@@ -124,7 +124,6 @@ export default function Home() {
                                                 <ChevronRightIcon className="icon" />
                                                 <label>{value.kerdes}</label>
                                             </label>
-                                            <hr className="w-50 mx-0 mb-4" />
                                         </div>
                                     )
                                 })}

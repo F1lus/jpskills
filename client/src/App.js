@@ -24,6 +24,7 @@ import ExamResults from './components/exams/examination/ExamResults'
 import Routing from './components/user_management/handlers/Routing'
 import Management from './components/user_management/superuser/Management'
 import UserManager from './components/user_management/superuser/UserManager'
+import Load from './components/loading/Load'
 
 export default function App() {
 
@@ -43,7 +44,7 @@ export default function App() {
 
   return (
     <React.Fragment>
-      {loading ? console.log('loading...') : null}
+      {loading ? <Load />: null}
       {loggedIn && permission !== 'superuser' ? <CustomNavbar /> : null}
       <TransitionGroup>
         <CSSTransition
