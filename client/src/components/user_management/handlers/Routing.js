@@ -3,7 +3,7 @@ import { useStore, useSelector } from 'react-redux'
 import { Redirect, Route, useLocation } from 'react-router'
 
 import { SocketContext } from '../../GlobalSocket'
-import { setNameHandler, setPermHandler, setStatusHandler, setLoad } from '../../store/ActionHandler'
+import { setNameHandler, setPermHandler, setStatusHandler } from '../../store/ActionHandler'
 
 export default function Routing({ component: Component, allowed, ...rest }) {
 
@@ -40,10 +40,9 @@ export default function Routing({ component: Component, allowed, ...rest }) {
     }, [handleLoginInfo, handleLogout, socket])
 
     const logoutHelper = useCallback(() => {
-        setLoad(store, true)
         socket.emit('logout').on('logged-out', handleLogout)
         return <Component />
-    }, [socket, handleLogout, store])
+    }, [socket, handleLogout])
 
     return (
         <Route {...rest} render={(props) => {
