@@ -304,3 +304,17 @@ input:checked[type="checkbox"]:before {
     opacity: 0;
     transition: opacity 250ms linear;
 }
+
+/*load animation*/
+#loadlogo path {
+    stroke-dasharray: 1349;
+    stroke-dashoffset: 1349;
+    animation: logo-animation 3s ease;
+    animation-iteration-count: infinite;
+}
+
+@keyframes logo-animation {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
