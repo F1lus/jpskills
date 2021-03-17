@@ -146,7 +146,7 @@ input[type="file"] {
 
 #modify {
     position: fixed;
-    z-index: 5;
+    z-index: 2;
     bottom: 0;
     left: 2%;
 }
@@ -317,4 +317,20 @@ input:checked[type="checkbox"]:before {
     to {
         stroke-dashoffset: 0;
     }
+}
+
+#loadlogo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#loadcontainer {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    z-index: 3;
 }

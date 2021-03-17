@@ -68,7 +68,6 @@ export default function ModifyPic(props) {
                 style={
                     {
                         overlay: {
-                            marginTop: "30px",
                             backgroundColor: "rgba(0,0,0,0.3)",
                             backdropFilter: "blur(6px)",
                         },
