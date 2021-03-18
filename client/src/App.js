@@ -7,9 +7,6 @@ import './style/styles.css'
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
-import OverlayScrollbars from 'overlayscrollbars'
-import 'overlayscrollbars/css/OverlayScrollbars.css'
-
 import { setLoad } from './components/store/ActionHandler'
 
 import Login from './components/user_management/Login'
@@ -33,12 +30,6 @@ export default function App() {
 
   const location = useLocation()
   const store = useStore()
-
-  document.addEventListener("DOMContentLoaded", () => {
-    if (!loading) {
-      OverlayScrollbars(document.querySelectorAll('body'), { className: "os-theme-dark" });
-    }
-  })
 
   useEffect(() => {
     setLoad(store, false)

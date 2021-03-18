@@ -14,5 +14,9 @@ export const setStatusHandler = (store, status) => {
 }
 
 export const setLoad = (store, loading) => {
-    store.dispatch(setLoading(loading))
+    if(!loading){
+        setTimeout(() => store.dispatch(setLoading(loading)), 1000)
+    }else{
+        store.dispatch(setLoading(loading))
+    }
 }

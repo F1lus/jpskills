@@ -106,6 +106,8 @@ class Connection {
 
                 skills.forEach(skill => {
                     stats.push({
+                        examId: skill.examId,
+                        workerId: worker.worker_id,
                         examName: skill.exam_name,
                         examCode: skill.exam_itemcode,
                         minScore: skill.points_required,
@@ -121,29 +123,6 @@ class Connection {
         }
         return stats
     }
-
-
-
-    /*selectUserAnswers = (examCode, cardNum) => {
-        return new Promise((resolve, reject) => {
-            const answers = []
-            this.con('exams').select('exam_id').where(this.con.raw('exam_itemcode = ?', [examCode])).first()
-            .then(exam => {
-                if(exam){
-                    this.con('workers').select('worker_id')
-                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
-                    .then(worker => {
-                        if(worker){
-                            this.con('exam_result')
-                            .select(['questions.question_name', 'exam_result.points', 'questions.points'])
-                            .innerJoin(this.con.raw('questions ON questions.question_id = exam_result.question_id'))
-                            .where('exam_result.worker_id', worker.worker_id).andWhere()
-                        }
-                    })
-                }
-            })
-        })
-    }*/
 
     selectSkill = async (examCode, cardNum) => {
         const skill = []

@@ -90,6 +90,10 @@ export default function Login() {
                 setCardNum(event.target.value)
                 break
             case 'password':
+                if (event.target.value.length <= 16) {
+                    setPassword(event.target.value)
+                }
+
                 if (register && password.length > 0) {
                     if (event.target.value.length >= 8 && event.target.value.length <= 17) {
                         document.getElementById('hossz').classList.remove('text-danger')
@@ -114,20 +118,37 @@ export default function Login() {
                         document.getElementById('szam').classList.add('text-danger')
                         document.getElementById('szam').classList.remove('text-success')
                     }
+
+                    if(password === password2){
+                        document.getElementById('egyeztet').classList.remove('text-danger')
+                        document.getElementById('egyeztet').classList.add('text-success')
+                    }else{
+                        document.getElementById('egyeztet').classList.remove('text-success')
+                        document.getElementById('egyeztet').classList.add('text-danger')
+                    }
                 }
-                if (event.target.value.length <= 16) {
-                    setPassword(event.target.value)
-                }
+
                 break
             case 'password2':
                 if (event.target.value.length <= 16) {
                     setPassword2(event.target.value)
                 }
+
+                if(register && password2.length > 0){
+                    if(password === event.target.value){
+                        document.getElementById('egyeztet').classList.remove('text-danger')
+                        document.getElementById('egyeztet').classList.add('text-success')
+                    }else{
+                        document.getElementById('egyeztet').classList.remove('text-success')
+                        document.getElementById('egyeztet').classList.add('text-danger')
+                    }
+                }
+
                 break
             default:
                 return
         }
-    }, [register, password.length])
+    }, [register, password, password2])
 
     const newUser = useCallback(event => {
         if (event.target.checked) {
@@ -140,7 +161,7 @@ export default function Login() {
     return (
         <div className="d-flex container text-center align-items-center justify-content-center vh-100 w-50">
             <div className="container shadow rounded bg-light p-3">
-                {register ? <h1><p>Kérjük adja meg adatait!</p></h1> : <h1><p>Kérjük jelentkezzen be!</p></h1>}
+                {register ? <h1><p>Kérjük töltse ki a mezőket!</p></h1> : <h1><p>A folytatáshoz jelentkezzen be!</p></h1>}
                 {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : null}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto">
@@ -160,13 +181,14 @@ export default function Login() {
                             </span>
                         </label>
                     </div>
-                    {register && password.length > 0 ? (
-                        <div className='alert alert-primary ml-5 w-50 text-justify'>
-                            <h6>A jelszó tartalma:</h6>
+                    {register && (password.length > 0 || password2.length) ? (
+                        <div className='mt-3 ml-5 w-50 text-justify'>
+                            <h6>A jelszavak megkötései:</h6>
                             <ul>
                                 <li id='hossz' className='text-danger'>- 8-16 karakter hosszú</li>
                                 <li id='szam' className='text-danger'>- Minimum egy szám</li>
                                 <li id='nagybetu' className='text-danger'>- Minimum egy nagybetű</li>
+                                <li id='egyeztet' className='text-danger'>- A jelszavak megegyeznek</li>
                             </ul>
                         </div>) : null}
 

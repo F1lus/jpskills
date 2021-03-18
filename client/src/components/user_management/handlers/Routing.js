@@ -2,6 +2,9 @@ import React, { useCallback, useContext, useEffect } from 'react'
 import { useStore, useSelector } from 'react-redux'
 import { Redirect, Route, useLocation } from 'react-router'
 
+import OverlayScrollbars from 'overlayscrollbars'
+import 'overlayscrollbars/css/OverlayScrollbars.css'
+
 import { SocketContext } from '../../GlobalSocket'
 import { setNameHandler, setPermHandler, setStatusHandler } from '../../store/ActionHandler'
 
@@ -10,6 +13,8 @@ export default function Routing({ component: Component, allowed, ...rest }) {
     const [user, permission, status] = useSelector(state => {
         return [state.userReducer.user, state.userReducer.permission, state.userReducer.loggedIn]
     })
+
+    const loading = useSelector(state => state.loadReducer.loading)
 
     const path = useLocation().pathname
 
@@ -27,7 +32,9 @@ export default function Routing({ component: Component, allowed, ...rest }) {
     }, [])
 
     useEffect(() => {
-        window.scrollTo(0, 0)
+        const bar = OverlayScrollbars(document.querySelectorAll('body'), { className: "os-theme-dark" })
+        bar.scroll({y: '0%'}, 500)
+
         socket
             .emit('request-login-info')
             .on('login-info', handleLoginInfo)
@@ -37,7 +44,7 @@ export default function Routing({ component: Component, allowed, ...rest }) {
                 .off('login-info', handleLoginInfo)
                 .off('logged-out', handleLogout)
         }
-    }, [handleLoginInfo, handleLogout, socket])
+    }, [handleLoginInfo, handleLogout, socket, loading])
 
     const logoutHelper = useCallback(() => {
         socket.emit('logout').on('logged-out', handleLogout)
