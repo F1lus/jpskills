@@ -155,9 +155,9 @@ export default function CreateTest(props) {
             <h1 className="text-center m-3"><p>Új vizsga feltöltése:</p></h1>
             <form onSubmit={handleSubmit}>
                 <div className="container text-center mb-2">
-                    <div className="row">
-                        <div className="col-md-4">
-                            <select name="type" className="w-75 rounded" onChange={handleChange}>
+                    <div className="row w-75 mx-auto">
+                        <div className="col">
+                            <select name="type" className="w-100 rounded" onChange={handleChange}>
                                 <option defaultValue={-1}>A termék gyártója</option>
                                 {types.length === 0 ? <></> : types.map((elem, index) => {
                                     return (
@@ -166,8 +166,8 @@ export default function CreateTest(props) {
                                 })}
                             </select>
                         </div>
-                        <div className="col-md-8">
-                            <select name="item" className="w-75 rounded" onChange={handleChange}>
+                        <div className="col">
+                            <select name="item" className="w-100 rounded" onChange={handleChange}>
                                 <option defaultValue={-1}>{items.length === 0 ? 'Először válasszon gyártot!' : 'A vizsga terméke'}</option>
                                 {items.length === 0 ? null : items.map((elem, index) => {
                                     return (
