@@ -47,19 +47,16 @@ ul {
 
 #hatter {
     height: 43px;
-    width: 100%;
+    width: 99.4vw;
     background-image: linear-gradient(to right, rgb(13,22,185), #000428);
     z-index: -1;
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
 }
 
 .nav {
     background-color: white;
-    border-bottom-right-radius: 3px;
-    border-bottom-left-radius: 3px;
     margin-top: -43px;
     top: 0;
+    width: 99.4vw;
 }
 
 .nav-link {

@@ -3,7 +3,7 @@ import Modal from 'react-modal'
 
 import API from '../../BackendAPI'
 
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 
 Modal.setAppElement('#root')
 
@@ -90,6 +90,8 @@ export default function ModifyPic(props) {
                 </form>
 
                 {alert && (<h3 className="alert alert-secondary mt-3 text-center" role="alert">{alert}</h3>)}
+
+                <small>A kilépéshez nyomja meg az ESC gombot, kattintson kívülre, vagy használja a bezárás gombot.</small>
 
             </Modal>
         </div>
