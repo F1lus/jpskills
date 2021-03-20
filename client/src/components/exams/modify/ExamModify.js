@@ -116,14 +116,14 @@ export default function ExamModify() {
             <ModifyProps socket={socket} points={maxPoints} exam={examCode} />
             {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}
 
-            <div className="container text-center rounded w-75 shadow bg-light p-3 mb-3">
+            <div className="container text-center rounded w-75 shadow bg-light p-3">
                 <h3><p>Általános műveletek</p></h3>
 
                 <AddQuestion socket={socket} display={displayQuestion} />
 
                 <button onClick={setDisplay} className="btn btn-primary my-1">{!displayQuestion ? 'Kérdés hozzáadása' : 'Mégse'}</button>
                 <br />
-                <hr />
+                <hr className="w-75" />
                 <button onClick={removeExam} className="btn btn-danger m-3">A vizsga törlése</button>
             </div>
         </div>

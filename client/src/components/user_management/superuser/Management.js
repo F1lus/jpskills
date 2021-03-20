@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector, useStore } from 'react-redux'
 import { Redirect, NavLink } from 'react-router-dom'
-import DataTable from 'react-data-table-component'
+import DataTable, { createTheme } from 'react-data-table-component'
 
 import { SocketContext } from '../../GlobalSocket'
 import {setLoad} from '../../store/ActionHandler'
@@ -112,37 +112,42 @@ export default function Management() {
         setRedirect(true)
     }, [])
 
+    createTheme("ownTheme", {
+        background: {
+            default: "#f8f9fa"
+        }
+    })
+
     return (
-        <div className="d-flex container align-items-center justify-content-center vh-100">
-            <div className='container-fluid bg-light shadow rounded text-center py-3 page mb-3'>
-                {redirect ? <Redirect to='/logout' /> : null}
+        <div className='container-fluid bg-light w-75 shadow rounded text-center py-3 mb-3 page'>
+            {redirect ? <Redirect to='/logout' /> : null}
 
-                <button className='btn btn-danger float-right' onClick={logout}>Kilépés</button>
-                <h2 className='float-left'>Üdvözöljük, {user}</h2>
-                <hr className='mt-5'/>
+            <button className='btn btn-danger float-right' onClick={logout}>Kilépés</button>
+            <h2 className='float-center'>Üdvözöljük, {user}</h2>
+            <hr className='mt-5 w-75'/>
 
-                <h3>A képzettségi mátrixban létező felhasználók száma: {users.length} fő</h3>
+            <h3>A képzettségi mátrixban létező felhasználók száma: {users.length} fő</h3>
 
-                <form className="mb-3 w-50">
-                    <div className="form-group m-auto">
-                        <input type="text" name="search" onChange={search} autoComplete="off" required />
-                        <label htmlFor="search" className="label-name">
-                            <span className="content-name">
-                                Keresés név, vagy csoport alapján
-                            </span>
-                        </label>
-                    </div>
-                </form>
+            <form className="mb-3 w-50">
+                <div className="form-group m-auto">
+                    <input type="text" name="search" onChange={search} autoComplete="off" required />
+                    <label htmlFor="search" className="label-name">
+                        <span className="content-name">
+                            Keresés név, vagy csoport alapján
+                        </span>
+                    </label>
+                </div>
+            </form>
 
-                <DataTable
-                    columns={dataColumns}
-                    data={displayList}
-                    pagination={true}
-                    fixedHeader={true}
-                    noDataComponent={'Nincsenek megjeleníthető adatok.'}
-                    paginationComponentOptions={customText}
-                />
-            </div>
+            <DataTable
+                columns={dataColumns}
+                data={displayList}
+                pagination={true}
+                fixedHeader={true}
+                noDataComponent={'Nincsenek megjeleníthető adatok.'}
+                paginationComponentOptions={customText}
+                theme="ownTheme"
+            />
         </div>
     )
 }

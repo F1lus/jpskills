@@ -55,34 +55,33 @@ export default function UserManager() {
 
 
     return (
-        <div className="d-flex container align-items-center justify-content-center vh-100">
-            <div className='container-fluid m-auto bg-light shadow rounded py-3 page mb-3'>
-                <NavLink to='/management'>
-                    <button className='btn btn-outline-blue float-left'>Vissza</button>
-                </NavLink>
+        <div className='container-fluid bg-light w-75 shadow rounded text-center py-3 mb-3 page'>
+            <NavLink to='/management'>
+                <button className='btn btn-outline-blue float-left'>Vissza</button>
+            </NavLink>
 
-                <button className='btn btn-danger float-right' onClick={e => {
-                    archiveUser(e, userInfo[0])
-                }}>Felhasználó vizsgáinak archiválása</button>
-                <h1 className='text-center'>{userInfo[1]}</h1>
+            <button className='btn btn-danger float-right' onClick={e => {
+                archiveUser(e, userInfo[0])
+            }}>Felhasználó vizsgáinak archiválása</button>
+            <br/><br/>
+            <h1>{userInfo[1]}</h1>
 
-                <hr />
+            <hr className="w-75" />
 
-                <div className='alert alert-danger w-50 m-auto'>
-                    <h2>CSALÁSSAL GYANÚSÍTOTT</h2>
-                    <hr />
-                    <h4>Indoklás: a fejlesztői konzol használatának kísérlete.</h4>
-                    <br />
-                    <small>Ezt az üzenetet azért látja, mivel a rendszer a felhasználónál gyanús tevékenységet rögzített.</small>
-                </div>
-
-                <Skills store={store} socket={socket} />
-
-                <hr className='m-3' />
-
-                <Archived store={store} socket={socket} />
-                
+            <div className='alert alert-danger w-50 m-auto text-center mb-3'>
+                <h2>CSALÁSSAL GYANÚSÍTOTT</h2>
+                <hr className="w-75" />
+                <h4>Indoklás: a fejlesztői konzol használatának kísérlete.</h4>
+                <br />
+                <small>Ezt az üzenetet azért látja, mivel a rendszer a felhasználónál gyanús tevékenységet rögzített.</small>
             </div>
+
+            <Skills store={store} socket={socket} />
+
+            <hr className='w-75 my-3' />
+
+            <Archived store={store} socket={socket} />
+            
         </div>
     )
 }

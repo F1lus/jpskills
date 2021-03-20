@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect} from 'react'
 
-import DataTable from 'react-data-table-component'
+import DataTable, { createTheme } from 'react-data-table-component'
 
 import { setLoad } from '../../../store/ActionHandler'
 
@@ -119,6 +119,12 @@ export default function Archived(props) {
         setDisplayArchived(tempList)
     }, [archivedList, delExam, delArchived])
 
+    createTheme("ownTheme", {
+        background: {
+            default: "#f8f9fa"
+        }
+    })
+
     return (
         <div>
             <h3>Archivált vizsgák</h3>
@@ -141,6 +147,7 @@ export default function Archived(props) {
                 fixedHeader={true}
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}
                 paginationComponentOptions={customText}
+                theme="ownTheme"
             />
         </div>
     )

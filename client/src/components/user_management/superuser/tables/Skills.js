@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react'
 
-import DataTable from 'react-data-table-component'
+import DataTable, { createTheme } from 'react-data-table-component'
 
 import { setLoad } from '../../../store/ActionHandler'
 
@@ -123,6 +123,12 @@ export default function Skills(props) {
         return () => socket.off('user-exams', handleExams)
     })
 
+    createTheme("ownTheme", {
+        background: {
+            default: "#f8f9fa"
+        }
+    })
+
     return (
         <div>
             <h3>Vizsga eredmények</h3>
@@ -145,6 +151,7 @@ export default function Skills(props) {
                 fixedHeader={true}
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}
                 paginationComponentOptions={customText}
+                theme="ownTheme"
             />
         </div>
     )
