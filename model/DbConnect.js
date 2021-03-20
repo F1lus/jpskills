@@ -1,4 +1,5 @@
 const CryptoJS = require('crypto-js')
+
 /**
  * Általános tudnivalók
  * 
@@ -38,6 +39,145 @@ class Connection {
         }
     }
 
+    archiveUser = async (workerId, superUserCardcode) => {
+        try {
+            const skills = await this.con('skills')
+                .where(this.con.raw('worker_id = ?', workerId))
+            
+            if(skills.length === 0){
+                return
+            }
+            const skillArray = skills.map(skill => {
+                return {
+                    examId: skill.exam_id,
+                    workerId: skill.worker_id
+                }
+            })
+
+            await this.archiveExams(skillArray, superUserCardcode)
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
+    selectArchivedSkills = async cardNum => {
+        const skills = []
+        try {
+            const worker = await this.con('workers')
+                .select('worker_id')
+                .where(this.con.raw('worker_cardcode = ?', cardNum))
+                .first()
+
+            const archived = await this.con('skills')
+                .innerJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                .where('worker_id', worker.worker_id)
+
+            for(const skill of archived){
+                const exam = await this.con('exams')
+                    .select('exam_name')
+                    .where('exam_id', skill.exam_id)
+                    .first()
+                
+                const archiver = await this.con('workers')
+                    .select('worker_name')
+                    .where('worker_id', skill.archiver_id)
+                    .first()
+                
+                skills.push({
+                    archiveId: skill.archive_id,
+                    workerId: skill.worker_id,
+                    examId: skill.exam_id,
+                    examName: exam.exam_name,
+                    completed: skill.completed === 1,
+                    archiver: archiver.worker_name
+                })
+            }
+
+        } catch (error) {
+            console.log(error.message)
+        }
+        return skills
+    }
+
+    removeArchivedExam = async archiveId => {
+        try {
+            await this.con.transaction(async trx => {
+                await this.con('skill_archive')
+                    .delete()
+                    .where(this.con.raw('archive_id = ?', archiveId))
+                    .transacting(trx)
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
+    archiveExams = async (skillArray, superUserCardcode) => {
+        try {
+            
+            await this.con.transaction(async trx => {
+
+                for(const skill of skillArray){
+                    
+                    const skillId = await this.con('skills')
+                        .select('skills.skills_id')
+                        .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                        .where('skill_archive.skills_id', null)
+                        .andWhere(this.con.raw('exam_id = ?', skill.examId))
+                        .andWhere(this.con.raw('worker_id = ?', skill.workerId))
+                        .first()
+                        .transacting(trx)
+                    
+                    if(skillId){
+                        const superuser = await this.con('workers')
+                            .select('worker_id')
+                            .where('worker_cardcode', superUserCardcode)
+                            .first()
+                            .transacting(trx)
+                        
+                        await this.con('skill_archive')
+                            .insert({
+                                skills_id: skillId.skills_id,
+                                archiver_id: superuser.worker_id
+                            })
+                            .transacting(trx)
+                    }
+                }
+            })
+
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
+    removeUserSkill = async (examId, workerId) => {
+        try {
+            await this.con.transaction(async trx => {
+
+                const questionIds = await this.con('questions')
+                    .select('question_id')
+                    .where(this.con.raw('exam_id = ?', examId))
+                    .transacting(trx)
+
+                for (const id of questionIds) {
+                    await this.con('exam_result')
+                        .delete()
+                        .where('question_id', id.question_id)
+                        .andWhere(this.con.raw('worker_id = ?', workerId))
+                        .transacting(trx)
+                }
+
+                await this.con('skills')
+                    .delete()
+                    .where(this.con.raw('exam_id = ?', examId))
+                    .andWhere(this.con.raw('worker_id = ?', workerId))
+                    .transacting(trx)
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
     getSpecificUser = async cardcode => {
         return (await this.getExistingUsers()).filter(user => user.cardcode == cardcode)
     }
@@ -46,14 +186,17 @@ class Connection {
         const users = []
 
         try {
-            const existingUsers = await this.con('admin_login')
-                .select(['cardcode', 'worker_name', 'worker_usergroup', 'worker_active'])
-                .innerJoin('workers', 'cardcode', 'worker_cardcode').whereNot('worker_usergroup', 'superuser')
+            const existingUsers = await this.con('workers')
+                .select(['worker_cardcode', 'worker_id', 'worker_name', 'worker_usergroup', 'worker_active'])
+                .whereNot('worker_usergroup', 'superuser')
+                .andWhereNot('worker_usergroup', 'Adminisztrátor')
+                .andWhereNot('worker_usergroup', 'admin')
             existingUsers.forEach(user => {
                 users.push({
+                    id: user.worker_id,
                     name: user.worker_name,
                     group: user.worker_usergroup,
-                    cardcode: user.cardcode,
+                    cardcode: user.worker_cardcode,
                     isActive: user.worker_active === 1
                 })
             })
@@ -69,11 +212,14 @@ class Connection {
         try {
             const exams = await this.con('exams')
                 .select(['exams.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed', 'worker_id'])
-                .innerJoin('skills', 'exams.exam_id', 'skills.exam_id').where('exam_creator', cardNum)
+                .innerJoin('skills', 'exams.exam_id', 'skills.exam_id')
+                .where('exam_creator', cardNum)
 
             for (const exam of exams) {
-                const worker = await this.con('workers').select('worker_name')
-                    .where('worker_id', [exam.worker_id]).first()
+                const worker = await this.con('workers')
+                    .select('worker_name')
+                    .where('worker_id', [exam.worker_id])
+                    .first()
 
                 if (worker) {
                     stats.push({
@@ -93,30 +239,58 @@ class Connection {
         return stats
     }
 
-    globalStatisticsForUser = async (cardNum) => {
+    globalStatisticsForUser = async (cardNum, getArchived) => {
         const stats = []
         try {
-            const worker = await this.con('workers').select(['worker_id', 'worker_name'])
-                .where('worker_cardcode', [cardNum]).first()
+            const worker = await this.con('workers')
+                .select(['worker_id', 'worker_name'])
+                .where('worker_cardcode', [cardNum])
+                .first()
 
             if (worker) {
-                const skills = await this.con('skills').select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
-                    .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
-                    .where('worker_id', [worker.worker_id])
+                if (getArchived) {
+                    const skills = await this.con('skills')
+                        .select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
+                        .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
+                        .innerJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                        .where('worker_id', [worker.worker_id])
 
-                skills.forEach(skill => {
-                    stats.push({
-                        examId: skill.examId,
-                        workerId: worker.worker_id,
-                        examName: skill.exam_name,
-                        examCode: skill.exam_itemcode,
-                        minScore: skill.points_required,
-                        score: skill.points,
-                        time: skill.time,
-                        completed: skill.completed === 1,
-                        worker: worker.worker_name
+                    skills.forEach(skill => {
+                        stats.push({
+                            examId: skill.exam_id,
+                            workerId: worker.worker_id,
+                            examName: skill.exam_name,
+                            examCode: skill.exam_itemcode,
+                            minScore: skill.points_required,
+                            score: skill.points,
+                            time: skill.time,
+                            completed: skill.completed === 1,
+                            worker: worker.worker_name
+                        })
                     })
-                })
+                } else {
+                    const skills = await this.con('skills')
+                        .select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
+                        .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
+                        .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                        .where('skill_archive.skills_id', null)
+                        .andWhere('worker_id', [worker.worker_id])
+
+                    skills.forEach(skill => {
+                        stats.push({
+                            examId: skill.exam_id,
+                            workerId: worker.worker_id,
+                            examName: skill.exam_name,
+                            examCode: skill.exam_itemcode,
+                            minScore: skill.points_required,
+                            score: skill.points,
+                            time: skill.time,
+                            completed: skill.completed === 1,
+                            worker: worker.worker_name
+                        })
+                    })
+                }
+
             }
         } catch (error) {
             console.log(error.message)
@@ -127,16 +301,22 @@ class Connection {
     selectSkill = async (examCode, cardNum) => {
         const skill = []
         try {
-            const exam = await this.con('exams').select(['exam_id', 'exam_name', 'points_required'])
-                .where(this.con.raw('exam_itemcode = ?', [examCode])).first()
+            const exam = await this.con('exams')
+                .select(['exam_id', 'exam_name', 'points_required'])
+                .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                .first()
 
             if (exam) {
-                const worker = await this.con('workers').select('worker_id')
-                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
+                const worker = await this.con('workers')
+                    .select('worker_id')
+                    .where('worker_cardcode', cardNum)
+                    .first()
 
                 if (worker) {
-                    const skillResult = await this.con('skills').where('worker_id', [worker.worker_id])
-                        .andWhere('exam_id', exam.exam_id).first()
+                    const skillResult = await this.con('skills')
+                        .where('worker_id', worker.worker_id)
+                        .andWhere('exam_id', exam.exam_id)
+                        .first()
 
                     const maxPoints = await this.countExamMaxPoints(exam.exam_id)
 
@@ -155,13 +335,17 @@ class Connection {
     countExamMaxPoints = async (examId) => {
         let maxPoints = 0
         try {
-            const questions = await this.con('questions').select(['question_id', 'points']).where('exam_id', [examId])
+            const questions = await this.con('questions')
+                .select(['question_id', 'points'])
+                .where('exam_id', [examId])
 
             for (const question of questions) {
 
-                const answers = await this.con('exam_prepare').select('exam_prepare.results_id')
+                const answers = await this.con('exam_prepare')
+                    .select('exam_prepare.results_id')
                     .innerJoin(this.con.raw('results ON exam_prepare.results_id = results.results_id'))
-                    .where('question_id', [question.question_id]).andWhere('correct', 1)
+                    .where('question_id', [question.question_id])
+                    .andWhere('correct', 1)
 
                 if (answers.length > 0) {
                     maxPoints += question.points * answers.length
@@ -176,17 +360,39 @@ class Connection {
     processAnswers = async (answers, examCode, cardNum, time) => {
         let success = false
         try {
-            const exam = await this.con('exams').select('exam_status').where('exam_itemcode', [examCode]).first()
+            const exam = await this.con('exams')
+                .select(['exam_status', 'exam_id'])
+                .where('exam_itemcode', [examCode])
+                .first()
+
+            const worker = await this.con('workers')
+                .select('worker_id')
+                .where(this.con.raw('worker_cardcode = ?', [cardNum]))
+                .first()
+
+            const skillExists = await this.con('skills')
+                .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                .where('skill_archive.skills_id', null)
+                .andWhere('worker_id', worker.worker_id)
+                .andWhere('exam_id', exam.exam_id)
+
+            if (skillExists.length > 0) {
+                return success
+            }
+
             if (exam.exam_status === 1) {
                 let maxQuestionPoints = 0
                 let totalPoints = 0
                 for (const answerObj of answers) {
-                    const results = await this.con('results').select('results.results_id')
+                    const results = await this.con('results')
+                        .select('results.results_id')
                         .innerJoin(this.con.raw('exam_prepare ON results.results_id = exam_prepare.results_id'))
                         .where(this.con.raw('exam_prepare.question_id = ?', [answerObj.id])).andWhere('correct', 1)
 
-                    const question = await this.con('questions').select(['question_id', 'points'])
-                        .where(this.con.raw('question_id = ?', [answerObj.id])).first()
+                    const question = await this.con('questions')
+                        .select(['question_id', 'points'])
+                        .where(this.con.raw('question_id = ?', [answerObj.id]))
+                        .first()
 
                     if (results.length > 0 && question) {
                         maxQuestionPoints += question.points * results.length
@@ -199,11 +405,11 @@ class Connection {
                             }
                         }
 
-                        await this.uploadPartialResults(cardNum, question.question_id, questionPoints)
+                        await this.uploadPartialResults(worker.worker_id, question.question_id, questionPoints)
                     }
                 }
 
-                success = await this.uploadResults(examCode, cardNum, totalPoints, time, maxQuestionPoints)
+                success = await this.uploadResults(examCode, totalPoints, time, maxQuestionPoints, worker.worker_id)
             }
         } catch (error) {
             console.log(error.message)
@@ -211,31 +417,31 @@ class Connection {
         return success
     }
 
-    uploadResults = async (examCode, cardNum, totalPoints, time, maxPoints) => {
+    uploadResults = async (examCode, totalPoints, time, maxPoints, workerId) => {
         let success = false
         try {
             await this.con.transaction(async trx => {
-                const worker = await this.con('workers').select('worker_id')
-                    .where('worker_cardcode', [cardNum])
-                    .first().transacting(trx)
 
-                if (worker) {
-                    const exam = await this.con('exams').select(['exam_id', 'points_required'])
-                        .where(this.con.raw('exam_itemcode = ?', [examCode])).first().transacting(trx)
+                const exam = await this.con('exams')
+                    .select(['exam_id', 'points_required'])
+                    .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                    .first()
+                    .transacting(trx)
 
-                    if (exam) {
-                        const completed = totalPoints >= Math.round(exam.points_required * maxPoints) ? 1 : 0
-                        const insert = await this.con('skills').insert({
-                            worker_id: worker.worker_id,
+                if (exam) {
+                    const completed = totalPoints >= Math.round(exam.points_required * maxPoints) ? 1 : 0
+                    const insert = await this.con('skills')
+                        .insert({
+                            worker_id: workerId,
                             exam_id: exam.exam_id,
                             points: totalPoints,
                             time: time,
                             completed: completed
-                        }).transacting(trx)
+                        })
+                        .transacting(trx)
 
-                        if (insert) {
-                            success = insert[0].insertId !== 0
-                        }
+                    if (insert) {
+                        success = insert[0].insertId !== 0
                     }
                 }
             })
@@ -245,23 +451,21 @@ class Connection {
         return success
     }
 
-    uploadPartialResults = async (cardNum, questionId, points) => {
+    uploadPartialResults = async (workerId, questionId, points) => {
         let success = false
         try {
             await this.con.transaction(async trx => {
-                const worker = await this.con('workers').select('worker_id')
-                    .where(this.con.raw('worker_cardcode = ?', [cardNum])).first().transacting(trx)
 
-                if (worker) {
-                    const insert = await this.con('exam_result').insert({
-                        worker_id: worker.worker_id,
+                const insert = await this.con('exam_result')
+                    .insert({
+                        worker_id: workerId,
                         question_id: questionId,
                         points: points
-                    }).transacting(trx)
+                    })
+                    .transacting(trx)
 
-                    if (insert) {
-                        success = insert[0].insertId !== 0
-                    }
+                if (insert) {
+                    success = insert[0].insertId !== 0
                 }
             })
         } catch (error) {
@@ -295,13 +499,17 @@ class Connection {
                 const validUser = await this.checkExamCreator(user, examCode)
                 if (validUser) {
                     const exam = await this.con('exams')
-                        .where(this.con.raw('exam_itemcode = ?', [examCode])).first().transacting(trx)
+                        .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                        .first()
+                        .transacting(trx)
 
                     if (exam) {
                         await this.removeMultipleQuestions(exam.exam_id, user, examCode)
 
-                        const del = await this.con('exams').delete()
-                            .where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+                        const del = await this.con('exams')
+                            .delete()
+                            .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                            .transacting(trx)
 
                         if (del) {
                             success = true
@@ -357,13 +565,16 @@ class Connection {
                 if (validUser) {
 
                     const resultIds = await this.con('exam_prepare')
-                        .where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+                        .where(this.con.raw('question_id = ?', [questionId]))
+                        .transacting(trx)
 
                     if (resultIds) {
                         await this.removeMultipleAnswers(resultIds)
                     }
-                    await this.con('questions').delete()
-                        .where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+                    await this.con('questions')
+                        .delete()
+                        .where(this.con.raw('question_id = ?', [questionId]))
+                        .transacting(trx)
 
                     success = await this.updateExamModify(user, examCode, trx)
                 }
@@ -386,8 +597,10 @@ class Connection {
         try {
             await this.con.transaction(async trx => {
                 for (const id of resultIds) {
-                    await this.con('results').delete()
-                        .where(this.con.raw('results_id = ?', [id.results_id])).transacting(trx)
+                    await this.con('results')
+                        .delete()
+                        .where(this.con.raw('results_id = ?', [id.results_id]))
+                        .transacting(trx)
                 }
             })
         } catch (error) {
@@ -412,9 +625,10 @@ class Connection {
                 const validUser = this.checkExamCreator(user, examCode)
 
                 if (validUser) {
-                    //this.con('exam_prepare').delete().where(this.con.raw('results_id = ?', [answerId]))
-                    const del = await this.con('results').delete()
-                        .where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
+                    const del = await this.con('results')
+                        .delete()
+                        .where(this.con.raw('results_id = ?', [answerId]))
+                        .transacting(trx)
 
                     if (del) {
                         success = await this.updateExamModify(user, examCode, trx)
@@ -453,15 +667,19 @@ class Connection {
 
                 if (validUser) {
                     const exam = await this.con('exams')
-                        .where(this.con.raw('exam_itemcode = ?', [examCode])).first().transacting(trx)
+                        .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                        .first()
+                        .transacting(trx)
 
                     if (exam) {
-                        const insert = await this.con('questions').insert({
-                            exam_id: exam.exam_id,
-                            question_name: text,
-                            points: points,
-                            picture: picture
-                        }).transacting(trx)
+                        const insert = await this.con('questions')
+                            .insert({
+                                exam_id: exam.exam_id,
+                                question_name: text,
+                                points: points,
+                                picture: picture
+                            })
+                            .transacting(trx)
 
                         if (insert[0].insertId !== 0) {
                             success = await this.updateExamModify(user, examCode, trx)
@@ -494,19 +712,24 @@ class Connection {
                 const validUser = await this.checkExamCreator(user, examCode)
 
                 if (validUser) {
-                    const question = await this.con('questions').select('question_id')
+                    const question = await this.con('questions')
+                        .select('question_id')
                         .where(this.con.raw('question_id = ?', [questionId]))
-                        .first().transacting(trx)
+                        .first()
+                        .transacting(trx)
 
                     if (question) {
                         let answerArray = [answerText, value]
-                        const insertAnswer = await this.con.raw('INSERT INTO results (result_text, correct) VALUES(?)', [answerArray]).transacting(trx)
+                        const insertAnswer = await this.con.raw('INSERT INTO results (result_text, correct) VALUES(?)', [answerArray])
+                            .transacting(trx)
 
                         if (insertAnswer[0].insertId !== 0) {
-                            const insertLink = await this.con('exam_prepare').insert({
-                                question_id: question.question_id,
-                                results_id: insertAnswer[0].insertId
-                            }).transacting(trx)
+                            const insertLink = await this.con('exam_prepare')
+                                .insert({
+                                    question_id: question.question_id,
+                                    results_id: insertAnswer[0].insertId
+                                })
+                                .transacting(trx)
 
                             if (insertLink[0].insertId !== 0) {
                                 success = await this.updateExamModify(user, examCode, trx)
@@ -534,11 +757,14 @@ class Connection {
                 const validUser = await this.checkExamCreator(user, examCode)
 
                 if (validUser) {
-                    const update = await this.con('exams').update({
-                        exam_status: status,
-                        exam_modifier: user,
-                        exam_modified_time: this.con.fn.now()
-                    }).where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+                    const update = await this.con('exams')
+                        .update({
+                            exam_status: status,
+                            exam_modifier: user,
+                            exam_modified_time: this.con.fn.now()
+                        })
+                        .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                        .transacting(trx)
 
                     if (update) {
                         success = true
@@ -558,15 +784,20 @@ class Connection {
                 const validUser = this.checkExamCreator(user, examCode)
 
                 if (validUser) {
-                    const exam = await this.con('exams').select('exam_id')
-                        .where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+                    const exam = await this.con('exams')
+                        .select('exam_id')
+                        .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                        .transacting(trx)
 
                     if (exam.length !== 0) {
-                        const update = await this.con('exams').update({
-                            points_required: points,
-                            exam_modifier: user,
-                            exam_modified_time: this.con.fn.now()
-                        }).where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+                        const update = await this.con('exams')
+                            .update({
+                                points_required: points,
+                                exam_modifier: user,
+                                exam_modified_time: this.con.fn.now()
+                            })
+                            .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                            .transacting(trx)
 
                         if (update) {
                             success = true
@@ -599,9 +830,12 @@ class Connection {
                 const validUser = await this.checkExamCreator(user, examCode)
 
                 if (validUser) {
-                    const update = await this.con('questions').update({
-                        picture: picture
-                    }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+                    const update = await this.con('questions')
+                        .update({
+                            picture: picture
+                        })
+                        .where(this.con.raw('question_id = ?', [questionId]))
+                        .transacting(trx)
 
                     if (update) {
                         success = await this.updateExamModify(user, examCode, trx)
@@ -635,17 +869,25 @@ class Connection {
                 if (validUser) {
                     const result = await this.con('results')
                         .where(this.con.raw('results_id = ?', [answerId]))
-                        .first().transacting(trx)
+                        .first()
+                        .transacting(trx)
 
                     let update = null
                     if (result && !(value === '0' || value === '1') && typeof value !== 'boolean') {
-                        update = await this.con('results').update({
-                            result_text: value
-                        }).where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
+                        update = await this.con('results')
+                            .update({
+                                result_text: value
+                            })
+                            .where(this.con.raw('results_id = ?', [answerId]))
+                            .transacting(trx)
+
                     } else if (result && value === '0' || value === '1' || typeof value === 'boolean') {
-                        update = await this.con('results').update({
-                            correct: value
-                        }).where(this.con.raw('results_id = ?', [answerId])).transacting(trx)
+                        update = await this.con('results')
+                            .update({
+                                correct: value
+                            })
+                            .where(this.con.raw('results_id = ?', [answerId]))
+                            .transacting(trx)
                     }
 
                     if (update != null) {
@@ -684,13 +926,20 @@ class Connection {
 
                     let update = null
                     if (question && typeof value === 'string') {
-                        update = await this.con('questions').update({
-                            question_name: value
-                        }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+                        update = await this.con('questions')
+                            .update({
+                                question_name: value
+                            })
+                            .where(this.con.raw('question_id = ?', [questionId]))
+                            .transacting(trx)
+
                     } else if (question && typeof value === 'number' || typeof value === 'bigint') {
-                        update = await this.con('questions').update({
-                            points: value
-                        }).where(this.con.raw('question_id = ?', [questionId])).transacting(trx)
+                        update = await this.con('questions')
+                            .update({
+                                points: value
+                            })
+                            .where(this.con.raw('question_id = ?', [questionId]))
+                            .transacting(trx)
                     }
 
                     if (update != null) {
@@ -725,16 +974,20 @@ class Connection {
                 if (validUser) {
                     const examNameCheck = await this.con('exams')
                         .where(this.con.raw('exam_name = ?', [examName]))
-                        .andWhere(this.con.raw('exam_itemcode <> ?', [examCode])).transacting(trx)
+                        .andWhere(this.con.raw('exam_itemcode <> ?', [examCode]))
+                        .transacting(trx)
+
                     if (examNameCheck.length === 0) {
-                        const update = await this.con('exams').update({
-                            exam_name: examName,
-                            exam_notes: notes,
-                            points_required: points,
-                            exam_modifier: user,
-                            exam_modified_time: this.con.fn.now()
-                        })
-                            .where(this.con.raw('exam_itemcode = ?', [examCode])).transacting(trx)
+                        const update = await this.con('exams')
+                            .update({
+                                exam_name: examName,
+                                exam_notes: notes,
+                                points_required: points,
+                                exam_modifier: user,
+                                exam_modified_time: this.con.fn.now()
+                            })
+                            .where(this.con.raw('exam_itemcode = ?', [examCode]))
+                            .transacting(trx)
 
                         if (update) {
                             success = true
@@ -766,7 +1019,8 @@ class Connection {
     checkExamCreator = async (user, examCode) => {
         let isValid = false
         try {
-            const exam = await this.con('exams').select('exam_creator')
+            const exam = await this.con('exams')
+                .select('exam_creator')
                 .where(this.con.raw('exam_itemcode = ?', [examCode]))
                 .first()
 
@@ -789,10 +1043,11 @@ class Connection {
     updateExamModify = async (user, examCode, trx) => {
         let updated = false
         try {
-            const updater = await this.con('exams').update({
-                exam_modifier: user,
-                exam_modified_time: this.con.fn.now()
-            })
+            const updater = await this.con('exams')
+                .update({
+                    exam_modifier: user,
+                    exam_modified_time: this.con.fn.now()
+                })
                 .where(this.con.raw('exam_itemcode = ?', [examCode]))
                 .transacting(trx)
             updated = updater === 1
@@ -827,11 +1082,14 @@ class Connection {
         try {
             let items = []
             if (productType) {
-                items = await this.con('items').select(['ProductName', 'Itemcode'])
+                items = await this.con('items')
+                    .select(['ProductName', 'Itemcode'])
                     .leftJoin('exams', 'items.Itemcode', 'exams.exam_itemcode')
-                    .where('exams.exam_itemcode', null).andWhere(this.con.raw('Types = ?', [productType]))
+                    .where('exams.exam_itemcode', null)
+                    .andWhere(this.con.raw('Types = ?', [productType]))
             } else {
-                items = await this.con('items').select(['ProductName', 'Itemcode'])
+                items = await this.con('items')
+                    .select(['ProductName', 'Itemcode'])
                     .leftJoin('exams', 'items.Itemcode', 'exams.exam_itemcode')
                     .where('exams.exam_itemcode', null)
             }
@@ -849,15 +1107,21 @@ class Connection {
         let result = []
         try {
             if (!userIsAdmin) {
-                const exam = await this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+                const exam = await this.con('exams')
+                    .where(this.con.raw('exam_itemcode = ?', [exam_itemcode]))
+                    .first()
 
-                const skill = await this.con('workers').select('workers.worker_id')
-                    .innerJoin('skills', 'workers.worker_id', 'skills.worker_id').where('worker_cardcode', [cardNum])
+                const skill = await this.con('workers')
+                    .select('workers.worker_id')
+                    .innerJoin('skills', 'workers.worker_id', 'skills.worker_id')
+                    .where('worker_cardcode', [cardNum])
                     .andWhere('exam_id', [exam.exam_id])
 
                 result.push(skill.length !== 0 ? 0 : exam.exam_status, exam.exam_docs)
-            }else{
-                const exam = await this.con('exams').where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+            } else {
+                const exam = await this.con('exams')
+                    .where(this.con.raw('exam_itemcode = ?', [exam_itemcode]))
+                    .first()
 
                 result.push(0, exam.exam_docs)
             }
@@ -921,15 +1185,19 @@ class Connection {
                     })
                 })
             } else {
-                const worker = await this.con('workers').select('worker_id')
-                    .where('worker_cardcode', [user]).first()
+                const worker = await this.con('workers')
+                    .select('worker_id')
+                    .where('worker_cardcode', [user])
+                    .first()
 
                 if (worker) {
                     const examList = await this.con('exams')
                         .select(['exams.exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
                         .where('exam_status', 1)
 
-                    const skills = await this.con('skills').select('exam_id').where('worker_id', worker.worker_id)
+                    const skills = await this.con('skills')
+                        .select('exam_id')
+                        .where('worker_id', worker.worker_id)
 
                     examList.forEach(exam => {
                         if (skills.findIndex(value => value.exam_id === exam.exam_id) === -1) {
@@ -987,7 +1255,8 @@ class Connection {
         try {
             for (const answerId of answersIdList) {
                 const answer = await this.con('results')
-                    .where(this.con.raw('results_id = ?', [answerId.results_id])).first()
+                    .where(this.con.raw('results_id = ?', [answerId.results_id]))
+                    .first()
 
                 if (answer) {
                     results.push({
@@ -1006,8 +1275,11 @@ class Connection {
     selectExamContent = async (exam_itemcode) => { //Az adatok összesítése és tovább küldése
         let content = []
         try {
-            const exam = await this.con('exams').select('exam_id')
-                .where(this.con.raw('exam_itemcode = ?', [exam_itemcode])).first()
+            const exam = await this.con('exams')
+                .select('exam_id')
+                .where(this.con.raw('exam_itemcode = ?', [exam_itemcode]))
+                .first()
+
             if (exam) {
                 const questions = await this.con('questions').where('exam_id', [exam.exam_id])
                 if (questions.length > 0) {
@@ -1025,7 +1297,8 @@ class Connection {
         try {
             const exam = await this.con('exams')
                 .select(['exam_name', 'exam_notes', 'exam_status', 'points_required'])
-                .where('exam_itemcode', [exam_itemcode]).first()
+                .where('exam_itemcode', [exam_itemcode])
+                .first()
 
             if (exam) {
                 result.push(exam.exam_name, exam.exam_notes, exam.exam_status, exam.points_required)
@@ -1046,7 +1319,8 @@ class Connection {
         let result = 'no_user'
         try {
             const worker = await this.con('workers')
-                .where(this.con.raw('worker_cardcode = ?', [cardNum])).first()
+                .where(this.con.raw('worker_cardcode = ?', [cardNum]))
+                .first()
 
             if (worker) {
                 result = [worker.worker_name, worker.worker_usergroup]
@@ -1061,13 +1335,20 @@ class Connection {
         let msg = false
         try {
             await this.con.transaction(async trx => {
+
                 const login = await this.con('admin_login')
-                    .where(this.con.raw('cardcode = ?', [cardNum])).first().transacting(trx)
+                    .where(this.con.raw('cardcode = ?', [cardNum]))
+                    .first()
+                    .transacting(trx)
+
                 if (!login) {
-                    const insert = await this.con('admin_login').insert({
-                        cardcode: cardNum,
-                        password: CryptoJS.AES.encrypt(password, 'jp-$kDB').toString()
-                    }).transacting(trx)
+                    const insert = await this.con('admin_login')
+                        .insert({
+                            cardcode: cardNum,
+                            password: CryptoJS.AES.encrypt(password, 'jp-$kDB').toString()
+                        })
+                        .transacting(trx)
+
                     msg = insert.length > 0
                 }
             })
@@ -1080,9 +1361,12 @@ class Connection {
     userLogout = async (cardNum) => {
         try {
             await this.con.transaction(async trx => {
-                await this.con('admin_login').update({
-                    latest_logout: this.con.fn.now()
-                }).where('cardcode', [cardNum]).transacting(trx)
+                await this.con('admin_login')
+                    .update({
+                        latest_logout: this.con.fn.now()
+                    })
+                    .where('cardcode', [cardNum])
+                    .transacting(trx)
             })
         } catch (error) {
             console.log(error.message)
@@ -1095,13 +1379,17 @@ class Connection {
             await this.con.transaction(async trx => {
                 const login =
                     await this.con('admin_login')
-                        .where(this.con.raw('cardcode = ?', [cardNum])).first().transacting(trx)
+                        .where(this.con.raw('cardcode = ?', [cardNum]))
+                        .first()
+                        .transacting(trx)
                 if (login.password) {
                     access = CryptoJS.AES.decrypt(login.password, 'jp-$kDB').toString(CryptoJS.enc.Utf8) === password
                     if (access) {
-                        await this.con('admin_login').update({
-                            latest_login: this.con.fn.now()
-                        }).where('cardcode', [cardNum]).transacting(trx)
+                        await this.con('admin_login')
+                            .update({
+                                latest_login: this.con.fn.now()
+                            }).where('cardcode', [cardNum])
+                            .transacting(trx)
                     }
                 }
             })
@@ -1122,22 +1410,36 @@ class Connection {
         try {
             await this.con.transaction(async trx => {
                 const itemCount =
-                    await this.con('items').count('Itemcode AS count')
-                        .where(this.con.raw('Itemcode = ?', [arr[0]])).first().transacting(trx)
+                    await this.con('items')
+                        .count('Itemcode AS count')
+                        .where(this.con.raw('Itemcode = ?', [arr[0]]))
+                        .first()
+                        .transacting(trx)
+
                 if (itemCount.count > 0) {
                     const examcodeCount =
-                        await this.con('exams').count('exam_itemcode AS count')
-                            .where(this.con.raw('exam_itemcode = ?', [arr[0]])).first().transacting(trx)
+                        await this.con('exams')
+                            .count('exam_itemcode AS count')
+                            .where(this.con.raw('exam_itemcode = ?', [arr[0]]))
+                            .first()
+                            .transacting(trx)
+
                     if (examcodeCount.count === 0) {
                         const nameCount =
-                            await this.con('exams').count('exam_id AS count')
-                                .where(this.con.raw('exam_name = ?', [arr[1]])).first().transacting(trx)
+                            await this.con('exams')
+                                .count('exam_id AS count')
+                                .where(this.con.raw('exam_name = ?', [arr[1]]))
+                                .first()
+                                .transacting(trx)
+
                         if (nameCount.count === 0) {
                             const insert = await this.con.raw(
                                 'INSERT INTO exams (exam_itemcode, exam_name, ' +
                                 'exam_notes, exam_docs, exam_creator, exam_modifier) ' +
                                 'VALUES (?)',
-                                [arr]).transacting(trx)
+                                [arr])
+                                .transacting(trx)
+
                             if (insert.length !== 0) {
                                 message = 200
                             }

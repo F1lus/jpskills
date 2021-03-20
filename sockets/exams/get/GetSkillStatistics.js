@@ -8,15 +8,15 @@ module.exports = (socket) => {
         if (session.perm === 'admin') {
             socket.emit('sending-statistics', await dbconnect.globalStatisticsForAdmin(session.cardNum))
         } else {
-            socket.emit('sending-statistics', await dbconnect.globalStatisticsForUser(session.cardNum))
+            socket.emit('sending-statistics', await dbconnect.globalStatisticsForUser(session.cardNum, false))
         }
     }
     socket.on('requesting-statistics', statistics)
 
     const userStatsByCardcode = async cardcode => {
         if(session.perm === 'superuser'){
-            socket.emit('user-exams', 
-                [await dbconnect.globalStatisticsForUser(cardcode), await dbconnect.getSpecificUser(cardcode)])
+            socket.emit('user-exams', await dbconnect.globalStatisticsForUser(cardcode, false))
+            socket.emit('userinfo', await dbconnect.getSpecificUser(cardcode))
         }
     }
     socket.on('exams-by-cardcode', userStatsByCardcode)

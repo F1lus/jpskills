@@ -43,13 +43,11 @@ export default function RenderContent(props) {
         event.preventDefault()
         socket.emit('exam-finished', answers, props.exam)
         setDisable(true)
-        setLoad(props.store, true)
-    }, [answers, props.exam, socket, props.store])
+    }, [answers, props.exam, socket])
 
     const handleExamProcessed = useCallback(() => {
         setFinished(true)
-        setLoad(props.store, true)
-    }, [props.store])
+    }, [])
 
     const submitExam = useCallback(() => {
         if (!disable) {
@@ -127,6 +125,7 @@ export default function RenderContent(props) {
                 <Prompt message={() => {
                     const confirm = window.confirm('Biztosan el akarja hagyni az oldalt? A vizsga a jelenlegi állapotában le lesz adva, és ez a művelet visszafordíthatatlan!')
                     if (confirm) {
+                        setLoad(props.store, true)
                         submitExam()
                     } else {
                         setDisable(false)

@@ -6,7 +6,7 @@ import OverlayScrollbars from 'overlayscrollbars'
 import 'overlayscrollbars/css/OverlayScrollbars.css'
 
 import { SocketContext } from '../../GlobalSocket'
-import { setNameHandler, setPermHandler, setStatusHandler } from '../../store/ActionHandler'
+import { setNameHandler, setPermHandler, setStatusHandler, setLoad } from '../../store/ActionHandler'
 
 export default function Routing({ component: Component, allowed, ...rest }) {
 
@@ -32,6 +32,8 @@ export default function Routing({ component: Component, allowed, ...rest }) {
     }, [])
 
     useEffect(() => {
+        setLoad(store, false)
+
         const bar = OverlayScrollbars(document.querySelectorAll('body'), { className: "os-theme-dark" })
         bar.scroll({y: '0%'}, 500)
 
@@ -44,7 +46,7 @@ export default function Routing({ component: Component, allowed, ...rest }) {
                 .off('login-info', handleLoginInfo)
                 .off('logged-out', handleLogout)
         }
-    }, [handleLoginInfo, handleLogout, socket, loading])
+    }, [handleLoginInfo, handleLogout, socket, loading, store])
 
     const logoutHelper = useCallback(() => {
         socket.emit('logout').on('logged-out', handleLogout)

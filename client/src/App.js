@@ -1,13 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Switch, useLocation } from 'react-router-dom'
-import { useSelector, useStore } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-
-import { setLoad } from './components/store/ActionHandler'
 
 import Login from './components/user_management/Login'
 import ExamWrapper from './components/exams/ExamWrapper'
@@ -29,11 +27,6 @@ export default function App() {
   const loading = useSelector(state => state.loadReducer.loading)
 
   const location = useLocation()
-  const store = useStore()
-
-  useEffect(() => {
-    setLoad(store, false)
-  }, [store])
 
   return (
     <React.Fragment>

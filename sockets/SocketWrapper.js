@@ -17,8 +17,11 @@ const updater = require('./exams/update/Updater')
 
 //Felhasználó kezelés
 const getLoginInfo = require('./users/GetLoginInfo')
-const getUsers = require('./users/GetUsers')
 const logout = require('./users/Logout')
+
+//Superuser műveletek
+const getUsers = require('./users/GetUsers')
+const skillManager = require('./exams/update/SkillManager')
 
 /**
  * Socket kapcsolat kezelése
@@ -45,7 +48,6 @@ module.exports = (socket) => {
 
     //Felhasználói művelet(ek)
     processExam(socket)
-    getUsers(socket)
     logout(socket)
 
     //Vizsgaeredmény eseményének regisztrálása
@@ -53,6 +55,10 @@ module.exports = (socket) => {
 
     //Statisztika
     getSkillStatistics(socket)
+
+    //Superuser műveletek
+    getUsers(socket)
+    skillManager(socket)
 
     //Egyéb események
     socket.on('exam-modified', () => {

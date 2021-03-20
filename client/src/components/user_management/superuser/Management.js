@@ -1,13 +1,15 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useStore } from 'react-redux'
 import { Redirect, NavLink } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 
 import { SocketContext } from '../../GlobalSocket'
+import {setLoad} from '../../store/ActionHandler'
 
 export default function Management() {
 
     const [user] = useSelector(state => [state.userReducer.user])
+    const store = useStore()
     const socket = useContext(SocketContext)
 
     const [redirect, setRedirect] = useState(false)
@@ -64,7 +66,8 @@ export default function Management() {
             })
         })
         setDisplayList(tempList)
-    }, [])
+        setLoad(store, false)
+    }, [store])
 
     const search = useCallback(event => {
         const value = event.target.value.toLowerCase().trim()
@@ -94,8 +97,9 @@ export default function Management() {
     }, [users])
 
     useEffect(() => {
+        setLoad(store, true)
         socket.emit('request-users')
-    }, [socket])
+    }, [socket, store])
 
     useEffect(() => {
         socket.on('existing-users', handleUsers)
@@ -112,8 +116,10 @@ export default function Management() {
         <div className="d-flex container align-items-center justify-content-center vh-100">
             <div className='container-fluid bg-light shadow rounded text-center py-3 page mb-3'>
                 {redirect ? <Redirect to='/logout' /> : null}
+
                 <button className='btn btn-danger float-right' onClick={logout}>Kilépés</button>
-                <h2>Üdvözöljük, {user}</h2>
+                <h2 className='float-left'>Üdvözöljük, {user}</h2>
+                <hr className='mt-5'/>
 
                 <h3>A képzettségi mátrixban létező felhasználók száma: {users.length} fő</h3>
 
