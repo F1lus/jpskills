@@ -161,7 +161,7 @@ export default function Login() {
     return (
         <div className="d-flex container text-center align-items-center justify-content-center vh-100 w-50">
             <div className="container shadow rounded bg-light p-3">
-                {register ? <h1><p>Kérjük töltse ki a mezőket!</p></h1> : <h1><p>A folytatáshoz jelentkezzen be!</p></h1>}
+                {register ? <h2><p>Kérjük töltse ki a mezőket!</p></h2> : <h2><p>A folytatáshoz jelentkezzen be!</p></h2>}
                 {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : null}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group m-auto">
