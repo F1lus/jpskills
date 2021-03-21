@@ -59,7 +59,7 @@ export default function App() {
 
             <Routing exact path='/management/:user' allowed={['superuser']} component={UserManager} />
 
-            <Routing exact path='/logout' allowed={['*']} component={LogoutPlaceholder} />
+            <Routing exact path='/logout' allowed={['*']} component={Load} />
           </Switch>
         </CSSTransition>
       </TransitionGroup>
@@ -67,9 +67,3 @@ export default function App() {
   )
 
 }
-
-const LogoutPlaceholder = () => (
-  <h5 className='text-light'>
-    Pillanat türelmet...
-  </h5>
-)

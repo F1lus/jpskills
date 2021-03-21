@@ -204,7 +204,7 @@ export default function CreateTest(props) {
                     </button>
                 </div>
             </form>
-            {result ? <h3 className="alert alert-secondary mt-3 text-center" role="alert">{result}</h3> : <></>}
+            {result ? <h3 className="alert alert-danger mt-3 text-center" role="alert">{result}</h3> : <></>}
         </div>
     )
 
