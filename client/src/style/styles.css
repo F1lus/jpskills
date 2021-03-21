@@ -28,7 +28,7 @@ ul {
 
 /*home*/
 #helpcontainer {
-    height: 35vh;
+    max-height: 35vh;
     overflow-y: scroll;
 }
 
@@ -40,7 +40,7 @@ ul {
 /*navbar*/
 #navbar {
     position: fixed;
-    width: 100vw;
+    width: 99.4vw;
     top: 0;
     z-index: 1;
 }

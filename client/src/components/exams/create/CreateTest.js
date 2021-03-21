@@ -196,7 +196,7 @@ export default function CreateTest(props) {
                     </label>
                 </div>
                 <div className="container">
-                    <input type="file" onChange={handleChange} name="examDoc" />
+                    <input type="file" onChange={handleChange} name="examDoc" required/>
                 </div>
                 <div className="container text-center">
                     <button type="submit" className="btn btn-warning mt-3" value="Létrehozás" disabled={disable}>

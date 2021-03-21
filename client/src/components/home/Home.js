@@ -130,7 +130,7 @@ export default function Home() {
                                 )
                             })}
                         </div>
-                        <div className="text-center my-3" id="helpcontainer">
+                        <div className="mt-3" id="helpcontainer">
                             <p id="help" />
                         </div>
                     </div>
@@ -150,7 +150,7 @@ export default function Home() {
                                 )
                             })}
                         </div>
-                        <div className="text-center my-3" id="helpcontainer">
+                        <div className="mt-3" id="helpcontainer">
                             <p id="help" />
                         </div>
                     </div>
