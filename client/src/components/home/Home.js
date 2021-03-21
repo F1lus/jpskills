@@ -117,45 +117,41 @@ export default function Home() {
                 <h1 className="text-center"><p>Használati útmutató</p></h1>
                 <Admin permission={permission}>
                     <div className="container">
-                        <div className="row">
-                            <div className="col-sm-6 col-8" id="questions">
-                                {Adminnak.map((value, index) => {
-                                    return (
-                                        <div className="container radio" key={index}>
-                                            <label>
-                                                <input type="radio" name="question" onChange={e => needHelp(e, index)} />
-                                                <ChevronRightIcon className="icon" />
-                                                <label>{value.kerdes}</label>
-                                            </label>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            <div className="col-sm-6 col-4" id="helpcontainer">
-                                <p id="help" />
-                            </div>
+                        <div className="border border-warning rounded" id="questions">
+                            {Adminnak.map((value, index) => {
+                                return (
+                                    <div className="container radio" key={index}>
+                                        <label>
+                                            <input type="radio" name="question" onChange={e => needHelp(e, index)} />
+                                            <ChevronRightIcon className="icon" />
+                                            <label>{value.kerdes}</label>
+                                        </label>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div className="text-center my-3" id="helpcontainer">
+                            <p id="help" />
                         </div>
                     </div>
                 </Admin>
                 <User permission={permission}>
                     <div className="container">
-                        <div className="row">
-                            <div className="col-sm-6 col-8" id="questions">
-                                {Usernek.map((value, index) => {
-                                    return (
-                                        <div className="container radio" key={index}>
-                                            <label>
-                                                <input type="radio" name="question" onChange={e => needHelp(e, index)} />
-                                                <ChevronRightIcon className="icon" />
-                                                <label>{value.kerdes}</label>
-                                            </label>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            <div className="col-sm-6 col-4" id="helpcontainer">
-                                <p id="help" />
-                            </div>
+                        <div className="border border-warning rounded" id="questions">
+                            {Usernek.map((value, index) => {
+                                return (
+                                    <div className="container radio" key={index}>
+                                        <label>
+                                            <input type="radio" name="question" onChange={e => needHelp(e, index)} />
+                                            <ChevronRightIcon className="icon" />
+                                            <label>{value.kerdes}</label>
+                                        </label>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div className="text-center my-3" id="helpcontainer">
+                            <p id="help" />
                         </div>
                     </div>
                 </User>
