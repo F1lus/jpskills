@@ -43,21 +43,22 @@ export default function Skills(props) {
         selectAllRowsItemText: 'Összes'
     }
 
-    const delExam = useCallback((event, examId, workerId) => {
+    const delExam = useCallback((event, examId, workerId, skillId) => {
         event.preventDefault()
 
         setLoad(store, true)
-        socket.emit('remove-skill', examId, workerId)
+        socket.emit('remove-skill', examId, workerId, skillId)
     }, [socket, store])
 
-    const archiveExam = useCallback((event, examId, workerId) => {
+    const archiveExam = useCallback((event, examId, workerId, skillId) => {
         event.preventDefault()
 
         setLoad(store, true)
 
         socket.emit('archive-skills', [{
             examId,
-            workerId
+            workerId,
+            skillId
         }])
     }, [socket, store])
 
@@ -70,12 +71,12 @@ export default function Skills(props) {
             tempList.push({
                 operations: (
                     <div>
-                        <button className="btn btn-outline-danger mx-2" onClick={e => {
-                            delExam(e, element.examId, element.workerId)
-                        }}>Törlés</button>
                         <button className="btn btn-outline-blue mx-2" onClick={e => {
-                            archiveExam(e, element.examId, element.workerId)
+                            archiveExam(e, element.examId, element.workerId, element.skillId)
                         }}>Archiválás</button>
+                        <button className="btn btn-outline-danger mx-2" onClick={e => {
+                            delExam(e, element.examId, element.workerId, element.skillId)
+                        }}>Törlés</button>
                     </div>
                 ),
                 examName: element.examName,
@@ -100,12 +101,12 @@ export default function Skills(props) {
                 tempList.push({
                     operations: (
                         <div>
-                            <button className="btn btn-outline-danger mx-2" onClick={e => {
-                                delExam(e, element.examId, element.workerId)
-                            }}>Törlés</button>
                             <button className="btn btn-outline-blue mx-2" onClick={e => {
-                                archiveExam(e, element.examId, element.workerId)
+                                archiveExam(e, element.examId, element.workerId, element.skillId)
                             }}>Archiválás</button>
+                            <button className="btn btn-outline-danger mx-2" onClick={e => {
+                                delExam(e, element.examId, element.workerId, element.skillId)
+                            }}>Törlés</button>
                         </div>
                     ),
                     examName: element.examName,

@@ -4,9 +4,9 @@ module.exports = socket => {
 
     const session = socket.handshake.session
 
-    const removeSkill = async (examId, workerId) => {
+    const removeSkill = async (examId, workerId, skillId) => {
         if(session.perm === 'superuser'){
-            await dbconnect.removeUserSkill(examId, workerId)
+            await dbconnect.removeUserSkill(examId, workerId, skillId)
             socket.emit('skill-update')
         }
     }

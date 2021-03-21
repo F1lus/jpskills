@@ -50,7 +50,8 @@ class Connection {
             const skillArray = skills.map(skill => {
                 return {
                     examId: skill.exam_id,
-                    workerId: skill.worker_id
+                    workerId: skill.worker_id,
+                    skillId: skill.skills_id
                 }
             })
 
@@ -84,6 +85,7 @@ class Connection {
                     .first()
 
                 skills.push({
+                    skillId: skill.skills_id,
                     archiveId: skill.archive_id,
                     workerId: skill.worker_id,
                     examId: skill.exam_id,
@@ -123,8 +125,7 @@ class Connection {
                         .select('skills.skills_id')
                         .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
                         .where('skill_archive.skills_id', null)
-                        .andWhere(this.con.raw('exam_id = ?', skill.examId))
-                        .andWhere(this.con.raw('worker_id = ?', skill.workerId))
+                        .andWhere(this.con.raw('skills.skills_id = ?', skill.skillId))
                         .first()
                         .transacting(trx)
 
@@ -150,7 +151,7 @@ class Connection {
         }
     }
 
-    removeUserSkill = async (examId, workerId) => {
+    removeUserSkill = async (examId, workerId, skillId) => {
         try {
             await this.con.transaction(async trx => {
 
@@ -169,8 +170,8 @@ class Connection {
 
                 await this.con('skills')
                     .delete()
-                    .where(this.con.raw('exam_id = ?', examId))
-                    .andWhere(this.con.raw('worker_id = ?', workerId))
+                    .where(this.con.raw('skills_id = ?', skillId))
+                    .limit(1)
                     .transacting(trx)
             })
         } catch (error) {
@@ -250,13 +251,14 @@ class Connection {
             if (worker) {
                 if (getArchived) {
                     const skills = await this.con('skills')
-                        .select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
-                        .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
+                        .select(['skills.skills_id', 'skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
+                        .innerJoin('exams', 'skills.exam_id', 'exams.exam_id')
                         .innerJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
                         .where('worker_id', [worker.worker_id])
 
                     skills.forEach(skill => {
                         stats.push({
+                            skillId: skill.skills_id,
                             examId: skill.exam_id,
                             workerId: worker.worker_id,
                             examName: skill.exam_name,
@@ -270,7 +272,7 @@ class Connection {
                     })
                 } else {
                     const skills = await this.con('skills')
-                        .select(['skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
+                        .select(['skills.skills_id', 'skills.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed'])
                         .innerJoin(this.con.raw('exams ON skills.exam_id = exams.exam_id'))
                         .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
                         .where('skill_archive.skills_id', null)
@@ -278,6 +280,7 @@ class Connection {
 
                     skills.forEach(skill => {
                         stats.push({
+                            skillId: skill.skills_id,
                             examId: skill.exam_id,
                             workerId: worker.worker_id,
                             examName: skill.exam_name,
@@ -313,10 +316,11 @@ class Connection {
                     .first()
 
                 if (worker) {
-                    const skillResult = await this.con('skills')
+                    const skills = await this.con('skills')
                         .where('worker_id', worker.worker_id)
                         .andWhere('exam_id', exam.exam_id)
-                        .first()
+                    
+                    const skillResult = skills[skills.length-1]
 
                     const maxPoints = await this.countExamMaxPoints(exam.exam_id)
 

@@ -43,12 +43,12 @@ export default function Archived(props) {
         selectAllRowsItemText: 'Összes'
     }
 
-    const delExam = useCallback((event, examId, workerId) => {
+    const delExam = useCallback((event, examId, workerId, skillId) => {
         event.preventDefault()
 
         setLoad(store, true)
 
-        socket.emit('remove-skill', examId, workerId)
+        socket.emit('remove-skill', examId, workerId, skillId)
     }, [socket, store])
 
     const delArchived = useCallback((event, archiveId) => {
@@ -71,7 +71,7 @@ export default function Archived(props) {
                             delArchived(e, element.archiveId)
                         }}>Visszavonás</button>
                         <button className='btn btn-outline-danger mx-2' onClick={e => {
-                            delExam(e, element.examId, element.workerId)
+                            delExam(e, element.examId, element.workerId, element.skillId)
                         }}>Törlés</button>
                     </div>
                 ),

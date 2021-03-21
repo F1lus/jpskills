@@ -61,7 +61,7 @@ export default function Profile() {
                     <h2 className='text-center'>Az Ön vizsgáiról általánosságban</h2>
                     <hr />
                     <h5>A vizsgáin eltöltött átlag idő: {renderStatsObject('time') || 'Nincs adat'}</h5>
-                    <h5>A vizsgáin elért átlagos pontszám: {renderStatsObject('score') || 'Nincs adat'}</h5>
+                    <h5>A vizsgáin elért átlagos pontszám: {renderStatsObject('score')}</h5>
                     <h5>A vizsgáin a sikerességi arány: {renderStatsObject('completion') || 'Nincs adat'}</h5>
                 </div>
             )
