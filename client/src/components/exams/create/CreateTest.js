@@ -67,9 +67,9 @@ export default function CreateTest(props) {
     const handleChange = useCallback(event => {
         switch (event.target.name) {
             case 'group':
-                if(event.target.value !== 'A vizsga célcsoportja'){
+                if (event.target.value !== 'A vizsga célcsoportja') {
                     setGroup(event.target.value)
-                }else{
+                } else {
                     setGroup(-10)
                 }
                 break
@@ -199,8 +199,8 @@ export default function CreateTest(props) {
                             </select>
                         </div>
                     </div>
-                    <h4 className='alert alert-danger w-25'>A célcsoport később nem módosítható!</h4>
-                    <select name="group" className="w-100 rounded" onChange={handleChange}>
+                    <h4 className='alert alert-danger w-50 mx-auto mt-3'>A célcsoport később nem módosítható!</h4>
+                    <select name="group" className="w-75 rounded" onChange={handleChange}>
                         <option defaultValue={-1}>A vizsga célcsoportja</option>
                         <option value={-10}>- Minden csoport -</option>
                         {groups.length === 0 ? <></> : groups.map((elem, index) => {

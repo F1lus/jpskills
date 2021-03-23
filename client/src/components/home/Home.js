@@ -2,12 +2,13 @@ import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector, useStore } from 'react-redux'
 
-import {setLoad} from '../store/ActionHandler'
+import { setLoad } from '../store/ActionHandler'
 import { SocketContext } from '../GlobalSocket'
 import { Admin, User } from '../user_management/handlers/PermissionHandler'
 
 import { Adminnak, Usernek } from './Helpdesk'
 import { ChevronRightIcon } from '@primer/octicons-react'
+
 import OverlayScrollbars from 'overlayscrollbars'
 import 'overlayscrollbars/css/OverlayScrollbars.css'
 
@@ -26,7 +27,7 @@ export default function Home() {
     }, [store])
 
     useEffect(() => {
-        if(permission !== 'admin'){
+        if (permission !== 'admin') {
             setLoad(store, true)
             socket.emit('exams-get-signal')
         }
@@ -38,8 +39,8 @@ export default function Home() {
     }, [store])
 
     useEffect(() => {
-        OverlayScrollbars(document.getElementById('questions'), {className: "os-theme-dark"})
-        OverlayScrollbars(document.getElementById('helpcontainer'), {className: "os-theme-dark"})
+        OverlayScrollbars(document.getElementById('questions'), { className: "os-theme-dark" })
+        OverlayScrollbars(document.getElementById('helpcontainer'), { className: "os-theme-dark" })
     })
 
     const needHelp = useCallback((event, index) => {

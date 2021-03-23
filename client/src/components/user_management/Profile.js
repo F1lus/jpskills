@@ -94,7 +94,7 @@ export default function Profile() {
 
                 <User permission={csoport}>
                     <div>
-                        <div className="container shadow rounded text-center bg-light mb-3 pt-3">
+                        <div className="container shadow rounded text-center bg-light mb-3 py-3">
                             <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
                         </div>
                     </div>
