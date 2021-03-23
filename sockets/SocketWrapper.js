@@ -1,7 +1,7 @@
 //Vizsga lekérdezések
 const getExamContent = require('./exams/get/GetExamContent')
 const getExams = require('./exams/get/GetExams')
-const getProducts = require('./exams/get/GetProducts')
+const getProducts = require('./exams/get/GetExamConditions')
 const learnExam = require('./exams/get/LearnExam')
 
 //Vizsga leadás

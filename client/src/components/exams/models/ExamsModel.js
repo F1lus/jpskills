@@ -6,12 +6,14 @@ export default (rawExamArray) => {
             if (!exam[2] || exam[2] === 'null' || exam[2] === '') {
                 exam[2] = null
             }
+            console.log(exam)
             examList.push({
                 name: exam[0],
                 itemcode: exam[1],
                 comment: exam[2],
                 status: exam[3] === 1 ? 'Aktív' : 'Inaktív',
-                date: exam[4]
+                date: exam[4],
+                group: exam[5]
             })
         })
 

@@ -24,7 +24,8 @@ export default function ExamsTable(props) {
                     workName: value.name,
                     date: value.date,
                     itemcode: value.itemcode,
-                    status: value.status
+                    status: value.status,
+                    group: value.group
                 }
             )
         });
@@ -66,6 +67,11 @@ export default function ExamsTable(props) {
         {
             name: "Állapot",
             selector: row => row.status,
+            sortable: true
+        },
+        {
+            name: "Célcsoport",
+            selector: row => row.group,
             sortable: true
         }
     ]

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Redirect } from 'react-router-dom'
 
 import API from '../../BackendAPI'
-import {setLoad} from '../../store/ActionHandler'
+import { setLoad } from '../../store/ActionHandler'
 
 export default function CreateTest(props) {
 
@@ -14,8 +14,12 @@ export default function CreateTest(props) {
     const [comment, setComment] = useState('')
     const [examDoc, setExamDoc] = useState(null)
     const [result, setResult] = useState(null)
+
     const [items, setItems] = useState([])
     const [types, setTypes] = useState([])
+    const [groups, setGroups] = useState([])
+    const [group, setGroup] = useState(-10)
+
     const [uploaded, setUploaded] = useState(false)
     const [disable, setDisable] = useState(false)
 
@@ -37,29 +41,46 @@ export default function CreateTest(props) {
         setLoad(props.store, false)
     }, [props.store])
 
-    useEffect(() => {
-        socket.on('types-emitter', handleTypes)
+    const handleGroups = useCallback(groups => {
+        if (groups) {
+            setGroups(groups)
+        } else {
+            setGroups([])
+        }
+        setLoad(props.store, false)
+    }, [props.store])
 
-        socket.on('products-emitter', handleProducts)
+    useEffect(() => {
+        socket
+            .on('types-emitter', handleTypes)
+            .on('products-emitter', handleProducts)
+            .on('groups-emitter', handleGroups)
 
         return () => {
-            socket.off('types-emitter', handleTypes)
-
-            socket.off('products-emitter', handleProducts)
+            socket
+                .off('types-emitter', handleTypes)
+                .off('products-emitter', handleProducts)
+                .off('groups-emitter', handleGroups)
         }
     })
 
     const handleChange = useCallback(event => {
         switch (event.target.name) {
+            case 'group':
+                if(event.target.value !== 'A vizsga célcsoportja'){
+                    setGroup(event.target.value)
+                }else{
+                    setGroup(-10)
+                }
+                break
             case 'type':
                 if (event.target.value === 'A termék gyártója') {
                     setItems([])
-                    break
                 } else {
                     setLoad(props.store, true)
                     socket.emit('get-products', event.target.value)
-                    break
                 }
+                break
             case 'item':
                 if (event.target.value === 'A vizsga terméke' || event.target.value === 'Nem található termék') {
                     break
@@ -109,6 +130,7 @@ export default function CreateTest(props) {
         data.append('examName', examName)
         data.append('comment', comment)
         data.append('examDoc', examDoc)
+        data.append('targetGroup', group)
 
         setResult(null)
         API.post('/exams/upload', data, { headers: { 'Content-Type': `multipart/form-data; boundary=${data._boundary}` } })
@@ -147,7 +169,7 @@ export default function CreateTest(props) {
                 setDisable(false)
                 setLoad(props.store, false)
             })
-    }, [comment, examDoc, examName, item, permission, props.store])
+    }, [comment, examDoc, examName, item, permission, group, props.store])
 
     return (
         <div className="container shadow rounded p-3 bg-light mt-3">
@@ -177,6 +199,16 @@ export default function CreateTest(props) {
                             </select>
                         </div>
                     </div>
+                    <h4 className='alert alert-danger w-25'>A célcsoport később nem módosítható!</h4>
+                    <select name="group" className="w-100 rounded" onChange={handleChange}>
+                        <option defaultValue={-1}>A vizsga célcsoportja</option>
+                        <option value={-10}>- Minden csoport -</option>
+                        {groups.length === 0 ? <></> : groups.map((elem, index) => {
+                            return (
+                                <option key={index} value={elem.id}>{elem.groupName}</option>
+                            )
+                        })}
+                    </select>
                 </div>
 
                 <div className="form-group m-auto w-75">
@@ -196,7 +228,7 @@ export default function CreateTest(props) {
                     </label>
                 </div>
                 <div className="container">
-                    <input type="file" onChange={handleChange} name="examDoc" required/>
+                    <input type="file" onChange={handleChange} name="examDoc" required />
                 </div>
                 <div className="container text-center">
                     <button type="submit" className="btn btn-warning mt-3" value="Létrehozás" disabled={disable}>

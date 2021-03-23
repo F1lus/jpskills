@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2021. Már 20. 18:24
+-- Létrehozás ideje: 2021. Már 23. 19:19
 -- Kiszolgáló verziója: 10.4.17-MariaDB
 -- PHP verzió: 8.0.2
 
@@ -55,6 +55,17 @@ CREATE TABLE `exams` (
   `exam_modified_time` timestamp NULL DEFAULT NULL COMMENT 'ennek ideje',
   `exam_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'aktív-e',
   `points_required` double NOT NULL DEFAULT 0.6 COMMENT 'szükséges pontszám'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `exam_grouping`
+--
+
+CREATE TABLE `exam_grouping` (
+  `exam_id` int(11) NOT NULL,
+  `worker_usergroup_id` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 -- --------------------------------------------------------
@@ -265,6 +276,13 @@ ALTER TABLE `exams`
   ADD KEY `exam_itemcode` (`exam_itemcode`);
 
 --
+-- A tábla indexei `exam_grouping`
+--
+ALTER TABLE `exam_grouping`
+  ADD UNIQUE KEY `exam_id` (`exam_id`),
+  ADD KEY `worker_usergroup_id` (`worker_usergroup_id`);
+
+--
 -- A tábla indexei `exam_prepare`
 --
 ALTER TABLE `exam_prepare`
@@ -351,19 +369,19 @@ ALTER TABLE `admin_login`
 -- AUTO_INCREMENT a táblához `exams`
 --
 ALTER TABLE `exams`
-  MODIFY `exam_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'az utasítás formalapszáma', AUTO_INCREMENT=34;
+  MODIFY `exam_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'az utasítás formalapszáma', AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT a táblához `exam_prepare`
 --
 ALTER TABLE `exam_prepare`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT a táblához `exam_result`
 --
 ALTER TABLE `exam_result`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT a táblához `items`
@@ -375,25 +393,25 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT a táblához `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT a táblához `results`
 --
 ALTER TABLE `results`
-  MODIFY `results_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
+  MODIFY `results_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
 
 --
 -- AUTO_INCREMENT a táblához `skills`
 --
 ALTER TABLE `skills`
-  MODIFY `skills_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `skills_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT a táblához `skill_archive`
 --
 ALTER TABLE `skill_archive`
-  MODIFY `archive_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `archive_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT a táblához `workers`
@@ -416,6 +434,13 @@ ALTER TABLE `admin_login`
 --
 ALTER TABLE `exams`
   ADD CONSTRAINT `exams_ibfk_1` FOREIGN KEY (`exam_itemcode`) REFERENCES `items` (`Itemcode`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `exam_grouping`
+--
+ALTER TABLE `exam_grouping`
+  ADD CONSTRAINT `exam_grouping_ibfk_1` FOREIGN KEY (`exam_id`) REFERENCES `exams` (`exam_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `exam_grouping_ibfk_2` FOREIGN KEY (`worker_usergroup_id`) REFERENCES `workers` (`worker_usergroup_id_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Megkötések a táblához `exam_prepare`

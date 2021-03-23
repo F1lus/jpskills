@@ -6,6 +6,10 @@ module.exports = socket => {
 
     const getTypes = async () => socket.emit('types-emitter', await dbconnect.selectProductTypes())
 
-    socket.on('get-products', getProducts)
-    socket.on('get-types', getTypes)
+    const getGroups = async () => socket.emit('groups-emitter', await dbconnect.selectUserGroups())
+
+    socket
+        .on('get-products', getProducts)
+        .on('get-types', getTypes)
+        .on('get-groups', getGroups)
 }

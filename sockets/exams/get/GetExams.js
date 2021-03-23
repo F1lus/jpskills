@@ -32,7 +32,8 @@ module.exports = (socket) => {
                 result.itemCode,
                 result.comment,
                 result.status,
-                dateFormat(('' + result.created))
+                dateFormat(('' + result.created)),
+                result.group
             ])
         })
 

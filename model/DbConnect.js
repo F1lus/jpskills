@@ -15,7 +15,7 @@ class Connection {
 
     /**
      * 
-     * @constructor -> A kapcsolat kiépítése
+     * @constructor A kapcsolat kiépítése
      * @property con -> connection rövidítése, ez felel a közvetlen kapcsolatért az adatbázissal
      */
 
@@ -37,6 +37,29 @@ class Connection {
         } catch (error) {
             console.log(error.message)
         }
+    }
+
+    selectUserGroups = async () => {
+        const groups = []
+        try {
+
+            const rawGroups = await this.con('workers')
+                .distinct('worker_usergroup_id_id', 'worker_usergroup')
+                .whereNot('worker_usergroup', 'admin')
+                .andWhereNot('worker_usergroup', 'Adminisztrátor')
+                .andWhereNot('worker_usergroup', 'superuser')
+
+            rawGroups.forEach(group => {
+                groups.push({
+                    id: group.worker_usergroup_id_id,
+                    groupName: group.worker_usergroup
+                })
+            })
+
+        } catch (error) {
+            console.log(error.message)
+        }
+        return groups
     }
 
     archiveUser = async (workerId, superUserCardcode) => {
@@ -319,8 +342,8 @@ class Connection {
                     const skills = await this.con('skills')
                         .where('worker_id', worker.worker_id)
                         .andWhere('exam_id', exam.exam_id)
-                    
-                    const skillResult = skills[skills.length-1]
+
+                    const skillResult = skills[skills.length - 1]
 
                     const maxPoints = await this.countExamMaxPoints(exam.exam_id)
 
@@ -1140,16 +1163,33 @@ class Connection {
         let exams = []
         try {
             if (!userIsAdmin) {
+                const worker = await this.con('workers')
+                    .select('worker_usergroup_id_id')
+                    .where('worker_cardcode', cardcode)
+                    .first()
+
                 const examList = await this.con('exams')
-                    .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_creation_time'])
+                    .select(['exams.exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_creation_time', 'worker_usergroup_id'])
+                    .innerJoin('exam_grouping', 'exams.exam_id', 'exam_grouping.exam_id')
 
                 examList.forEach(result => {
-                    exams.push({
-                        examName: result.exam_name,
-                        itemCode: result.exam_itemcode,
-                        comment: result.exam_notes,
-                        created: result.exam_creation_time
-                    })
+                    if(result.worker_usergroup_id != null){
+                        if(result.worker_usergroup_id === worker.worker_usergroup_id_id){
+                            exams.push({
+                                examName: result.exam_name,
+                                itemCode: result.exam_itemcode,
+                                comment: result.exam_notes,
+                                created: result.exam_creation_time
+                            })
+                        }
+                    }else{
+                        exams.push({
+                            examName: result.exam_name,
+                            itemCode: result.exam_itemcode,
+                            comment: result.exam_notes,
+                            created: result.exam_creation_time
+                        })
+                    }
                 })
             } else {
                 const examList = await this.con('exams')
@@ -1171,73 +1211,104 @@ class Connection {
         return exams
     }
 
-    selectExams = async (user, userIsAdmin) => { //Általános vizsgainfók kiválasztása
+    selectExams = async (user, userIsAdmin) => {
         let exams = []
         try {
             if (userIsAdmin) {
                 const examList = await this.con('exams')
-                    .select(['exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
+                    .select(['exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time', 'worker_usergroup_id'])
+                    .innerJoin('exam_grouping', 'exams.exam_id', 'exam_grouping.exam_id')
                     .where('exam_creator', [user])
 
-                examList.forEach(exam => {
-                    exams.push({
-                        examName: exam.exam_name,
-                        itemCode: exam.exam_itemcode,
-                        comment: exam.exam_notes,
-                        status: exam.exam_status,
-                        created: exam.exam_creation_time
-                    })
-                })
+                for (const exam of examList) {
+                    if (exam.worker_usergroup_id == null) {
+                        exams.push({
+                            examName: exam.exam_name,
+                            itemCode: exam.exam_itemcode,
+                            comment: exam.exam_notes,
+                            status: exam.exam_status,
+                            created: exam.exam_creation_time,
+                            group: '-'
+                        })
+                    } else {
+                        const group = await this.con('workers')
+                            .select('worker_usergroup')
+                            .where('worker_usergroup_id_id', exam.worker_usergroup_id)
+                            .first()
+
+                        exams.push({
+                            examName: exam.exam_name,
+                            itemCode: exam.exam_itemcode,
+                            comment: exam.exam_notes,
+                            status: exam.exam_status,
+                            created: exam.exam_creation_time,
+                            group: group.worker_usergroup
+                        })
+                    }
+                }
             } else {
                 const worker = await this.con('workers')
-                    .select('worker_id')
+                    .select(['worker_id', 'worker_usergroup_id_id', 'worker_usergroup'])
                     .where('worker_cardcode', user)
                     .first()
 
                 if (worker) {
                     const examList = await this.con('exams')
-                        .select(['exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time'])
-                        .where('exam_status', 1)
+                        .select(['exams.exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time', 'worker_usergroup_id'])
+                        .innerJoin('exam_grouping', 'exams.exam_id', 'exam_grouping.exam_id')
+                        .andWhere('exam_status', 1)
 
-                    for(const exam of examList){
-                        const skills = await this.con('skills')
-                            .where('exam_id', exam.exam_id)
-                            .andWhere('worker_id', worker.worker_id)
-                        
-                        if(skills.length > 0){
-                            const archived = await this.con('skills')
-                                .innerJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
-                                .where('exam_id', exam.exam_id)
-                                .andWhere('worker_id', worker.worker_id)
-                            
-                            if(skills.length === archived.length){
-                                examList.forEach(exam => {
+                    for (const exam of examList) {
+                        if (exam.worker_usergroup_id != null) {
+                            if (exam.worker_usergroup_id === worker.worker_usergroup_id_id) {
+                                const skills = await this.con('skills')
+                                    .where('exam_id', exam.exam_id)
+                                    .andWhere('worker_id', worker.worker_id)
+
+                                if (skills.length > 0) {
+                                    const archived = await this.con('skills')
+                                        .innerJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                                        .where('exam_id', exam.exam_id)
+                                        .andWhere('worker_id', worker.worker_id)
+
+                                    if (skills.length === archived.length) {
+                                        exams.push({
+                                            examName: exam.exam_name,
+                                            itemCode: exam.exam_itemcode,
+                                            comment: exam.exam_notes,
+                                            status: exam.exam_status,
+                                            created: exam.exam_creation_time,
+                                            group: worker.worker_usergroup
+                                        })
+                                    }
+                                } else {
                                     exams.push({
                                         examName: exam.exam_name,
                                         itemCode: exam.exam_itemcode,
                                         comment: exam.exam_notes,
                                         status: exam.exam_status,
-                                        created: exam.exam_creation_time
+                                        created: exam.exam_creation_time,
+                                        group: worker.worker_usergroup
                                     })
-                                })
+                                }
                             }
                         }else{
-                            examList.forEach(exam => {
-                                exams.push({
-                                    examName: exam.exam_name,
-                                    itemCode: exam.exam_itemcode,
-                                    comment: exam.exam_notes,
-                                    status: exam.exam_status,
-                                    created: exam.exam_creation_time
-                                })
+                            exams.push({
+                                examName: exam.exam_name,
+                                itemCode: exam.exam_itemcode,
+                                comment: exam.exam_notes,
+                                status: exam.exam_status,
+                                created: exam.exam_creation_time,
+                                group: 'Mindenki'
                             })
                         }
+
                     }
 
                 }
             }
         } catch (error) {
-            console.log(error)
+            console.log(error.message)
         }
         return exams
     }
@@ -1427,7 +1498,7 @@ class Connection {
     ----------------------------------------------------------------------
     */
 
-    insertExam = async (arr) => {
+    insertExam = async (arr, group) => {
         let message = ''
         try {
             await this.con.transaction(async trx => {
@@ -1458,8 +1529,8 @@ class Connection {
                     .where(this.con.raw('exam_name = ?', [arr[1]]))
                     .first()
                     .transacting(trx)
-                
-                if(nameCount.count !== 0){
+
+                if (nameCount.count !== 0) {
                     message = 'mysql_name_exists_error'
                     return
                 }
@@ -1469,9 +1540,27 @@ class Connection {
                     'exam_notes, exam_docs, exam_creator, exam_modifier) ' +
                     'VALUES (?)', [arr])
                     .transacting(trx)
-
                 if (insert.length !== 0) {
-                    message = 200
+                    if (group == -10) {
+                        const insertGrouping = await this.con('exam_grouping')
+                            .insert({
+                                exam_id: insert[0].insertId,
+                                worker_usergroup_id: null
+                            })
+                            .transacting(trx)
+                        if (insertGrouping.length !== null) {
+                            message = 200
+                        }
+                    } else {
+                        const insertGrouping = await this.con.raw(
+                            'INSERT INTO exam_grouping SET exam_id = ?, worker_usergroup_id = ? ',
+                            [insert[0].insertId, group])
+                            .transacting(trx)
+
+                        if (insertGrouping.length !== null) {
+                            message = 200
+                        }
+                    }
                 }
             })
         } catch (error) {

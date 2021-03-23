@@ -19,7 +19,9 @@ export default function ExamWrapper() {
         setLoad(store, true)
 
         if (permission === 'admin') {
-            socket.emit('get-types')
+            socket
+                .emit('get-types')
+                .emit('get-groups')
         }
         socket.emit('exams-get-signal')
 
