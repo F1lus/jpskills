@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { useParams, Redirect } from 'react-router-dom'
-import {useStore} from 'react-redux'
+import { useStore } from 'react-redux'
 
 import model from '../models/ResultModel'
-import {setLoad} from '../../store/ActionHandler'
+import { setLoad } from '../../store/ActionHandler'
 
 import { SocketContext } from '../../GlobalSocket'
 
@@ -47,9 +47,13 @@ export default function ExamResults() {
             <br />
             <h2><b>A sikeres vizsga feltétele minimum {Math.floor(result.maxPoints * result.minPercent)} pont ({result.minPercent * 100}%)</b></h2>
             <br />
-            <h2><b>Az Ön eredménye: <span className={result.completed ? 'text-success' : 'text-danger'}>
-                {result.userScore}/{result.maxPoints}
-            </span></b></h2>
+            <h2>
+                <b>Az Ön eredménye:
+                    <span className={result.completed ? 'text-success' : 'text-danger'}>
+                        {result.userScore}/{result.maxPoints}
+                    </span>
+                </b>
+            </h2>
             <hr className="w-75" />
             <h1>A vizsga ezáltal {
                 result.completed ?

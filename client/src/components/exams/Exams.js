@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 
 import model from './models/ExamsModel'
 
-import {setLoad} from '../store/ActionHandler'
+import { setLoad } from '../store/ActionHandler'
 
 import ExamsTable from './ExamsTable'
 import { Admin, User } from '../user_management/handlers/PermissionHandler'

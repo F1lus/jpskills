@@ -3,7 +3,7 @@ import { useSelector, useStore } from 'react-redux'
 
 import { SocketContext } from '../GlobalSocket'
 import { setLoad } from '../store/ActionHandler'
- 
+
 import Exams from './Exams'
 import CreateTest from './create/CreateTest'
 import { Admin } from '../user_management/handlers/PermissionHandler'

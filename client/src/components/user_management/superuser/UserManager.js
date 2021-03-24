@@ -63,7 +63,7 @@ export default function UserManager() {
             <button className='btn btn-danger float-right' onClick={e => {
                 archiveUser(e, userInfo[0])
             }}>Felhasználó vizsgáinak archiválása</button>
-            <br/><br/>
+            <br /><br />
             <h1>{userInfo[1]}</h1>
 
             <hr className="w-75" />
@@ -81,7 +81,7 @@ export default function UserManager() {
             <hr className='w-75 my-3' />
 
             <Archived store={store} socket={socket} />
-            
+
         </div>
     )
 }

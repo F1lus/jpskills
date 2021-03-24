@@ -274,7 +274,7 @@ input:checked[type="checkbox"]:before {
                 inset 2px 2px 6px rgba(0,0,0,1);
 }
 
-/*page transition animation*/
+/*page transition fade animation*/
 .page {
     position: absolute;
     top: 40px;

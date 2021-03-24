@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Redirect, Prompt } from 'react-router-dom'
 
-import {setLoad} from '../../store/ActionHandler'
+import { setLoad } from '../../store/ActionHandler'
 
 export default function RenderContent(props) {
 

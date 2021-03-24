@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react'
-import {useStore} from 'react-redux'
+import { useStore } from 'react-redux'
 import CryptoJS from 'crypto-js'
 
 import API from '../BackendAPI'
-import {setLoad} from '../store/ActionHandler'
+import { setLoad } from '../store/ActionHandler'
 
 export default function Login() {
 
@@ -119,10 +119,10 @@ export default function Login() {
                         document.getElementById('szam').classList.remove('text-success')
                     }
 
-                    if(password === password2){
+                    if (password === password2) {
                         document.getElementById('egyeztet').classList.remove('text-danger')
                         document.getElementById('egyeztet').classList.add('text-success')
-                    }else{
+                    } else {
                         document.getElementById('egyeztet').classList.remove('text-success')
                         document.getElementById('egyeztet').classList.add('text-danger')
                     }
@@ -134,11 +134,11 @@ export default function Login() {
                     setPassword2(event.target.value)
                 }
 
-                if(register && password2.length > 0){
-                    if(password === event.target.value){
+                if (register && password2.length > 0) {
+                    if (password === event.target.value) {
                         document.getElementById('egyeztet').classList.remove('text-danger')
                         document.getElementById('egyeztet').classList.add('text-success')
-                    }else{
+                    } else {
                         document.getElementById('egyeztet').classList.remove('text-success')
                         document.getElementById('egyeztet').classList.add('text-danger')
                     }
@@ -192,8 +192,6 @@ export default function Login() {
                             </ul>
                         </div>) : null}
 
-
-
                     {register ?
                         <div>
                             <div className="form-group m-auto">
@@ -201,7 +199,7 @@ export default function Login() {
                                 <label htmlFor="password" className="label-name">
                                     <span className="content-name">
                                         Jelszó megerősítése
-                                </span>
+                                    </span>
                                 </label>
                             </div>
 

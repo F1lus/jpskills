@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { useStore } from 'react-redux'
 
 import model from '../models/ExamsModel'
-import {setLoad} from '../../store/ActionHandler'
+import { setLoad } from '../../store/ActionHandler'
 
 import { SocketContext } from '../../GlobalSocket'
 
@@ -33,7 +33,7 @@ export default function Learn() {
 
     useEffect(() => {
         OverlayScrollbars(document.getElementById("learn"), { className: "os-theme-dark" });
-    },[])
+    }, [])
 
     return (
         <div className="container text-center p-3 mb-3" id="learn">
@@ -59,5 +59,4 @@ export default function Learn() {
             </div>
         </div>
     )
-
 }

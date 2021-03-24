@@ -35,7 +35,7 @@ export default function Routing({ component: Component, allowed, ...rest }) {
         setLoad(store, false)
 
         const bar = OverlayScrollbars(document.querySelectorAll('body'), { className: "os-theme-dark" })
-        bar.scroll({y: '0%'}, 500)
+        bar.scroll({ y: '0%' }, 500)
 
         socket
             .emit('request-login-info')

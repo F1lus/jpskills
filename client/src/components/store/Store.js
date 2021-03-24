@@ -1,4 +1,4 @@
-import {combineReducers, createStore} from 'redux'
+import { combineReducers, createStore } from 'redux'
 
 import userReducer from './UserManager'
 import loadReducer from './LoadingManager'

@@ -3,7 +3,7 @@ import { useParams, Redirect } from 'react-router-dom'
 
 import { useStore } from 'react-redux'
 
-import {setLoad} from '../../store/ActionHandler'
+import { setLoad } from '../../store/ActionHandler'
 
 import ListManager from './ListManager'
 import AddQuestion from './AddQuestion'

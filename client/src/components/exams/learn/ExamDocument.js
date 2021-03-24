@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import {useStore} from 'react-redux'
+import { useStore } from 'react-redux'
 
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 
 import { SocketContext } from '../../GlobalSocket'
-import {setLoad} from '../../store/ActionHandler'
+import { setLoad } from '../../store/ActionHandler'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 

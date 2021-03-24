@@ -1,10 +1,10 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Redirect, useParams } from 'react-router-dom'
-import {useStore} from 'react-redux'
+import { useStore } from 'react-redux'
 
 import RenderContent from './RenderContent'
 import model from '../models/QuestionsModel'
-import {setLoad} from '../../store/ActionHandler'
+import { setLoad } from '../../store/ActionHandler'
 
 import { SocketContext } from '../../GlobalSocket'
 

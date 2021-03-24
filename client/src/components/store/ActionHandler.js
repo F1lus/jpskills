@@ -1,4 +1,4 @@
-import {setName, setPerm, setStatus} from './UserManager'
+import { setName, setPerm, setStatus } from './UserManager'
 import { setLoading } from './LoadingManager'
 
 export const setNameHandler = (store, user) => {
@@ -14,9 +14,9 @@ export const setStatusHandler = (store, status) => {
 }
 
 export const setLoad = (store, loading) => {
-    if(!loading){
+    if (!loading) {
         setTimeout(() => store.dispatch(setLoading(loading)), 1000)
-    }else{
+    } else {
         store.dispatch(setLoading(loading))
     }
 }

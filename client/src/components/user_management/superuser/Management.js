@@ -4,7 +4,7 @@ import { Redirect, NavLink } from 'react-router-dom'
 import DataTable, { createTheme } from 'react-data-table-component'
 
 import { SocketContext } from '../../GlobalSocket'
-import {setLoad} from '../../store/ActionHandler'
+import { setLoad } from '../../store/ActionHandler'
 
 export default function Management() {
 
@@ -124,7 +124,7 @@ export default function Management() {
 
             <button className='btn btn-danger float-right' onClick={logout}>Kilépés</button>
             <h2 className='float-center'>Üdvözöljük, {user}</h2>
-            <hr className='mt-5 w-75'/>
+            <hr className='mt-5 w-75' />
 
             <h3>A képzettségi mátrixban létező felhasználók száma: {users.length} fő</h3>
 
