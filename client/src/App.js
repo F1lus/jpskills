@@ -20,6 +20,7 @@ import Routing from './components/user_management/handlers/Routing'
 import Management from './components/user_management/superuser/Management'
 import UserManager from './components/user_management/superuser/UserManager'
 import Load from './components/loading/Load'
+import AdminManager from './components/user_management/superuser/AdminManager'
 
 export default function App() {
 
@@ -58,6 +59,8 @@ export default function App() {
             <Routing exact path='/management' allowed={['superuser']} component={Management} />
 
             <Routing exact path='/management/:user' allowed={['superuser']} component={UserManager} />
+
+            <Routing exact path='/management/admin/:user' allowed={['superuser']} component={AdminManager} />
 
             <Routing exact path='/logout' allowed={['*']} component={Load} />
           </Switch>

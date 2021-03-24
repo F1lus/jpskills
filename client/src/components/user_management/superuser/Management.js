@@ -55,7 +55,12 @@ export default function Management() {
             tempList.push({
                 name: element.name,
                 cardcode: (
-                    <NavLink to={`/management/${cardcode}`}>
+                    <NavLink to={
+                        element.group === 'admin' || element.group === 'Adminisztrátor' ?
+                            `/management/admin/${cardcode}`
+                            :
+                            `/management/${cardcode}`
+                    }>
                         <button className='btn btn-outline-blue'>
                             Kezelés
                         </button>
@@ -82,7 +87,12 @@ export default function Management() {
             tempList.push({
                 name: element.name,
                 cardcode: (
-                    <NavLink to={`/management/${cardcode}`}>
+                    <NavLink to={
+                        element.group === 'admin' || element.group === 'Adminisztrátor' ?
+                            `/management/admin/${cardcode}`
+                            :
+                            `/management/${cardcode}`
+                    }>
                         <button className='btn btn-outline-blue'>
                             Kezelés
                         </button>

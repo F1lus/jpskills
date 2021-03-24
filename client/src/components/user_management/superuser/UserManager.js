@@ -25,7 +25,9 @@ export default function UserManager() {
     }, [socket, store])
 
     const handleUserInfo = useCallback(userinfo => {
-        setUserInfo([userinfo[0].id, userinfo[0].name])
+        if(userinfo.length > 0){
+            setUserInfo([userinfo[0].id, userinfo[0].name])
+        }
     }, [])
 
     const commonHandler = useCallback(() => {
@@ -67,14 +69,6 @@ export default function UserManager() {
             <h1>{userInfo[1]}</h1>
 
             <hr className="w-75" />
-
-            <div className='alert alert-danger w-50 m-auto text-center mb-3'>
-                <h2>CSALÁSSAL GYANÚSÍTOTT</h2>
-                <hr className="w-75" />
-                <h4>Indoklás: a fejlesztői konzol használatának kísérlete.</h4>
-                <br />
-                <small>Ezt az üzenetet azért látja, mivel a rendszer a felhasználónál gyanús tevékenységet rögzített.</small>
-            </div>
 
             <Skills store={store} socket={socket} />
 

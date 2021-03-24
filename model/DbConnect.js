@@ -203,18 +203,16 @@ class Connection {
     }
 
     getSpecificUser = async cardcode => {
-        return (await this.getExistingUsers()).filter(user => user.cardcode == cardcode)
+        return (await this.getExistingUsers(0)).filter(user => user.cardcode == cardcode)
     }
 
-    getExistingUsers = async () => {
+    getExistingUsers = async cardcode => {
         const users = []
 
         try {
             const existingUsers = await this.con('workers')
                 .select(['worker_cardcode', 'worker_id', 'worker_name', 'worker_usergroup', 'worker_active'])
-                .whereNot('worker_usergroup', 'superuser')
-                .andWhereNot('worker_usergroup', 'Adminisztrátor')
-                .andWhereNot('worker_usergroup', 'admin')
+                .whereNot('worker_cardcode', cardcode)
             existingUsers.forEach(user => {
                 users.push({
                     id: user.worker_id,
