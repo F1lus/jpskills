@@ -9,5 +9,21 @@ module.exports = socket => {
             socket.emit('existing-users', await DbConnect.getExistingUsers(session.cardNum))
         }
     }
-    socket.on('request-users', getExistingUsers)
+
+    const getSpecificUser = async cardcode => {
+        if(session.perm === 'superuser'){
+            socket.emit('userinfo', await DbConnect.getSpecificUser(cardcode))
+        }
+    }
+
+    const getAdmins = async user => {
+        if(session.perm === 'superuser'){
+            socket.emit('admin-list', await DbConnect.getAdmins(user))
+        }
+    }
+
+    socket
+        .on('get-userinfo', getSpecificUser)
+        .on('request-users', getExistingUsers)
+        .on('get-admins', getAdmins)
 }

@@ -22,6 +22,7 @@ const logout = require('./users/Logout')
 //Superuser műveletek
 const getUsers = require('./users/GetUsers')
 const skillManager = require('./exams/update/SkillManager')
+const adminManager = require('./users/AdminManager')
 
 /**
  * Socket kapcsolat kezelése
@@ -59,6 +60,7 @@ module.exports = (socket) => {
     //Superuser műveletek
     getUsers(socket)
     skillManager(socket)
+    adminManager(socket)
 
     //Egyéb események
     socket.on('exam-modified', () => {

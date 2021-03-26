@@ -14,6 +14,13 @@ export default function AdminManager(){
     const store = useStore()
 
     const [userInfo, setUserInfo] = useState([])
+    const [admins, setAdmins] = useState([])
+    const [selectedAdmin, setSelectedAdmin] = useState(-1)
+
+    const [exams, setExams] = useState([])
+    const [displayList, setDisplayList] = useState([])
+
+    const [warning, setWarning] = useState(null)
 
     //Backend kezelők
 
@@ -23,39 +30,74 @@ export default function AdminManager(){
         }
     }, [])
 
-    const commonHandler = useCallback(() => {
-        socket
-            .emit('exams-by-cardcode', user)
-            .emit('get-archived', user)
-    }, [user, socket])
+    const handleAdmins = useCallback(admins => {
+        if(admins.length > 0){
+            setAdmins(admins)
+        }
+    }, [])
 
-    //Adatok feldolgozása
+    const handleExams = useCallback(exams => {
+        if(exams.length > 0){
+            setExams(exams)
+
+            setDisplayList(exams)
+        }
+    }, [])
+
+    const handleChange = useCallback(event => {
+        switch(event.target.name){
+            case 'selectAdmin':
+                if(event.target.value !== -1){
+                    setSelectedAdmin(event.target.value)
+                }
+                break
+            default:
+                break
+        }
+    }, [])
+
+    const search = useCallback(event => {
+        const value = event.target.value.toLowerCase().trim()
+
+        const filterBySearch = exams.filter(exam => {
+            return exam.examName.toLowerCase().includes(value) || exam.examCode.toLowerCase().includes(value)
+        })
+
+        setDisplayList(filterBySearch)
+    }, [exams])
+
+    const delUser = useCallback(event => {
+        event.preventDefault()
+    }, [])
 
     useEffect(() => {
-
-        setLoad(store, true)
+        
         socket
-            .emit('exams-by-cardcode', user)
-            .emit('get-archived', user)
+            .emit('get-userinfo', user)
+            .emit('get-admins', user)
+            .emit('get-admin-exams', user)
+
             .on('userinfo', handleUserInfo)
-            .on('skill-update', commonHandler)
+            .on('admin-list', handleAdmins)
+            .on('admin-exams', handleExams)
 
         return () => {
             socket
                 .off('userinfo', handleUserInfo)
-                .off('skill-update', commonHandler)
+                .off('admin-list', handleAdmins)
+                .off('admin-exams', handleExams)
         }
-    }, [socket, commonHandler, handleUserInfo, user, store])
+    }, [socket, handleUserInfo, handleExams, handleAdmins, user, store])
 
     const dataColumns = [
         {
-            name: 'Művelet',
-            selector: row => row.operations,
-            sortable: false
-        },
-        {
             name: 'Vizsga neve',
             selector: row => row.examName,
+            sortable: true
+        },
+        {
+            name: 'Cikkszám',
+            selector: row => row.examCode,
             sortable: true
         },
         {
@@ -96,14 +138,31 @@ export default function AdminManager(){
 
             <hr className="w-75" />
 
-            <select className="w-50 rounded">
-                <option value="0">Kérem válasszon</option>
+            {warning ? <h6 className='alert alert-danger'>Válassza ki, hogy kire ruházza át a tulajdonjogot!</h6> : null}
+
+            <select name='selectAdmin' className="w-50 rounded" onChange={handleChange}>
+                <option value={-1}>Kérem válasszon</option>
+                {admins.length > 0 ? admins.map((admin, index) => {
+                    return <option key={index} value={admin.id}>{admin.name}</option>
+                }) : null}
             </select>
 
             <hr className="w-75" />
 
+            <form className="mb-3 w-50">
+                <div className="form-group m-auto">
+                    <input type="text" name="search" onChange={search} autoComplete="off" required />
+                    <label htmlFor="search" className="label-name">
+                        <span className="content-name">
+                            Keresés vizsganév, vagy cikkszám alapján
+                        </span>
+                    </label>
+                </div>
+            </form>
+
             <DataTable
                 columns={dataColumns}
+                data={displayList}
                 pagination={true}
                 fixedHeader={true}
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}

@@ -39,6 +39,32 @@ class Connection {
         }
     }
 
+    selectExamsByCreator = async cardcode => {
+        const exams = []
+
+        try {
+
+            const selectedExams = await this.con('exams')
+                .select(['exam_id', 'exam_name', 'exam_creation_time', 'exam_modified_time', 'exam_itemcode'])
+                .where(this.con.raw('exam_creator = ?', cardcode))
+
+            selectedExams.forEach(exam => {
+                exams.push({
+                    id: exam.exam_id,
+                    examName: exam.exam_name,
+                    examCode: exam.exam_itemcode,
+                    created: exam.exam_creation_time,
+                    modified: exam.exam_modified_time || ' - '
+                })
+            })
+
+        } catch (error) {
+            console.log(error.message)
+        }
+
+        return exams
+    }
+
     selectUserGroups = async () => {
         const groups = []
         try {
@@ -200,6 +226,14 @@ class Connection {
         } catch (error) {
             console.log(error.message)
         }
+    }
+
+    getAdmins = async cardcode => {
+        return (await this.getExistingUsers(0)).filter(user => {
+            if (user.cardcode != cardcode) {
+                return user.group === 'Adminisztrátor' || user.group === 'admin'
+            }
+        })
     }
 
     getSpecificUser = async cardcode => {
@@ -1171,8 +1205,8 @@ class Connection {
                     .innerJoin('exam_grouping', 'exams.exam_id', 'exam_grouping.exam_id')
 
                 examList.forEach(result => {
-                    if(result.worker_usergroup_id != null){
-                        if(result.worker_usergroup_id === worker.worker_usergroup_id_id){
+                    if (result.worker_usergroup_id != null) {
+                        if (result.worker_usergroup_id === worker.worker_usergroup_id_id) {
                             exams.push({
                                 examName: result.exam_name,
                                 itemCode: result.exam_itemcode,
@@ -1180,7 +1214,7 @@ class Connection {
                                 created: result.exam_creation_time
                             })
                         }
-                    }else{
+                    } else {
                         exams.push({
                             examName: result.exam_name,
                             itemCode: result.exam_itemcode,
@@ -1290,7 +1324,7 @@ class Connection {
                                     })
                                 }
                             }
-                        }else{
+                        } else {
                             exams.push({
                                 examName: exam.exam_name,
                                 itemCode: exam.exam_itemcode,

@@ -16,7 +16,6 @@ module.exports = (socket) => {
     const userStatsByCardcode = async cardcode => {
         if(session.perm === 'superuser'){
             socket.emit('user-exams', await dbconnect.globalStatisticsForUser(cardcode, false))
-            socket.emit('userinfo', await dbconnect.getSpecificUser(cardcode))
         }
     }
     socket.on('exams-by-cardcode', userStatsByCardcode)
