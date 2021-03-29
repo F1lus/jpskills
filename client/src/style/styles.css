@@ -148,6 +148,12 @@ input[type="file"] {
     left: 2%;
 }
 
+/*login*/
+#cookies {
+    position: fixed;
+    bottom: 0;
+}
+
 /*form animation*/
 .form-group {
     width: 90%;

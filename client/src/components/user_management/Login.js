@@ -221,9 +221,9 @@ export default function Login() {
                 </div>
             </div>
 
-            <div className="container alert alert-danger shadow text-center rounded">
-                <h3>Az oldal működéséhez sütiket használunk!</h3>
-                <a href="https://ec.europa.eu/info/cookies_hu" target="_blank" className="text-danger">További információért kattints.</a>
+            <div className="container alert alert-primary shadow text-center rounded w-75" id="cookies">
+                <h3>Az oldal megfelelő működéséhez elengedhetetlen a sütik használata!</h3>
+                <a href="https://ec.europa.eu/info/cookies_hu" target="_blank" rel="noopener noreferrer">További információért kattintson ide!</a>
             </div>
         </div>
     )
