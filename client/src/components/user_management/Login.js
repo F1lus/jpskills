@@ -159,8 +159,8 @@ export default function Login() {
     }, [])
 
     return (
-        <div className="d-flex container text-center align-items-center justify-content-center vh-100 w-50">
-            <div className="container shadow rounded bg-light p-3">
+        <div className="d-flex flex-column container text-center align-items-center justify-content-center vh-100 w-50">
+            <div className="container shadow rounded bg-light p-3 mb-3">
                 {register ? <h2><p>Kérjük töltse ki a mezőket!</p></h2> : <h2><p>A folytatáshoz jelentkezzen be!</p></h2>}
                 {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : null}
                 <form onSubmit={handleSubmit}>
@@ -219,6 +219,11 @@ export default function Login() {
                         {register ? 'Vegye ki a pipát, ha már van fiókja!' : 'Pipálja be, ha még nincs fiókja!'}
                     </label>
                 </div>
+            </div>
+
+            <div className="container alert alert-danger shadow text-center rounded">
+                <h3>Az oldal működéséhez sütiket használunk!</h3>
+                <a href="https://ec.europa.eu/info/cookies_hu" target="_blank" className="text-danger">További információért kattints.</a>
             </div>
         </div>
     )
