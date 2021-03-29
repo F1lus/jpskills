@@ -39,6 +39,44 @@ class Connection {
         }
     }
 
+    deleteAdmin = async (cardcode, replaceAdmin) => {
+        try {
+            
+            await this.con.transaction(async trx => {
+
+                const validCardcode = await this.con('admin_login')
+                    .select('cardcode')
+                    .where(this.con.raw('cardcode = ?', cardcode))
+                    .first()
+                    .transacting(trx)
+
+                const validAdmin = await this.con('admin_login')
+                    .select('cardcode')
+                    .where(this.con.raw('cardcode = ?', replaceAdmin))
+                    .first()
+                    .transacting(trx)
+
+                if(validCardcode && validAdmin){
+                    await this.con('exams')
+                        .update({
+                            exam_creator: validAdmin.cardcode
+                        })
+                        .where('exam_creator', validCardcode.cardcode)
+                        .transacting(trx)
+
+                    await this.con('admin_login')
+                        .delete()
+                        .where('cardcode', validCardcode.cardcode)
+                        .transacting(trx)
+                }
+
+            })
+
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
     selectExamsByCreator = async cardcode => {
         const exams = []
 
@@ -54,7 +92,7 @@ class Connection {
                     examName: exam.exam_name,
                     examCode: exam.exam_itemcode,
                     created: exam.exam_creation_time,
-                    modified: exam.exam_modified_time || ' - '
+                    modified: exam.exam_modified_time || '-'
                 })
             })
 
@@ -229,11 +267,35 @@ class Connection {
     }
 
     getAdmins = async cardcode => {
-        return (await this.getExistingUsers(0)).filter(user => {
-            if (user.cardcode != cardcode) {
-                return user.group === 'Adminisztrátor' || user.group === 'admin'
+        const admins = []
+
+        try {
+            
+            const validAdmins = await this.con('admin_login')
+                .select('cardcode')
+                .where(this.con.raw('cardcode <> ?', cardcode))
+
+            for(const admin of validAdmins){
+                const workerData = await this.con('workers')
+                    .select(['worker_name', 'worker_cardcode', 'worker_usergroup'])
+                    .where('worker_cardcode', admin.cardcode)
+                    .first()
+                
+                if(workerData){
+                    if(workerData.worker_usergroup === 'admin' || workerData.worker_usergroup === 'Adminisztrátor'){
+                        admins.push({
+                            name: workerData.worker_name,
+                            cardcode: workerData.worker_cardcode
+                        })
+                    }
+                }
             }
-        })
+
+        } catch (error) {
+            console.log(error.message)
+        }
+
+        return admins
     }
 
     getSpecificUser = async cardcode => {

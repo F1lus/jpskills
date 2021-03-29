@@ -20,7 +20,7 @@ export default function AdminManager(){
     const [exams, setExams] = useState([])
     const [displayList, setDisplayList] = useState([])
 
-    const [warning, setWarning] = useState(null)
+    const [warning, setWarning] = useState(false)
 
     //Backend kezelők
 
@@ -28,21 +28,22 @@ export default function AdminManager(){
         if(userinfo.length > 0){
             setUserInfo([userinfo[0].id, userinfo[0].name])
         }
-    }, [])
+
+        setLoad(store, false)
+    }, [store])
 
     const handleAdmins = useCallback(admins => {
-        if(admins.length > 0){
-            setAdmins(admins)
-        }
-    }, [])
+        setAdmins(admins)
+
+        setLoad(store, false)
+    }, [store])
 
     const handleExams = useCallback(exams => {
-        if(exams.length > 0){
-            setExams(exams)
+        setExams(exams)
+        setDisplayList(exams)
 
-            setDisplayList(exams)
-        }
-    }, [])
+        setLoad(store, false)
+    }, [store])
 
     const handleChange = useCallback(event => {
         switch(event.target.name){
@@ -68,10 +69,23 @@ export default function AdminManager(){
 
     const delUser = useCallback(event => {
         event.preventDefault()
-    }, [])
+
+        if(selectedAdmin === -1){
+            setWarning(true)
+        }else{
+            setWarning(false)
+            setLoad(store, true)
+            socket.emit('delete-admin', user, selectedAdmin)
+        }
+    }, [selectedAdmin, socket, user, store])
+
+    const removeHandler = useCallback(() => {
+        socket.emit('get-admin-exams', user)
+    }, [user, socket])
 
     useEffect(() => {
-        
+        setLoad(store, true)
+
         socket
             .emit('get-userinfo', user)
             .emit('get-admins', user)
@@ -80,14 +94,16 @@ export default function AdminManager(){
             .on('userinfo', handleUserInfo)
             .on('admin-list', handleAdmins)
             .on('admin-exams', handleExams)
+            .on('admin-removed', removeHandler)
 
         return () => {
             socket
                 .off('userinfo', handleUserInfo)
                 .off('admin-list', handleAdmins)
                 .off('admin-exams', handleExams)
+                .off('admin-removed', removeHandler)
         }
-    }, [socket, handleUserInfo, handleExams, handleAdmins, user, store])
+    }, [socket, handleUserInfo, handleExams, handleAdmins, removeHandler, user, store])
 
     const dataColumns = [
         {
@@ -132,18 +148,18 @@ export default function AdminManager(){
                 <button className='btn btn-outline-blue float-left'>Vissza</button>
             </NavLink>
 
-            <button className='btn btn-danger float-right'>Felhasználó törlése</button>
+            <button className='btn btn-danger float-right' onClick={delUser}>Felhasználó törlése</button>
             <br /><br />
             <h1>{userInfo[1]}</h1>
 
             <hr className="w-75" />
 
-            {warning ? <h6 className='alert alert-danger'>Válassza ki, hogy kire ruházza át a tulajdonjogot!</h6> : null}
+            {warning ? <h6 className='alert alert-danger'>Még nem választotta ki, hogy törlés után kire szálljon a vizsgák tulajdonjoga</h6> : null}
 
             <select name='selectAdmin' className="w-50 rounded" onChange={handleChange}>
-                <option value={-1}>Kérem válasszon</option>
+                <option value={-1}>Válassza ki, hogy kire szálljon törlés után a vizsgák tulajdonjoga!</option>
                 {admins.length > 0 ? admins.map((admin, index) => {
-                    return <option key={index} value={admin.id}>{admin.name}</option>
+                    return <option key={index} value={admin.cardcode}>{admin.name}</option>
                 }) : null}
             </select>
 
