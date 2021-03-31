@@ -141,17 +141,11 @@ input[type="file"] {
     margin-top: 5vh;
 }
 
-#modify {
+#listen {
     position: fixed;
     z-index: 2;
     bottom: 0;
     left: 2%;
-}
-
-/*login*/
-#cookies {
-    position: fixed;
-    bottom: 0;
 }
 
 /*form animation*/
