@@ -39,7 +39,9 @@ export default function ExamModify() {
 
     const timeoutCb = useCallback(() => {
         const modify = document.getElementById('modify')
-        modify.classList.remove('alert-danger', 'alert-success')
+        if (modify.classList.contains('alert-danger', 'alert-success')) {
+            modify.classList.remove('alert-danger', 'alert-success')
+        }
         modify.innerHTML = null
 
         setCallTimeout(false)
@@ -111,7 +113,7 @@ export default function ExamModify() {
 
     return (
         <div className="container mt-5 text-center mb-3">
-            <div className="alert w-25" id="listen" />
+            <div className="alert w-25" id="modify" />
             {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
             <ModifyProps socket={socket} points={maxPoints} exam={examCode} />
             {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}

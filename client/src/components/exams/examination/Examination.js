@@ -43,9 +43,9 @@ export default function Examination() {
     }, [exam, handleContent, handleProps, socket, store])
 
     return (
-        <div className="page mt-3">
+        <div className="page mt-2">
             {examProps[2] === 0 ? <Redirect to='/exams' /> : null}
-            <div className='container bg-white rounded shadow py-3 mb-3 text-center'>
+            <div className='container bg-white rounded shadow py-3 mb-2 text-center'>
                 <h2>
                     <p>Vizsga: {examProps[0]}</p>
                 </h2>

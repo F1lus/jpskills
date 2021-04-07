@@ -87,7 +87,7 @@ export default function RenderContent(props) {
     }, [list])
 
     return (
-        <div className="page mt-3">
+        <div className="mt-2">
             {finished ? <Redirect to={`/exams/result/${props.exam}`} /> : null}
             {list.map((question, qId) => {
                 return (
@@ -116,7 +116,7 @@ export default function RenderContent(props) {
                         </li>
                     </ul>)
             })}
-            <div className="container text-center rounded bg-light shadow p-3 mb-3">
+            <div className="container text-center rounded bg-light shadow p-3 mb-2">
                 <button className="btn btn-warning" onClick={handleSubmit} disabled={disable}>Leadás</button>
             </div>
 
