@@ -41,8 +41,8 @@ export default function ExamModify() {
         const modify = document.getElementById('modify')
         if (modify.classList.contains('alert-danger', 'alert-success')) {
             modify.classList.remove('alert-danger', 'alert-success')
+            modify.innerHTML = null
         }
-        modify.innerHTML = null
 
         setCallTimeout(false)
     }, [])
