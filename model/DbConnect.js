@@ -41,7 +41,7 @@ class Connection {
 
     deleteAdmin = async (cardcode, replaceAdmin) => {
         try {
-            
+
             await this.con.transaction(async trx => {
 
                 const validCardcode = await this.con('admin_login')
@@ -56,7 +56,7 @@ class Connection {
                     .first()
                     .transacting(trx)
 
-                if(validCardcode && validAdmin){
+                if (validCardcode && validAdmin) {
                     await this.con('exams')
                         .update({
                             exam_creator: validAdmin.cardcode
@@ -270,19 +270,19 @@ class Connection {
         const admins = []
 
         try {
-            
+
             const validAdmins = await this.con('admin_login')
                 .select('cardcode')
                 .where(this.con.raw('cardcode <> ?', cardcode))
 
-            for(const admin of validAdmins){
+            for (const admin of validAdmins) {
                 const workerData = await this.con('workers')
                     .select(['worker_name', 'worker_cardcode', 'worker_usergroup'])
                     .where('worker_cardcode', admin.cardcode)
                     .first()
-                
-                if(workerData){
-                    if(workerData.worker_usergroup === 'admin' || workerData.worker_usergroup === 'Adminisztrátor'){
+
+                if (workerData) {
+                    if (workerData.worker_usergroup === 'admin' || workerData.worker_usergroup === 'Adminisztrátor') {
                         admins.push({
                             name: workerData.worker_name,
                             cardcode: workerData.worker_cardcode
@@ -1351,21 +1351,19 @@ class Connection {
                         .select(['exams.exam_id', 'exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time', 'worker_usergroup_id'])
                         .innerJoin('exam_grouping', 'exams.exam_id', 'exam_grouping.exam_id')
                         .andWhere('exam_status', 1)
-
                     for (const exam of examList) {
-                        if (exam.worker_usergroup_id != null) {
-                            if (exam.worker_usergroup_id === worker.worker_usergroup_id_id) {
-                                const skills = await this.con('skills')
-                                    .where('exam_id', exam.exam_id)
-                                    .andWhere('worker_id', worker.worker_id)
+                        const skills = await this.con('skills')
+                            .where('exam_id', exam.exam_id)
+                            .andWhere('worker_id', worker.worker_id)
+                        if (skills.length > 0) {
+                            const archived = await this.con('skills')
+                                .innerJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                                .where('exam_id', exam.exam_id)
+                                .andWhere('worker_id', worker.worker_id)
 
-                                if (skills.length > 0) {
-                                    const archived = await this.con('skills')
-                                        .innerJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
-                                        .where('exam_id', exam.exam_id)
-                                        .andWhere('worker_id', worker.worker_id)
-
-                                    if (skills.length === archived.length) {
+                            if (skills.length === archived.length) {
+                                if (exam.worker_usergroup_id != null) {
+                                    if (exam.worker_usergroup_id == worker.worker_usergroup_id_id) {
                                         exams.push({
                                             examName: exam.exam_name,
                                             itemCode: exam.exam_itemcode,
@@ -1382,7 +1380,7 @@ class Connection {
                                         comment: exam.exam_notes,
                                         status: exam.exam_status,
                                         created: exam.exam_creation_time,
-                                        group: worker.worker_usergroup
+                                        group: 'Mindenki'
                                     })
                                 }
                             }
@@ -1393,7 +1391,7 @@ class Connection {
                                 comment: exam.exam_notes,
                                 status: exam.exam_status,
                                 created: exam.exam_creation_time,
-                                group: 'Mindenki'
+                                group: worker.worker_usergroup
                             })
                         }
 

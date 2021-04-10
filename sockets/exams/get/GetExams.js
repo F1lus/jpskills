@@ -48,10 +48,10 @@ module.exports = (socket) => {
         let examResult = []
         results.forEach(result => {
             examResult.push([result.examName,
-            result.itemCode,
-            result.comment,
-            result.status,
-            dateFormat(('' + result.created))
+                result.itemCode,
+                result.comment,
+                result.status,
+                dateFormat(('' + result.created))
             ])
         })
         socket.emit('exams-learn-emitter', examResult)
