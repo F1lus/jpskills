@@ -1385,14 +1385,27 @@ class Connection {
                                 }
                             }
                         } else {
-                            exams.push({
-                                examName: exam.exam_name,
-                                itemCode: exam.exam_itemcode,
-                                comment: exam.exam_notes,
-                                status: exam.exam_status,
-                                created: exam.exam_creation_time,
-                                group: worker.worker_usergroup
-                            })
+                            if (exam.worker_usergroup_id != null) {
+                                if (exam.worker_usergroup_id == worker.worker_usergroup_id_id) {
+                                    exams.push({
+                                        examName: exam.exam_name,
+                                        itemCode: exam.exam_itemcode,
+                                        comment: exam.exam_notes,
+                                        status: exam.exam_status,
+                                        created: exam.exam_creation_time,
+                                        group: worker.worker_usergroup
+                                    })
+                                }
+                            } else {
+                                exams.push({
+                                    examName: exam.exam_name,
+                                    itemCode: exam.exam_itemcode,
+                                    comment: exam.exam_notes,
+                                    status: exam.exam_status,
+                                    created: exam.exam_creation_time,
+                                    group: 'Mindenki'
+                                })
+                            }
                         }
 
                     }
