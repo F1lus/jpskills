@@ -57,7 +57,7 @@ export default function Profile() {
     const renderGlobalStats = useCallback(() => {
         if (stats != null) {
             return (
-                <div className="alert alert-success text-justify my-2 w-50 mx-auto">
+                <div className="alert alert-success text-justify my-2 w-75 mx-auto">
                     <h2 className='text-center'>Az Ön vizsgáiról általánosságban</h2>
                     <hr />
                     <h5>A vizsgáin eltöltött átlag idő: {renderStatsObject('time') || 'Nincs adat'}</h5>

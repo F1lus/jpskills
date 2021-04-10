@@ -39,10 +39,8 @@ export default function ExamModify() {
 
     const timeoutCb = useCallback(() => {
         const modify = document.getElementById('modify')
-        if (modify.classList.contains('alert-danger', 'alert-success')) {
-            modify.classList.remove('alert-danger', 'alert-success')
-            modify.innerHTML = null
-        }
+        modify.classList.remove('alert-danger', 'alert-success')
+        modify.innerHTML = null
 
         setCallTimeout(false)
     }, [])
