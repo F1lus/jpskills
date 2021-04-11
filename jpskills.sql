@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2021. Már 23. 19:19
+-- Létrehozás ideje: 2021. Ápr 11. 15:07
 -- Kiszolgáló verziója: 10.4.17-MariaDB
 -- PHP verzió: 8.0.2
 
@@ -369,19 +369,19 @@ ALTER TABLE `admin_login`
 -- AUTO_INCREMENT a táblához `exams`
 --
 ALTER TABLE `exams`
-  MODIFY `exam_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'az utasítás formalapszáma', AUTO_INCREMENT=43;
+  MODIFY `exam_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'az utasítás formalapszáma', AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT a táblához `exam_prepare`
 --
 ALTER TABLE `exam_prepare`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT a táblához `exam_result`
 --
 ALTER TABLE `exam_result`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT a táblához `items`
@@ -393,25 +393,25 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT a táblához `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT a táblához `results`
 --
 ALTER TABLE `results`
-  MODIFY `results_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
+  MODIFY `results_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
 
 --
 -- AUTO_INCREMENT a táblához `skills`
 --
 ALTER TABLE `skills`
-  MODIFY `skills_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `skills_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT a táblához `skill_archive`
 --
 ALTER TABLE `skill_archive`
-  MODIFY `archive_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `archive_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT a táblához `workers`
