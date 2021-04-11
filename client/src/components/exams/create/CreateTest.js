@@ -147,9 +147,6 @@ export default function CreateTest(props) {
                     case 'invalid_file_size':
                         setResult('A fájl mérete meghaladta a maximális méretet! (2 Mb)')
                         break
-                    case 'mysql_form_exists_error':
-                        setResult('A vizsga felvétele nem sikerült, mivel a megadott formalapszámhoz már hozzárendeltek egy vizsgát!')
-                        break
                     case 'mysql_item_exists_error':
                         setResult('A vizsga felvétele nem sikerült, mivel a megadott termékkódhoz már hozzárendeltek egy vizsgát!')
                         break

@@ -12,6 +12,7 @@ upload.post('/exams/upload', async (req, res) => {
     } else {
         if (req.files.examDoc.truncated) {
             res.send({ result: 'invalid_file_size' })
+            return
         }
         let arrayOfData = []
         arrayOfData.push(
