@@ -6,7 +6,7 @@ export default (rawExamArray) => {
             if (!exam[2] || exam[2] === 'null' || exam[2] === '') {
                 exam[2] = null
             }
-            console.log(exam)
+            
             examList.push({
                 name: exam[0],
                 itemcode: exam[1],
