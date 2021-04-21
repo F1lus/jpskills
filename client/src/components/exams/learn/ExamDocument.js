@@ -1,63 +1,66 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useState, useEffect, useCallback, useContext, useRef } from 'react'
+import { NavLink, useParams } from 'react-router-dom'
 import { useStore } from 'react-redux'
-
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
 
 import { SocketContext } from '../../GlobalSocket'
 import { setLoad } from '../../store/ActionHandler'
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
-import { ArrowLeftIcon, ArrowRightIcon } from '@primer/octicons-react';
-import { NavLink } from 'react-router-dom';
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist'
+
+import worker from 'pdfjs-dist/build/pdf.worker.entry'
+
 
 export default function ExamDocument(props) {
 
+    GlobalWorkerOptions.workerSrc = worker
+
     const exam = useParams()
     const socket = useContext(SocketContext)
+    const canvasRef = useRef()
     const store = useStore()
 
-    const [examDoc, setExamDoc] = useState('/')
-    const [pageNum, setPageNum] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [status, setStatus] = useState(false)
+    const [examDoc, setExamDoc] = useState(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [maxPages, setMaxPages] = useState(1)
 
+    const renderPdf = useCallback(async () => {
+        const page = await examDoc.getPage(currentPage)
 
-    const onDocumentLoadSuccess = useCallback(numPages => {
-        setPageNum(numPages)
-    }, [])
+        const viewport = page.getViewport({scale: 0.7})
 
-    const nextPage = useCallback(event => {
-        event.preventDefault()
-        if (pageNum) {
-            setCurrentPage(page => {
-                if (page + 1 > pageNum) {
-                    return page
-                } else {
-                    return page + 1
-                }
-            })
+        const canvas = canvasRef.current
+        canvas.height = viewport.height
+        canvas.width = viewport.width
+
+        page.render({
+            canvasContext: canvas.getContext('2d'),
+            viewport: viewport
+        })
+
+    }, [examDoc, currentPage])
+
+    const nextPage = useCallback(e => {
+        if(currentPage < maxPages){
+            setCurrentPage(page => ++page)
         }
-    }, [pageNum])
+    }, [currentPage, maxPages])
 
-    const prevPage = useCallback(event => {
-        event.preventDefault()
-        if (pageNum) {
-            setCurrentPage(page => {
-                if (page - 1 < 1) {
-                    return page
-                } else {
-                    return page - 1
-                }
-            })
+    const prevPage = useCallback(e => {
+        if(currentPage > 1){
+            setCurrentPage(page => --page)
         }
-    }, [pageNum])
+    }, [currentPage])
 
-    const handleExamDoc = useCallback((status, document) => {
-        setExamDoc(document)
-        setStatus(status === 0)
+    const handleExamDoc = useCallback(async (status, document) => {
+        const loadingTask = getDocument(document)
+        const pdf = await loadingTask.promise
+
+        setExamDoc(pdf)
+        setMaxPages(pdf.numPages)
         setLoad(store, false)
+
     }, [store])
 
     useEffect(() => {
@@ -69,44 +72,19 @@ export default function ExamDocument(props) {
         return () => socket.off('examDoc-emitter', handleExamDoc)
     }, [exam.examCode, socket, handleExamDoc, store])
 
+    useEffect(() => {
+        if(examDoc){
+            renderPdf()
+        }
+    }, [examDoc, renderPdf, currentPage])
+
     return (
         <div className="container text-center bg-light rounded shadow page mt-3">
-            <Document
-                loading='A virtuális tananyag betöltése...'
-                file={{ data: examDoc }}
-                onLoadSuccess={page => onDocumentLoadSuccess(page.numPages)}
-                error='A virtuális tananyag betöltése nem sikerült. Kérjük próbálja újra!'
-            >
-                <Page pageNumber={currentPage} />
-            </Document>
-
-            <p>{currentPage} / {pageNum}</p>
-
-            <button className="btn btn-outline-blue m-2" onClick={prevPage}>
-                <i>
-                    <ArrowLeftIcon />
-                </i>
-            </button>
-
-            <NavLink to="/profile">
-                <button className="btn btn-outline-blue m-2">
-                    Vissza!
-                </button>
-            </NavLink>
-
-            <NavLink to={`/exams/${exam.examCode}`}>
-                <button disabled={
-                    (props.permission === 'admin' ? true : status)
-                } className="btn btn-outline-blue m-2">
-                    Levizsgázom!
-                </button>
-            </NavLink>
-
-            <button className="btn btn-outline-blue m-2" onClick={nextPage}>
-                <i>
-                    <ArrowRightIcon />
-                </i>
-            </button>
+            <canvas ref={canvasRef}></canvas>
+            <br/>
+            <button onClick={prevPage}>Hátra</button>
+            <NavLink to='/profile'><button>Vissza</button></NavLink>
+            <button onClick={nextPage}>Előre</button>
         </div>
     );
 }
