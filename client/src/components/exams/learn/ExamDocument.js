@@ -5,9 +5,7 @@ import { useStore } from 'react-redux'
 import { SocketContext } from '../../GlobalSocket'
 import { setLoad } from '../../store/ActionHandler'
 
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-
-import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist'
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/es5/build/pdf'
 
 import worker from 'pdfjs-dist/build/pdf.worker.entry'
 

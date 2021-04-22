@@ -3,8 +3,6 @@ import Modal from 'react-modal'
 
 import API from '../../BackendAPI'
 
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
-
 Modal.setAppElement('#root')
 
 export default function ModifyPic(props) {
