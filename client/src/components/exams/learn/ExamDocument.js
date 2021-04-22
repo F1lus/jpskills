@@ -26,7 +26,7 @@ export default function ExamDocument(props) {
     const renderPdf = useCallback(async () => {
         const page = await examDoc.getPage(currentPage)
 
-        const viewport = page.getViewport({scale: 0.7})
+        const viewport = page.getViewport({ scale: 0.75 })
 
         const canvas = canvasRef.current
         canvas.height = viewport.height
@@ -40,13 +40,13 @@ export default function ExamDocument(props) {
     }, [examDoc, currentPage])
 
     const nextPage = useCallback(e => {
-        if(currentPage < maxPages){
+        if (currentPage < maxPages) {
             setCurrentPage(page => ++page)
         }
     }, [currentPage, maxPages])
 
     const prevPage = useCallback(e => {
-        if(currentPage > 1){
+        if (currentPage > 1) {
             setCurrentPage(page => --page)
         }
     }, [currentPage])
@@ -71,18 +71,20 @@ export default function ExamDocument(props) {
     }, [exam.examCode, socket, handleExamDoc, store])
 
     useEffect(() => {
-        if(examDoc){
+        if (examDoc) {
             renderPdf()
         }
     }, [examDoc, renderPdf, currentPage])
 
     return (
         <div className="container text-center bg-light rounded shadow page mt-3">
-            <canvas ref={canvasRef}></canvas>
-            <br/>
-            <button onClick={prevPage}>Hátra</button>
-            <NavLink to='/profile'><button>Vissza</button></NavLink>
-            <button onClick={nextPage}>Előre</button>
+            <div className='py-2'>
+                <canvas ref={canvasRef}></canvas>
+                <br />
+                <button className='btn btn-outline-primary' onClick={prevPage}>Hátra</button>
+                <NavLink to='/profile'><button className='btn btn-outline-primary mx-4'>Vissza a profilra</button></NavLink>
+                <button className='btn btn-outline-primary' onClick={nextPage}>Előre</button>
+            </div>
         </div>
     );
 }
