@@ -37,7 +37,9 @@ export default function ExamDocument(props) {
             viewport: viewport
         })
 
-    }, [examDoc, currentPage])
+        setLoad(store, false)
+
+    }, [examDoc, currentPage, store])
 
     const nextPage = useCallback(e => {
         if (currentPage < maxPages) {
@@ -57,9 +59,8 @@ export default function ExamDocument(props) {
 
         setExamDoc(pdf)
         setMaxPages(pdf.numPages)
-        setLoad(store, false)
 
-    }, [store])
+    }, [])
 
     useEffect(() => {
         setLoad(store, true)
