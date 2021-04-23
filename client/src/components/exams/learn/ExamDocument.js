@@ -26,7 +26,7 @@ export default function ExamDocument(props) {
     const renderPdf = useCallback(async () => {
         const page = await examDoc.getPage(currentPage)
 
-        const viewport = page.getViewport({ scale: 0.75 })
+        const viewport = page.getViewport({ scale: 1 })
 
         const canvas = canvasRef.current
         canvas.height = viewport.height
