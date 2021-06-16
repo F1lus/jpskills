@@ -177,7 +177,7 @@ export default function CreateTest(props) {
                     <div className="row w-75 mx-auto">
                         <div className="col">
                             <select name="type" className="w-100 rounded" onChange={handleChange}>
-                                <option defaultValue={-1}>A termék gyártója</option>
+                                <option defaultValue={-1}>Vevő</option>
                                 {types.length === 0 ? <></> : types.map((elem, index) => {
                                     return (
                                         <option key={index} value={elem}>{elem}</option>
@@ -187,10 +187,10 @@ export default function CreateTest(props) {
                         </div>
                         <div className="col">
                             <select name="item" className="w-100 rounded" onChange={handleChange}>
-                                <option defaultValue={-1}>{items.length === 0 ? 'Először válasszon gyártot!' : 'A vizsga terméke'}</option>
+                                <option defaultValue={-1}>{items.length === 0 ? 'Először válasszon vevőt!' : 'A vizsga terméke'}</option>
                                 {items.length === 0 ? null : items.map((elem, index) => {
                                     return (
-                                        <option key={index} value={elem[1]}>{elem[0]} || {elem[1]}</option>
+                                        <option key={index} value={elem[1]}>{elem[1]} || {elem[0]}</option>
                                     )
                                 })}
                             </select>
