@@ -36,8 +36,10 @@ export default function CreateTest(props) {
     const handleProducts = useCallback(products => {
         if (products) {
             setItems(products)
+            setFilteredItems(products)
         } else {
             setItems([])
+            setFilteredItems([])
         }
         setLoad(props.store, false)
     }, [props.store])
@@ -200,11 +202,8 @@ export default function CreateTest(props) {
                         <div className="col">
                             <select name="item" className="w-100 rounded" onChange={handleChange}>
                                 <option defaultValue={-1}>{items.length === 0 ? 'Először válasszon vevőt!' : 'A vizsga terméke'}</option>
-                                {filteredItems.length === 0 ? items.map((elem, index) => {
-                                    return (
-                                        <option key={index} value={elem[1]}>{elem[1]} || {elem[0]}</option>
-                                    )
-                                }) : filteredItems.map((elem, index) => {
+                                {filteredItems.length === 0 ? <></>
+                                : filteredItems.map((elem, index) => {
                                     return (
                                         <option key={index} value={elem[1]}>{elem[1]} || {elem[0]}</option>
                                     )
