@@ -16,6 +16,7 @@ export default function CreateTest(props) {
     const [result, setResult] = useState(null)
 
     const [items, setItems] = useState([])
+    const [filteredItems, setFilteredItems] = useState([])
     const [types, setTypes] = useState([])
     const [groups, setGroups] = useState([])
     const [group, setGroup] = useState(-10)
@@ -168,6 +169,16 @@ export default function CreateTest(props) {
             })
     }, [comment, examDoc, examName, item, permission, group, props.store])
 
+    const searchItem = useCallback(event => {
+        if(items.length > 0 && types) {
+            const filteredBy = items.filter(item => {
+                const search = event.target.value.toLowerCase().trim()
+                return item[1].includes(search) || item[0].toLowerCase().includes(search)
+            })
+            setFilteredItems(filteredBy)
+        }
+    },[items, types])
+
     return (
         <div className="container shadow rounded p-3 bg-light mt-3">
             {uploaded ? <Redirect from='/exams' to={`/exams/modify/${item}`} /> : null}
@@ -185,16 +196,33 @@ export default function CreateTest(props) {
                                 })}
                             </select>
                         </div>
+
                         <div className="col">
                             <select name="item" className="w-100 rounded" onChange={handleChange}>
                                 <option defaultValue={-1}>{items.length === 0 ? 'Először válasszon vevőt!' : 'A vizsga terméke'}</option>
-                                {items.length === 0 ? null : items.map((elem, index) => {
+                                {filteredItems.length === 0 ? items.map((elem, index) => {
+                                    return (
+                                        <option key={index} value={elem[1]}>{elem[1]} || {elem[0]}</option>
+                                    )
+                                }) : filteredItems.map((elem, index) => {
                                     return (
                                         <option key={index} value={elem[1]}>{elem[1]} || {elem[0]}</option>
                                     )
                                 })}
                             </select>
                         </div>
+
+                        {items.length > 0 ?  
+                            <div className="col">
+                                <div className="form-group m-auto w-75">
+                                    <input type="text" name="search" onChange={searchItem} required autoComplete="off" />
+                                    <label htmlFor="examName" className="label-name">
+                                        <span className="content-name">
+                                            Termék keresése
+                                        </span>
+                                    </label>
+                                </div>
+                            </div> : null}        
                     </div>
                     <h4 className='alert alert-danger w-50 mx-auto mt-3'>A célcsoport később nem módosítható!</h4>
                     <select name="group" className="w-75 rounded" onChange={handleChange}>
