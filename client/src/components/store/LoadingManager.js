@@ -1,5 +1,5 @@
 const loadState = {
-    loading: true
+    loading: false
 }
 
 const SET_LOADING = 'SET_LOADING'

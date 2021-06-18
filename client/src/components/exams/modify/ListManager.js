@@ -48,7 +48,7 @@ export default function ListManager(props) {
 
     const listMapper = useCallback((el, kerdesIndex) => {
         return (
-            <ul key={kerdesIndex} className='container text-center border border-warning rounded w-75 shadow bg-light p-3 mb-3'>
+            <ul key={kerdesIndex} className='container wow bounceInLeft text-center border border-warning rounded w-75 shadow bg-light p-3 mb-3'>
                 <div className="container">
                     <span className="float-left"><b>{kerdesIndex + 1}.</b></span>
                     <li>

@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Switch, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
+import 'wowjs/css/libs/animate.css'
+import WOW from 'wowjs'
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
@@ -29,43 +31,49 @@ export default function App() {
 
   const location = useLocation()
 
+  useEffect(() => {
+    new WOW.WOW().init()
+  }, [])
+
   return (
     <React.Fragment>
-      {loading ? <Load /> : null}
-      {loggedIn && permission !== 'superuser' ? <CustomNavbar /> : null}
-      <TransitionGroup>
-        <CSSTransition
-          key={location.key}
-          timeout={500}
-          classNames="fade"
-        >
-          <Switch location={location}>
-            <Routing exact path='/' allowed={['*']} component={Login} />
+      <div id='main'>
+        {loading ? <Load /> : null}
+        {loggedIn && permission !== 'superuser' ? <CustomNavbar /> : null}
+        <TransitionGroup>
+          <CSSTransition
+            key={location.key}
+            timeout={500}
+            classNames="fade"
+          >
+            <Switch location={location}>
+              <Routing exact path='/' allowed={['*']} component={Login} />
 
-            <Routing exact path='/home' allowed={['*']} component={Home} />
+              <Routing exact path='/home' allowed={['*']} component={Home} />
 
-            <Routing exact path='/exams' allowed={['*']} component={ExamWrapper} />
+              <Routing exact path='/exams' allowed={['*']} component={ExamWrapper} />
 
-            <Routing exact path='/exams/modify/:examName' allowed={['admin']} component={ExamModify} />
+              <Routing exact path='/exams/modify/:examName' allowed={['admin']} component={ExamModify} />
 
-            <Routing exact path='/exams/learn/:examCode' allowed={['*']} component={ExamDocument} />
+              <Routing exact path='/exams/learn/:examCode' allowed={['*']} component={ExamDocument} />
 
-            <Routing exact path='/exams/:examCode' allowed={['*']} component={Examination} />
+              <Routing exact path='/exams/:examCode' allowed={['*']} component={Examination} />
 
-            <Routing exact path='/exams/result/:examCode/' allowed={['*']} component={ExamResults} />
+              <Routing exact path='/exams/result/:examCode/' allowed={['*']} component={ExamResults} />
 
-            <Routing exact path='/profile' allowed={['*']} component={Profile} />
+              <Routing exact path='/profile' allowed={['*']} component={Profile} />
 
-            <Routing exact path='/management' allowed={['superuser']} component={Management} />
+              <Routing exact path='/management' allowed={['superuser']} component={Management} />
 
-            <Routing exact path='/management/:user' allowed={['superuser']} component={UserManager} />
+              <Routing exact path='/management/:user' allowed={['superuser']} component={UserManager} />
 
-            <Routing exact path='/management/admin/:user' allowed={['superuser']} component={AdminManager} />
+              <Routing exact path='/management/admin/:user' allowed={['superuser']} component={AdminManager} />
 
-            <Routing exact path='/logout' allowed={['*']} component={Load} />
-          </Switch>
-        </CSSTransition>
-      </TransitionGroup>
+              <Routing exact path='/logout' allowed={['*']} component={Load} />
+            </Switch>
+          </CSSTransition>
+        </TransitionGroup>
+      </div>
     </React.Fragment>
   )
 

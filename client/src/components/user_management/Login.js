@@ -160,7 +160,7 @@ export default function Login() {
 
     return (
         <div className="d-flex flex-column container text-center align-items-center justify-content-center vh-100 w-50">
-            <div className="container shadow rounded bg-light p-3 mb-3">
+            <div className="wow bounceInLeft container shadow rounded bg-light p-3 mb-3 w-75">
                 {register ? <h2><p>Kérjük töltse ki a mezőket!</p></h2> : <h2><p>A folytatáshoz jelentkezzen be!</p></h2>}
                 {alert ? <h3 className="alert alert-danger text-center" id="hiba">{alert}</h3> : null}
                 <form onSubmit={handleSubmit}>
@@ -221,7 +221,7 @@ export default function Login() {
                 </div>
             </div>
 
-            <div className="container alert alert-primary shadow text-center rounded w-25 px-1" id="modify">
+            <div className="wow bounceInUp container alert alert-primary shadow text-center rounded w-25 px-1" id="modify">
                 <h6>Az oldal megfelelő működéséhez elengedhetetlen a sütik használata!</h6>
                 <a href="https://ec.europa.eu/info/cookies_hu" target="_blank" rel="noopener noreferrer">További információért kattintson ide!</a>
             </div>

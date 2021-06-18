@@ -15,6 +15,15 @@ module.exports = (socket) => {
                     begin: new Date().getTime() / 1000
                 }
             }
+            if(fs.existsSync(path.join(__dirname, `../../../temp_files`))){
+                if(!fs.existsSync(path.join(__dirname, `../../../temp_files/user_timer`))){
+                    fs.mkdirSync(path.join(__dirname, `../../../temp_files/user_timer`)) 
+                }
+            }else{
+                fs.mkdirSync(path.join(__dirname, `../../../temp_files`))
+                fs.mkdirSync(path.join(__dirname, `../../../temp_files/user_timer`))
+            }
+
             const location = path.join(__dirname, `../../../temp_files/user_timer/${session.cardNum}.json`)
             const data = JSON.stringify(object)
 
