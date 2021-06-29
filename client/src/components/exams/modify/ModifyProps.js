@@ -9,6 +9,7 @@ export default function ModifyProps(props) {
     const [examProps, setExamProps] = useState([])
     const [status, setStatus] = useState(null)
     const [disable, setDisable] = useState(false)
+    const [toggle, setToggle] = useState(0)
 
     const handleProps = useCallback(examProps => {
         setExamProps([examProps[0], examProps[1] === 'null' ? '' : examProps[1], examProps[2], examProps[3] * 100])
@@ -43,13 +44,6 @@ export default function ModifyProps(props) {
                     setExamProps(list)
                 }
                 break
-            case 'examStatus':
-                if (event.target.value === 'Állapotváltás...') {
-                    break
-                }
-                list[2] = event.target.value
-                setExamProps(list)
-                break
             case 'examMinPoints':
                 if (event.target.value > 100) {
                     list[3] = 100
@@ -69,9 +63,8 @@ export default function ModifyProps(props) {
         event.preventDefault()
         setDisable(true)
 
-        if (examProps[2] != null) {
-            socket.emit('update-status', { examCode: examCode.examName, status: examProps[2] })
-        }
+        socket.emit('update-status', { examCode: examCode.examName, status: examProps[2] })
+
     }, [examCode.examName, examProps, socket])
 
     const handleSubmit = useCallback(event => {
@@ -89,6 +82,12 @@ export default function ModifyProps(props) {
         }
     }, [examCode.examName, examProps, socket])
 
+    const handleClick = useCallback(event => {
+        event.target.classList.toggle("active")
+        event.target.classList.contains("active") ? setToggle(0) : setToggle(1)
+        examProps[2] = toggle
+        statusChange(event)
+    },[toggle, examProps, statusChange])
 
     return (
         <div className="container text-center rounded w-75 mb-3 mt-3 p-3 shadow bg-light">
@@ -125,19 +124,12 @@ export default function ModifyProps(props) {
                 <button name='Módosítás' className="btn btn-warning m-2" disabled={disable}>Módosítás!</button>
             </form>
             <hr />
-            <form onSubmit={statusChange}>
-                <p>A vizsga jelenleg {status ?
-                    <span className="text-success">Aktív</span> : <span className="text-danger">Inaktív</span>
-                }</p>
-
-                <select name='examStatus' className="rounded pl-2 w-25 mb-3" onChange={handleChange}>
-                    <option value={null}>Állapotváltás...</option>
-                    <option value={1}>Aktív</option>
-                    <option value={0}>Inaktív</option>
-                </select>
-
-                <button name='Módosítás' className="btn btn-warning m-2" disabled={disable}>Módosítás!</button>
-            </form>
+            <p>A vizsga jelenleg {status ?
+                <span className="text-success">Aktív</span> : <span className="text-danger">Inaktív</span>
+            }</p>
+            <div className={status ? "container mx-auto mb-3 active" : "container mx-auto mb-3"} id="toggle" onClick={handleClick} onChange={statusChange}>
+                <i className="indicator"></i>
+            </div>
         </div>
     )
 }

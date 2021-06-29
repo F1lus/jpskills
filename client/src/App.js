@@ -37,7 +37,6 @@ export default function App() {
 
   return (
     <React.Fragment>
-      <div id='main'>
         {loading ? <Load /> : null}
         {loggedIn && permission !== 'superuser' ? <CustomNavbar /> : null}
         <TransitionGroup>
@@ -73,7 +72,6 @@ export default function App() {
             </Switch>
           </CSSTransition>
         </TransitionGroup>
-      </div>
     </React.Fragment>
   )
 
