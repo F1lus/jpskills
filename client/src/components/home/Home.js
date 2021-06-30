@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { NavLink } from 'react-router-dom'
-import { useSelector, useStore } from 'react-redux'
+import { useSelector } from 'react-redux'
 
-import { setLoad } from '../store/ActionHandler'
 import { SocketContext } from '../GlobalSocket'
 import { Admin, User } from '../user_management/handlers/PermissionHandler'
 
@@ -15,7 +14,6 @@ import 'overlayscrollbars/css/OverlayScrollbars.css'
 export default function Home() {
 
     const socket = useContext(SocketContext)
-    const store = useStore()
 
     const [user, permission] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
 
@@ -23,12 +21,10 @@ export default function Home() {
 
     const handleExams = useCallback(dbExams => {
         setVanVizsga(dbExams.length > 0)
-        setLoad(store, false)
-    }, [store])
+    }, [])
 
     useEffect(() => {
         if (permission !== 'admin') {
-            setLoad(store, true)
             socket.emit('exams-get-signal')
         }
 
@@ -36,7 +32,7 @@ export default function Home() {
 
         return () => socket.off('exams-get-emitter', handleExams)
         // eslint-disable-next-line
-    }, [store])
+    }, [])
 
     useEffect(() => {
         OverlayScrollbars(document.getElementById('questions'), { className: "os-theme-dark" })

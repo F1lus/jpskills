@@ -85,7 +85,11 @@ export default function ModifyProps(props) {
     const handleClick = useCallback(event => {
         event.target.classList.toggle("active")
         event.target.classList.contains("active") ? setToggle(0) : setToggle(1)
-        examProps[2] = toggle
+
+        const propsCopy = examProps
+        propsCopy[2] = toggle
+        setExamProps(propsCopy)
+        
         statusChange(event)
     },[toggle, examProps, statusChange])
 

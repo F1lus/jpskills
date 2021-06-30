@@ -1,9 +1,11 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useStore } from 'react-redux'
 import CryptoJS from 'crypto-js'
 
 import API from '../BackendAPI'
 import { setLoad } from '../store/ActionHandler'
+
+import WOW from 'wowjs'
 
 export default function Login() {
 
@@ -14,6 +16,10 @@ export default function Login() {
     const [password2, setPassword2] = useState('')
     const [alert, setAlert] = useState(null)
     const [register, setRegister] = useState(false)
+
+    useEffect(() => {
+        new WOW.WOW().init()
+    }, [])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()

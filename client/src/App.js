@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
 import 'wowjs/css/libs/animate.css'
-import WOW from 'wowjs'
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
@@ -30,10 +29,6 @@ export default function App() {
   const loading = useSelector(state => state.loadReducer.loading)
 
   const location = useLocation()
-
-  useEffect(() => {
-    new WOW.WOW().init()
-  }, [])
 
   return (
     <React.Fragment>
