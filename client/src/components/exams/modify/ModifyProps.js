@@ -23,6 +23,8 @@ export default function ModifyProps(props) {
         socket.on('exam-props', handleProps)
         socket.on('updated', handleUpdate)
 
+        
+
         return () => {
             socket.off('exam-props', handleProps)
             socket.off('updated', handleUpdate)
@@ -84,14 +86,21 @@ export default function ModifyProps(props) {
 
     const handleClick = useCallback(event => {
         event.target.classList.toggle("active")
-        event.target.classList.contains("active") ? setToggle(0) : setToggle(1)
 
-        const propsCopy = examProps
-        propsCopy[2] = toggle
-        setExamProps(propsCopy)
-        
         statusChange(event)
-    },[toggle, examProps, statusChange])
+    },[statusChange])
+
+    useEffect(() => {
+        const switcher = document.getElementById("toggle")
+        const propsCopy = examProps
+
+        switcher.classList.contains("active") ? setToggle(0) : setToggle(1)
+        
+        propsCopy[2] = toggle
+
+        setExamProps(propsCopy)
+
+    }, [examProps, toggle, status])
 
     return (
         <div className="container text-center rounded w-75 mb-3 mt-3 p-3 shadow bg-light">
@@ -131,7 +140,7 @@ export default function ModifyProps(props) {
             <p>A vizsga jelenleg {status ?
                 <span className="text-success">Aktív</span> : <span className="text-danger">Inaktív</span>
             }</p>
-            <div className={status ? "container mx-auto mb-3 active" : "container mx-auto mb-3"} id="toggle" onClick={handleClick} onChange={statusChange}>
+            <div className={status ? "container mx-auto mb-3 active" : "container mx-auto mb-3"} id="toggle" onClick={handleClick}>
                 <i className="indicator"></i>
             </div>
         </div>
