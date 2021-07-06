@@ -55,6 +55,7 @@ export default function Login() {
             data = {
                 cardNum: CryptoJS.AES.encrypt(cardNum, 'RcdNum@jp-$k-s3c#r3t').toString(),
                 password: CryptoJS.AES.encrypt(password, 'Rpw@jp-$k-s3c#r3t').toString(),
+                email: email.toString(),
                 newUser: true
             }
         } else {
