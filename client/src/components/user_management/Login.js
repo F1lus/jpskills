@@ -14,6 +14,7 @@ export default function Login() {
     const [cardNum, setCardNum] = useState(null)
     const [password, setPassword] = useState('')
     const [password2, setPassword2] = useState('')
+    const [email, setEmail] = useState('')
     const [alert, setAlert] = useState(null)
     const [register, setRegister] = useState(false)
 
@@ -25,7 +26,7 @@ export default function Login() {
         event.preventDefault()
         let data = null
         if (register) {
-            if (cardNum == null || password == null || password2 == null) {
+            if (cardNum == null || password == null || password2 == null || email == null) {
                 setAlert('Valamelyik mező hiányos!')
                 return
             }
@@ -88,7 +89,7 @@ export default function Login() {
                 setAlert('Hiba történt! Próbálja újra!')
                 console.log(err)
             })
-    }, [cardNum, password, password2, register, store])
+    }, [cardNum, password, password2, register, store, email])
 
     const handleChange = useCallback(event => {
         switch (event.target.name) {
@@ -151,6 +152,9 @@ export default function Login() {
                 }
 
                 break
+            case 'email':
+                setEmail(event.target.value)
+                break
             default:
                 return
         }
@@ -178,6 +182,18 @@ export default function Login() {
                             </span>
                         </label>
                     </div>
+
+                    {register ?
+                    <div className="form-group m-auto">
+                        <input type="email" name="email" autoComplete="off" value={email || ''} onChange={handleChange} required />
+                        <label htmlFor="email" className="label-name">
+                            <span className="content-name">
+                                Email cím
+                            </span>
+                        </label>
+                    </div>
+                    :
+                    null }
 
                     <div className="form-group m-auto">
                         <input type="password" name="password" autoComplete="off" value={password || ''} onChange={handleChange} required />
