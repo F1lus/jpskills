@@ -7,14 +7,7 @@ const fileUpload = require('express-fileupload')
 const helmet = require('helmet')
 
 //Socketek
-const socketWrapper = require('./sockets/SocketWrapper')
-
-//Felhasználó kezelés
-const login = require('./routes/users/Login')
-
-//Vizsgák kezeléséhez kapcsolódó műveletek
-const uploadExam = require('./routes/exams/update/UploadExam')
-const updater = require('./routes/exams/update/ExamUpdate')
+const socketWrapper = require('./sockets/SocketWrapper') 
 
 //Előkészítés
 const config = require('./config')
@@ -59,11 +52,11 @@ io.use(socketSession(session))
 io.on('connection', socketWrapper)
 
 //Routing
-app.use(uploadExam)
+app.use(require('./routes/exams/update/UploadExam'))
 
-app.use(updater)
+app.use(require('./routes/exams/update/ExamUpdate'))
 
-app.use(login)
+app.use(require('./routes/users/Login'))
 
 //Szerver indítás
 server.listen(config.server_port, config.server_host, () => console.log('A szerver készen áll!'))

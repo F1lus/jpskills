@@ -1,28 +1,28 @@
 const login = require('express').Router()
-const CryptoJS = require('crypto-js')
 
 const dbconnect = require('../../model/DbConnect')
 
 login.post('/login', async (req, res) => {
     if (req.body.newUser) {
-        const cardNum = CryptoJS.AES.decrypt(req.body.cardNum, 'RcdNum@jp-$k-s3c#r3t').toString(CryptoJS.enc.Utf8)
-        const password = CryptoJS.AES.decrypt(req.body.password, 'Rpw@jp-$k-s3c#r3t').toString(CryptoJS.enc.Utf8)
+        const cardNum = req.body.cardNum
+        const email = req.body.email
+        const password = req.body.password
 
         if (password.length < 8 || password.length > 16 || password.toLowerCase() === password || !password.split('').some(letter => !isNaN(letter))) {
-            res.json({ error: 'A szerver elutasította a jelszót a követelmények hiánya miatt!' })
+            res.json({ error: 'A jelszava nem felel meg a követelményeknek!' })
             return
         }
 
         const userData = await dbconnect.findUser(cardNum)
         if (Array.isArray(userData) && userData.length !== 0) {
-            res.json({ access: await dbconnect.registerUser(cardNum, password) })
+            res.json({ access: await dbconnect.registerUser(cardNum, email, password) })
         } else {
             res.json({ error: 'cardnum_not_found' })
         }
 
     } else {
-        const cardNum = CryptoJS.AES.decrypt(req.body.cardNum, 'LcdNum@jp-$k-s3c#r3t').toString(CryptoJS.enc.Utf8)
-        const password = CryptoJS.AES.decrypt(req.body.password, 'Lpw@jp-$k-s3c#r3t').toString(CryptoJS.enc.Utf8)
+        const cardNum = req.body.cardNum
+        const password = req.body.password
 
         if (cardNum && password) {
             const exists = await dbconnect.userExists(cardNum, password)

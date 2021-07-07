@@ -1529,13 +1529,14 @@ class Connection {
         return result
     }
 
-    registerUser = async (cardNum, password) => {
+    registerUser = async (cardNum, email, password) => {
         let msg = false
         try {
             await this.con.transaction(async trx => {
 
                 const login = await this.con('admin_login')
                     .where(this.con.raw('cardcode = ?', [cardNum]))
+                    .orWhere(this.con.raw('email = ?', [email]))
                     .first()
                     .transacting(trx)
 
@@ -1543,6 +1544,7 @@ class Connection {
                     const insert = await this.con('admin_login')
                         .insert({
                             cardcode: cardNum,
+                            email: email,
                             password: CryptoJS.AES.encrypt(password, 'jp-$kDB').toString()
                         })
                         .transacting(trx)

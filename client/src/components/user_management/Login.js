@@ -1,11 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 import { useStore } from 'react-redux'
-import CryptoJS from 'crypto-js'
 
 import API from '../BackendAPI'
 import { setLoad } from '../store/ActionHandler'
-
-import WOW from 'wowjs'
+import wow from 'wowjs'
 
 export default function Login() {
 
@@ -17,10 +15,6 @@ export default function Login() {
     const [email, setEmail] = useState('')
     const [alert, setAlert] = useState(null)
     const [register, setRegister] = useState(false)
-
-    useEffect(() => {
-        new WOW.WOW().init()
-    }, [])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
@@ -53,9 +47,9 @@ export default function Login() {
 
             setLoad(store, true)
             data = {
-                cardNum: CryptoJS.AES.encrypt(cardNum, 'RcdNum@jp-$k-s3c#r3t').toString(),
-                password: CryptoJS.AES.encrypt(password, 'Rpw@jp-$k-s3c#r3t').toString(),
-                email: email.toString(),
+                cardNum: cardNum,
+                password: password,
+                email: email,
                 newUser: true
             }
         } else {
@@ -66,8 +60,8 @@ export default function Login() {
 
             setLoad(store, true)
             data = {
-                cardNum: CryptoJS.AES.encrypt(cardNum, 'LcdNum@jp-$k-s3c#r3t').toString(),
-                password: CryptoJS.AES.encrypt(password, 'Lpw@jp-$k-s3c#r3t').toString()
+                cardNum: cardNum,
+                password: password
             }
         }
 
@@ -88,7 +82,6 @@ export default function Login() {
             }).catch(err => {
                 setLoad(store, false)
                 setAlert('Hiba történt! Próbálja újra!')
-                console.log(err)
             })
     }, [cardNum, password, password2, register, store, email])
 
