@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2021. Ápr 11. 15:07
+-- Létrehozás ideje: 2021. Júl 08. 23:32
 -- Kiszolgáló verziója: 10.4.17-MariaDB
 -- PHP verzió: 8.0.2
 
@@ -32,6 +32,7 @@ USE `jpskills`;
 CREATE TABLE `admin_login` (
   `id` int(11) NOT NULL,
   `cardcode` bigint(20) NOT NULL,
+  `email` varchar(100) COLLATE utf8_hungarian_ci NOT NULL,
   `password` varchar(100) COLLATE utf8_hungarian_ci NOT NULL,
   `latest_login` timestamp NULL DEFAULT NULL,
   `latest_logout` timestamp NULL DEFAULT NULL
@@ -216,6 +217,19 @@ CREATE TABLE `skill_archive` (
 -- --------------------------------------------------------
 
 --
+-- Tábla szerkezet ehhez a táblához `tokens`
+--
+
+CREATE TABLE `tokens` (
+  `id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `token` text COLLATE utf8_hungarian_ci NOT NULL,
+  `expires` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tábla szerkezet ehhez a táblához `workers`
 --
 
@@ -345,6 +359,13 @@ ALTER TABLE `skill_archive`
   ADD KEY `archiver_id` (`archiver_id`);
 
 --
+-- A tábla indexei `tokens`
+--
+ALTER TABLE `tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `admin_id` (`admin_id`);
+
+--
 -- A tábla indexei `workers`
 --
 ALTER TABLE `workers`
@@ -363,19 +384,19 @@ ALTER TABLE `workers`
 -- AUTO_INCREMENT a táblához `admin_login`
 --
 ALTER TABLE `admin_login`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT a táblához `exams`
 --
 ALTER TABLE `exams`
-  MODIFY `exam_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'az utasítás formalapszáma', AUTO_INCREMENT=47;
+  MODIFY `exam_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'az utasítás formalapszáma', AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT a táblához `exam_prepare`
 --
 ALTER TABLE `exam_prepare`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT a táblához `exam_result`
@@ -393,13 +414,13 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT a táblához `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
 -- AUTO_INCREMENT a táblához `results`
 --
 ALTER TABLE `results`
-  MODIFY `results_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
+  MODIFY `results_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
 
 --
 -- AUTO_INCREMENT a táblához `skills`
@@ -412,6 +433,12 @@ ALTER TABLE `skills`
 --
 ALTER TABLE `skill_archive`
   MODIFY `archive_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT a táblához `tokens`
+--
+ALTER TABLE `tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT a táblához `workers`
@@ -475,6 +502,12 @@ ALTER TABLE `skills`
 ALTER TABLE `skill_archive`
   ADD CONSTRAINT `skill_archive_ibfk_1` FOREIGN KEY (`skills_id`) REFERENCES `skills` (`skills_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `skill_archive_ibfk_2` FOREIGN KEY (`archiver_id`) REFERENCES `workers` (`worker_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `tokens`
+--
+ALTER TABLE `tokens`
+  ADD CONSTRAINT `tokens_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin_login` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
