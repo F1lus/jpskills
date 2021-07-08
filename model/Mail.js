@@ -10,7 +10,7 @@ const config = require('../config')
  * 
  * @param {string} email User email
  * @param {string} subject Email subject
- * @param {string} payload Variables to insert into the document
+ * @param {any} payload Variables to insert into the document
  * @param {string} template Path to the template
  * 
  * @returns Whether the email has been sent or not (boolean)
@@ -37,15 +37,12 @@ module.exports = async (email, subject, payload, template) => {
             html: compiledTemplate(payload)
         })
 
-        transporter.sendMail(options(), (err, info) => {
-            if(err){
-                return false
-            }else{
-                return true
-            }
-        })
+        await transporter.sendMail(options())
+
+        return true
 
     } catch (error) {
-        console.log(error.message)  
+        console.log(error.message)
+        return false
     }
 }

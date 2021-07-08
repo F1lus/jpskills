@@ -8,10 +8,10 @@ module.exports = {
 
     mail: {
         host: 'smtp.gmail.com',
-        address: '"" <>',
+        address: '"JP Skills" <jpskills.test@gmail.com>',
         auth: {
-            user: '',
-            password: ''
+            user: 'jpskills.test@gmail.com',
+            password: 'skillTeszt1'
         }
     },
 

@@ -1529,6 +1529,69 @@ class Connection {
         return result
     }
 
+    getUserForMail = async adminId => {
+        let result = null
+        try {
+            const admin = await this.con('admin_login')
+                .where('id', adminId)
+                .first()
+            
+            if(admin){
+                const worker = await this.con('workers')
+                    .where('worker_cardcode', admin.cardcode)
+                    .first()
+
+                if(worker){
+                    result = {
+                        name: worker.worker_name,
+                        email: admin.email
+                    }
+                }
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+        
+        return result
+    }
+
+    findUserId = async (cardNum) => {
+        let result = -1
+        try {
+            const admin = await this.con('admin_login')
+                .where(this.con.raw('cardcode = ?', [cardNum]))
+                .first()
+
+            if (admin) {
+                result = admin.id
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+        return result
+    }
+
+    resetUserPassword = async (id, password) => {
+        let msg = false
+
+        try {
+            await this.con.transaction(async trx => {
+                const update = await this.con('admin_login')
+                    .update({
+                        password: CryptoJS.AES.encrypt(password, 'jp-$kDB').toString()
+                    })
+                    .where(this.con.raw('id = ?', id))
+                    .transacting(trx)
+
+                if(update){
+                    msg = true
+                }
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
     registerUser = async (cardNum, email, password) => {
         let msg = false
         try {
@@ -1556,6 +1619,66 @@ class Connection {
             console.log(error.message)
         }
         return msg
+    }
+
+    selectUserToken = async adminId => {
+        let result = null
+
+        try {
+            result = await this.con('tokens')
+                .where(this.con.raw('admin_id = ?', adminId))
+                .first()
+        } catch (error) {
+            console.log(error.message)
+        }
+
+        return result
+    }
+
+    clearExpiredTokens = async () => {
+        try {
+            await this.con.transaction(async trx => {
+                const tokens = await this.con('tokens').transacting(trx)
+
+                for(const token of tokens){
+                    if(new Date().getTime() > new Date(token.expires).getTime()){
+                        await this.con('tokens')
+                            .delete()
+                            .where('id', token.id)
+                            .transacting(trx)
+                    }
+                }
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
+    registerToken = async (adminId, token, expires) => {
+        try {
+            await this.con.transaction(async trx => {
+                const amount = await this.con('tokens')
+                    .where('admin_id', adminId)
+                    .transacting(trx)
+                
+                if(amount.length !== 0){
+                    await this.con('tokens')
+                        .delete()
+                        .where('admin_id', adminId)
+                        .transacting(trx)
+                }
+
+                await this.con('tokens')
+                    .insert({
+                        admin_id: adminId,
+                        token,
+                        expires
+                    })
+                    .transacting(trx)
+            })
+        } catch (error) {
+            console.log(error.message)
+        }
     }
 
     userLogout = async (cardNum) => {

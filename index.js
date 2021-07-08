@@ -58,5 +58,7 @@ app.use(require('./routes/exams/update/ExamUpdate'))
 
 app.use(require('./routes/users/Login'))
 
+app.use(require('./routes/users/ResetPassword'))
+
 //Szerver indítás
 server.listen(config.server_port, config.server_host, () => console.log('A szerver készen áll!'))
