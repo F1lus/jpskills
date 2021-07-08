@@ -14,7 +14,7 @@ export default function Routing({ component: Component, allowed, ...rest }) {
         return [state.userReducer.user, state.userReducer.permission, state.userReducer.loggedIn]
     })
 
-    const noLoginPaths = ['/', '/resetRequest']
+    const noLoginPaths = ['/', '/resetRequest', '/passwordReset']
 
     const path = useLocation().pathname
 

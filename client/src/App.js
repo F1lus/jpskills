@@ -9,7 +9,8 @@ import 'wowjs/css/libs/animate.css'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import Login from './components/user_management/Login'
-import PasswordReset from './components/user_management/ResetRequest'
+import ResetRequest from './components/user_management/ResetRequest'
+import PasswordReset from './components/user_management/PasswordReset'
 import ExamWrapper from './components/exams/ExamWrapper'
 import ExamModify from './components/exams/modify/ExamModify'
 import CustomNavbar from './components/nav/CustomNavbar'
@@ -23,7 +24,6 @@ import Management from './components/user_management/superuser/Management'
 import UserManager from './components/user_management/superuser/UserManager'
 import Load from './components/loading/Load'
 import AdminManager from './components/user_management/superuser/AdminManager'
-import ResetRequest from './components/user_management/ResetRequest'
 
 export default function App() {
 
@@ -46,6 +46,8 @@ export default function App() {
               <Routing exact path='/' allowed={['*']} component={Login} />
 
               <Routing exact path='/resetRequest' allowed={['*']} component={ResetRequest} />
+
+              <Routing exact path='/passwordReset' allowed={['*']} component={PasswordReset} />
 
               <Routing exact path='/home' allowed={['*']} component={Home} />
 

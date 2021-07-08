@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 export default function ResetRequest() {
 
@@ -23,6 +24,10 @@ export default function ResetRequest() {
                         <button className="btn btn-warning mt-3">Bejelentkezés</button>
                     </div>
                 </form>
+                <br/>
+                <div className="text-center">
+                    <NavLink to="/">Vissza a bejelentkezéshez</NavLink>
+                </div>
             </div>
         </div>
     )

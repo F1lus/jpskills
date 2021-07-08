@@ -246,6 +246,7 @@ export default function Login() {
                         {register ? 'Vegye ki a pipát, ha már van fiókja!' : 'Pipálja be, ha még nincs fiókja!'}
                     </label>
                 </div>
+                
                 <div className="text-center">
                     <NavLink to="/resetRequest">Elfelejtettem a jelszavam</NavLink>
                 </div>
