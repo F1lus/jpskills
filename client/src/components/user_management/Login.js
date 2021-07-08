@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useStore } from 'react-redux'
 
 import API from '../BackendAPI'
@@ -15,6 +15,12 @@ export default function Login() {
     const [email, setEmail] = useState('')
     const [alert, setAlert] = useState(null)
     const [register, setRegister] = useState(false)
+
+    useEffect(() => {
+        new wow.WOW({
+            live: false
+        }).init()
+    }, [])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()

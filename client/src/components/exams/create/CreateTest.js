@@ -102,7 +102,7 @@ export default function CreateTest(props) {
             default:
                 break
         }
-    }, [comment.length, examName.length, socket, props.store])
+    }, [comment.length, examName.length, socket])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
