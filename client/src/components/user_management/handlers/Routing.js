@@ -14,8 +14,6 @@ export default function Routing({ component: Component, allowed, ...rest }) {
         return [state.userReducer.user, state.userReducer.permission, state.userReducer.loggedIn]
     })
 
-    const loading = useSelector(state => state.loadReducer.loading)
-
     const noLoginPaths = ['/']
 
     const path = useLocation().pathname
@@ -47,7 +45,7 @@ export default function Routing({ component: Component, allowed, ...rest }) {
                 .off('login-info', handleLoginInfo)
                 .off('logged-out', handleLogout)
         }
-    }, [handleLoginInfo, handleLogout, socket, loading, store])
+    }, [handleLoginInfo, handleLogout, socket, store])
 
     const logoutHelper = useCallback(() => {
         socket.emit('logout').on('logged-out', handleLogout)

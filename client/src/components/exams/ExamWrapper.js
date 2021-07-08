@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from 'react'
 import { useSelector, useStore } from 'react-redux'
 
 import { SocketContext } from '../GlobalSocket'
-import { setLoad } from '../store/ActionHandler'
 
 import Exams from './Exams'
 import CreateTest from './create/CreateTest'
@@ -16,7 +15,6 @@ export default function ExamWrapper() {
     const permission = useSelector(state => state.userReducer.permission)
 
     useEffect(() => {
-        setLoad(store, true)
 
         if (permission === 'admin') {
             socket
