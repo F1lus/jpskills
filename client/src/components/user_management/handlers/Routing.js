@@ -59,6 +59,10 @@ export default function Routing({ component: Component, allowed, ...rest }) {
                     return <Redirect to='/' />
                 }
             }else{
+                if(permission === 'superuser' && !(path.includes('/management') || path === '/logout')){
+                    return <Redirect to='/management' />
+                }
+
                 if(noLoginPaths.includes(path)){
                     return <Redirect to='/home' />
                 }
@@ -73,7 +77,6 @@ export default function Routing({ component: Component, allowed, ...rest }) {
 
                 if (allowed.findIndex(perm => perm === '*' || perm === permission) === -1) {
                     return <Redirect to='/home' />
-                    
                 }
             }
 
