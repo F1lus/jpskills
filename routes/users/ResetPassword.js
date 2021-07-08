@@ -31,7 +31,7 @@ reset
                 response: await mail(userInfo.email, 'Új jelszó beállítása', {
                     name: userInfo.name,
                     link: `${config.client}/resetPassword?token=${token}&id=${userId}`
-                }, '../newpass.handlebars')
+                }, 'newpass')
             })
         } catch (error) {
             res.json({ err: error.message })

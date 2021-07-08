@@ -28,7 +28,7 @@ module.exports = async (email, subject, payload, template) => {
             }
         })
 
-        const src = fs.readFileSync(path.join(__dirname, template), 'utf8')
+        const src = fs.readFileSync(path.join(__dirname, 'templates', `${template}.handlebars`), 'utf8')
         const compiledTemplate = handlebars.compile(src)
         const options = () => ({
             from: config.mail.address,
