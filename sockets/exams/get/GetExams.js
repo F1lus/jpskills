@@ -22,6 +22,10 @@ module.exports = (socket) => {
     const session = socket.handshake.session
 
     const getExams = async () => {
+        if(!session.cardNum || !session.perm){
+            return
+        }
+
         const exams = await dbconnect.selectExams(session.cardNum, session.perm === 'admin')
 
         let examResult = []
@@ -43,6 +47,11 @@ module.exports = (socket) => {
     socket.on('exams-get-signal', getExams)
 
     const learnExams = async () => {
+
+        if(!session.cardNum || !session.perm){
+            return
+        }
+
         const results = await dbconnect.selectLearnExams(session.perm === 'admin', session.cardNum)
 
         let examResult = []

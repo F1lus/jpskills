@@ -7,6 +7,10 @@ module.exports = (socket) => {
     const session = socket.handshake.session
 
     const removeFile = () => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         const location = path.join(__dirname, `../../../temp_files/user_timer/${session.cardNum}.json`)
 
         if (fs.existsSync(location)) {
@@ -20,6 +24,10 @@ module.exports = (socket) => {
     }
 
     const process = async (answers, examCode) => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         const time = removeFile()
         const processed = await dbconnect.processAnswers(answers, examCode, session.cardNum, time)
 

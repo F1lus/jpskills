@@ -9,6 +9,10 @@ const config = require('../../config')
 
 reset
     .post('/requestReset', async (req, res) => {
+        if(req.session.perm || req.session.cardNum){
+            return
+        }
+
         try {
             const cardNum = req.body.cardNum
 

@@ -5,18 +5,30 @@ module.exports = socket => {
     const session = socket.handshake.session
 
     const getExistingUsers = async () => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             socket.emit('existing-users', await DbConnect.getExistingUsers(session.cardNum))
         }
     }
 
     const getSpecificUser = async cardcode => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             socket.emit('userinfo', await DbConnect.getSpecificUser(cardcode))
         }
     }
 
     const getAdmins = async user => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             socket.emit('admin-list', await DbConnect.getAdmins(user))
         }

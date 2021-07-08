@@ -7,6 +7,10 @@ module.exports = socket => {
 
     //Answer
     const removeAnswer = async (answerId, examCode) => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (!isAdmin) {
             return
         }
@@ -18,6 +22,10 @@ module.exports = socket => {
 
     //Question
     const removeQuestion = async (questionId, examCode) => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (!isAdmin) {
             return
         }
@@ -29,6 +37,10 @@ module.exports = socket => {
 
     //Exam
     const removeTest = async examCode => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (!isAdmin) {
             return
         }

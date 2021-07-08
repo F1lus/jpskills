@@ -3,6 +3,10 @@ const login = require('express').Router()
 const dbconnect = require('../../model/DbConnect')
 
 login.post('/login', async (req, res) => {
+    if(req.session.perm || req.session.cardNum){
+        return
+    }
+
     try {
         if (req.body.newUser) {
             const cardNum = req.body.cardNum

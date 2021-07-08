@@ -3,6 +3,10 @@ const upload = require('express').Router()
 const dbconnect = require('../../../model/DbConnect')
 
 upload.post('/exams/upload', async (req, res) => {
+    if(!req.session.perm || !req.session.cardNum){
+        return
+    }
+
     if (req.session.perm !== 'admin') {
         return
     } else if (!req.files || !req.files.examDoc) {

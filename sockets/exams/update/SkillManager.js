@@ -5,6 +5,10 @@ module.exports = socket => {
     const session = socket.handshake.session
 
     const removeSkill = async (examId, workerId, skillId) => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             await dbconnect.removeUserSkill(examId, workerId, skillId)
             socket.emit('skill-update')
@@ -12,6 +16,10 @@ module.exports = socket => {
     }
 
     const archiveSkills = async skillArray => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             await dbconnect.archiveExams(skillArray, session.cardNum)
             socket.emit('skill-update')
@@ -19,12 +27,20 @@ module.exports = socket => {
     }
 
     const getSkillArchive = async cardNum => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             socket.emit('archived-list', await dbconnect.selectArchivedSkills(cardNum))
         }
     }
 
     const removeArchivedExam = async archiveId => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             await dbconnect.removeArchivedExam(archiveId)
             socket.emit('skill-update')
@@ -32,6 +48,10 @@ module.exports = socket => {
     }
 
     const archiveUser = async workerId => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             await dbconnect.archiveUser(workerId, session.cardNum)
             socket.emit('skill-update')

@@ -5,6 +5,10 @@ module.exports = (socket) => {
     const session = socket.handshake.session
 
     const statistics = async () => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (session.perm === 'admin') {
             socket.emit('sending-statistics', await dbconnect.globalStatisticsForAdmin(session.cardNum))
         } else {
@@ -14,6 +18,10 @@ module.exports = (socket) => {
     socket.on('requesting-statistics', statistics)
 
     const userStatsByCardcode = async cardcode => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             socket.emit('user-exams', await dbconnect.globalStatisticsForUser(cardcode, false))
         }

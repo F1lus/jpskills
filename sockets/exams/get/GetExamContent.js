@@ -9,6 +9,11 @@ module.exports = (socket) => {
     const getExamProps = async (examCode) => socket.emit('exam-props', await dbconnect.selectExamProps(examCode))
 
     const beginTimer = () => {
+
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (session.perm !== 'admin') {
             const object = {
                 timer: {

@@ -16,6 +16,8 @@ export default function Routing({ component: Component, allowed, ...rest }) {
 
     const loading = useSelector(state => state.loadReducer.loading)
 
+    const noLoginPaths = ['/']
+
     const path = useLocation().pathname
 
     const socket = useContext(SocketContext)
@@ -54,7 +56,36 @@ export default function Routing({ component: Component, allowed, ...rest }) {
 
     return (
         <Route {...rest} render={(props) => {
-            if (!status && path === '/') {
+            if(!status){
+                if(!noLoginPaths.includes(path)){
+                    return <Redirect to='/' />
+                }
+            }else{
+                if(noLoginPaths.includes(path)){
+                    return <Redirect to='/home' />
+                }
+
+                if(path === '/logout'){
+                    return (
+                        <div>
+                            {logoutHelper()}
+                        </div>
+                    )
+                }
+
+                if (allowed.findIndex(perm => perm === '*' || perm === permission) === -1) {
+                    return <Redirect to='/home' />
+                    
+                }
+            }
+
+            return <Component {...props} user={user} permission={permission} />
+        }} />
+    )
+}
+
+/*
+if (!status && path === '/') {
                 return <Component  {...props} />
             } else if (status && path === '/') {
                 return <Redirect to='/home' />
@@ -85,6 +116,4 @@ export default function Routing({ component: Component, allowed, ...rest }) {
             } else {
                 return <Redirect to='/' />
             }
-        }} />
-    )
-}
+*/

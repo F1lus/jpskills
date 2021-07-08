@@ -22,6 +22,10 @@ module.exports = socket => {
     const session = socket.handshake.session
 
     const getAdminExams = async cardcode => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             const exams = await DbConnect.selectExamsByCreator(cardcode)
 
@@ -41,6 +45,10 @@ module.exports = socket => {
     }
 
     const deleteAdmin = async (cardcode, replaceAdmin) => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if(session.perm === 'superuser'){
             await DbConnect.deleteAdmin(cardcode, replaceAdmin)
             socket.emit('admin-removed')

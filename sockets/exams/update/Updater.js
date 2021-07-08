@@ -2,11 +2,16 @@ const dbconnect = require('../../../model/DbConnect')
 
 module.exports = socket => {
 
-    const user = socket.handshake.session.cardNum
-    const isAdmin = socket.handshake.session.perm === 'admin'
+    const session = socket.handshake.session
+    const user = session.cardNum
+    const isAdmin = session.perm === 'admin'
 
     //Status
     const updateStatus = async data => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (!isAdmin) {
             return
         }
@@ -18,6 +23,10 @@ module.exports = socket => {
 
     //ExamProps
     const updateExamProps = async data => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (!isAdmin) {
             return
         }
@@ -30,6 +39,10 @@ module.exports = socket => {
 
     //Question Modify
     const modifyQuestion = async data => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (!isAdmin) {
             return
         }
@@ -42,6 +55,10 @@ module.exports = socket => {
 
     //Answer Modify
     const modifyAnswer = async data => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (!isAdmin) {
             return
         }
@@ -54,6 +71,10 @@ module.exports = socket => {
 
     //Insert Question
     const insertAnswer = async data => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
         if (!isAdmin) {
             return
         }
