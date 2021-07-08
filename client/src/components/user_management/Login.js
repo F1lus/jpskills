@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react'
 import { useStore } from 'react-redux'
 
+import { NavLink } from 'react-router-dom'
+
 import API from '../BackendAPI'
 import { setLoad } from '../store/ActionHandler'
 import wow from 'wowjs'
@@ -243,6 +245,9 @@ export default function Login() {
                         <input type="checkbox" name="regisztráció" onChange={e => newUser(e)} className="m-2" />
                         {register ? 'Vegye ki a pipát, ha már van fiókja!' : 'Pipálja be, ha még nincs fiókja!'}
                     </label>
+                </div>
+                <div className="text-center">
+                    <NavLink to="/resetRequest">Elfelejtettem a jelszavam</NavLink>
                 </div>
             </div>
 
