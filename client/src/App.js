@@ -47,7 +47,7 @@ export default function App() {
 
               <Routing exact path='/resetRequest' allowed={['*']} component={ResetRequest} />
 
-              <Routing exact path='/passwordReset' allowed={['*']} component={PasswordReset} />
+              <Routing exact path='/resetPassword' allowed={['*']} component={PasswordReset} />
 
               <Routing exact path='/home' allowed={['*']} component={Home} />
 

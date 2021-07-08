@@ -54,7 +54,7 @@ export default function ResetRequest() {
                     </div>
 
                     <div className="text-center">
-                        <button className="btn btn-warning mt-3">Bejelentkezés</button>
+                        <button className="btn btn-warning mt-3">Kérelmezés</button>
                     </div>
                 </form>
                 <br/>

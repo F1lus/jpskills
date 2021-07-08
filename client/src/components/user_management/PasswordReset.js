@@ -1,6 +1,10 @@
 import React from 'react'
 
+import { useLocation } from 'react-router'
+
 export default function PasswordReset() {
+
+    const query = useLocation().search.replace('?', '').split('&')
 
     return (
         <div className="d-flex flex-column container text-center align-items-center justify-content-center vh-100 w-50">
