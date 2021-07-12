@@ -7,16 +7,13 @@ export default function AddAnswer(props) {
 
     const [disableButton, setDisableButton] = useState(false)
     const [answer, setAnswer] = useState(null)
-    const [isCorrect, setCorrect] = useState(1)
+    const [isCorrect, setCorrect] = useState(0)
 
 
     const handleChange = useCallback(event => {
         switch (event.target.name) {
             case 'answer':
                 setAnswer(event.target.value)
-                break
-            case 'value':
-                setCorrect(event.target.value)
                 break
             default:
                 return
@@ -25,7 +22,7 @@ export default function AddAnswer(props) {
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
-        if (props.questionId && answer && isCorrect) {
+        if (props.questionId && answer) {
             setDisableButton(true)
             props.socket.emit('insert-answer', {
                 examCode: param.examName,
@@ -46,6 +43,11 @@ export default function AddAnswer(props) {
 
     }, [props.socket, handleUpdate])
 
+    const handleClick = useCallback(event => {
+        event.target.classList.toggle("active")
+        event.target.classList.contains("active") ? setCorrect(1) : setCorrect(0)
+    }, [])
+
     return (
         <div>
             { props.display ?
@@ -60,11 +62,9 @@ export default function AddAnswer(props) {
                             </label>
                         </div>
 
-                        <select name='value' className="rounded pl-2 w-25" onChange={handleChange}>
-                            <option value={1}>Helyes</option>
-                            <option value={0}>Helytelen</option>
-                        </select>
-                        <br />
+                        <div className={isCorrect ? "container mx-auto mb-3 active" : "container mx-auto mb-3"} id="toggle" onClick={handleClick}>
+                            <i className="indicator"></i>
+                        </div>
                         <button disabled={disableButton} className="btn btn-warning m-2">Hozzáadás!</button>
                     </form>
                 </div>

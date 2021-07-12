@@ -206,7 +206,7 @@ export default function CreateTest(props) {
                         {items.length > 0 ?  
                             <div className="col">
                                 <div className="form-group m-auto w-75">
-                                    <input type="text" name="search" onChange={searchItem} required autoComplete="off" />
+                                    <input type="text" name="search" onChange={searchItem} autoComplete="off" />
                                     <label htmlFor="examName" className="label-name">
                                         <span className="content-name">
                                             Termék keresése
