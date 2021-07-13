@@ -189,16 +189,16 @@ export default function Login() {
                     </div>
 
                     {register ?
-                    <div className="form-group m-auto">
-                        <input type="email" name="email" autoComplete="off" value={email || ''} onChange={handleChange} required />
-                        <label htmlFor="email" className="label-name">
-                            <span className="content-name">
-                                Email cím
-                            </span>
-                        </label>
-                    </div>
-                    :
-                    null }
+                        <div className="form-group m-auto">
+                            <input type="email" name="email" autoComplete="off" value={email || ''} onChange={handleChange} required />
+                            <label htmlFor="email" className="label-name">
+                                <span className="content-name">
+                                    Email cím
+                                </span>
+                            </label>
+                        </div>
+                        :
+                        null}
 
                     <div className="form-group m-auto">
                         <input type="password" name="password" autoComplete="off" value={password || ''} onChange={handleChange} required />
@@ -208,16 +208,6 @@ export default function Login() {
                             </span>
                         </label>
                     </div>
-                    {register && (password.length > 0 || password2.length) ? (
-                        <div className='mt-3 ml-5 w-50 text-justify'>
-                            <h6>A jelszavak megkötései:</h6>
-                            <ul>
-                                <li id='hossz' className='text-danger'>- 8-16 karakter hosszú</li>
-                                <li id='szam' className='text-danger'>- Minimum egy szám</li>
-                                <li id='nagybetu' className='text-danger'>- Minimum egy nagybetű</li>
-                                <li id='egyeztet' className='text-danger'>- A jelszavak megegyeznek</li>
-                            </ul>
-                        </div>) : null}
 
                     {register ?
                         <div>
@@ -228,6 +218,16 @@ export default function Login() {
                                         Jelszó megerősítése
                                     </span>
                                 </label>
+                            </div>
+
+                            <div className='mt-3 ml-4 w-50 text-justify'>
+                                <h6>A jelszavak megkötései:</h6>
+                                <ul>
+                                    <li id='hossz' className='text-danger'>- 8-16 karakter hosszú</li>
+                                    <li id='szam' className='text-danger'>- Minimum egy szám</li>
+                                    <li id='nagybetu' className='text-danger'>- Minimum egy nagybetű</li>
+                                    <li id='egyeztet' className='text-danger'>- A jelszavak megegyeznek</li>
+                                </ul>
                             </div>
 
                             <div className="text-center">
@@ -246,7 +246,7 @@ export default function Login() {
                         {register ? 'Vegye ki a pipát, ha már van fiókja!' : 'Pipálja be, ha még nincs fiókja!'}
                     </label>
                 </div>
-                
+
                 <div className="text-center">
                     <NavLink to="/resetRequest">Elfelejtettem a jelszavam</NavLink>
                 </div>

@@ -1535,13 +1535,13 @@ class Connection {
             const admin = await this.con('admin_login')
                 .where('id', adminId)
                 .first()
-            
-            if(admin){
+
+            if (admin) {
                 const worker = await this.con('workers')
                     .where('worker_cardcode', admin.cardcode)
                     .first()
 
-                if(worker){
+                if (worker) {
                     result = {
                         name: worker.worker_name,
                         email: admin.email
@@ -1551,7 +1551,7 @@ class Connection {
         } catch (error) {
             console.log(error.message)
         }
-        
+
         return result
     }
 
@@ -1580,16 +1580,23 @@ class Connection {
                     .update({
                         password: CryptoJS.AES.encrypt(password, 'jp-$kDB').toString()
                     })
-                    .where(this.con.raw('id = ?', id))
+                    .where('id', id)
                     .transacting(trx)
 
-                if(update){
+                if (update) {
+                    await this.con('tokens')
+                        .delete()
+                        .where('admin_id', id)
+                        .transacting(trx)
+                    
                     msg = true
                 }
             })
         } catch (error) {
             console.log(error.message)
         }
+
+        return msg
     }
 
     registerUser = async (cardNum, email, password) => {
@@ -1640,8 +1647,8 @@ class Connection {
             await this.con.transaction(async trx => {
                 const tokens = await this.con('tokens').transacting(trx)
 
-                for(const token of tokens){
-                    if(new Date().getTime() > new Date(token.expires).getTime()){
+                for (const token of tokens) {
+                    if (new Date().getTime() > new Date(token.expires).getTime()) {
                         await this.con('tokens')
                             .delete()
                             .where('id', token.id)
@@ -1660,8 +1667,8 @@ class Connection {
                 const amount = await this.con('tokens')
                     .where('admin_id', adminId)
                     .transacting(trx)
-                
-                if(amount.length !== 0){
+
+                if (amount.length !== 0) {
                     await this.con('tokens')
                         .delete()
                         .where('admin_id', adminId)

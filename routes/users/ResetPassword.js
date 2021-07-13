@@ -34,7 +34,7 @@ reset
             res.json({
                 response: await mail(userInfo.email, 'Új jelszó beállítása', {
                     name: userInfo.name,
-                    link: `${config.client}/resetPassword?token=${token}&id=${userId}`
+                    link: `${config.client}/resetPassword?token=${key}&id=${userId}`
                 }, 'newpass')
             })
         } catch (error) {
@@ -66,7 +66,7 @@ reset
                 throw new Error('A link nem megfelelő!')
             }
 
-            res.json({ response: await dbconnect.resetUserPassword(token.admin_id, newPw) })
+            res.json({ response: await dbconnect.resetUserPassword(storedToken.admin_id, newPw) })
         } catch (error) {
             res.json({ err: error.message })
         }
