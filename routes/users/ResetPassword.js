@@ -52,6 +52,10 @@ reset
                 throw new Error('Az adatok egyike hiányos, vagy nem megfelelő!')
             }
 
+            if (newPw.length < 8 || newPw.length > 16 || newPw.toLowerCase() === newPw || !newPw.split('').some(letter => !isNaN(letter))) {
+                throw new Error('A jelszava nem felel meg a követelményeknek!')
+            }
+
             await dbconnect.clearExpiredTokens()
 
             const storedToken = await dbconnect.selectUserToken(id)
