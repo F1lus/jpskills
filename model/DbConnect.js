@@ -1034,7 +1034,7 @@ class Connection {
      * Használt táblák: questions
      */
 
-    updateQuestion = async (user, examCode, questionId, value) => {
+    updateQuestion = async (user, examCode, questionId, value, type) => {
         let success = false
         try {
             await this.con.transaction(async trx => {
@@ -1046,7 +1046,8 @@ class Connection {
                         .first().transacting(trx)
 
                     let update = null
-                    if (question && typeof value === 'string') {
+
+                    if (question && type === 'text') {
                         update = await this.con('questions')
                             .update({
                                 question_name: value
@@ -1054,7 +1055,7 @@ class Connection {
                             .where(this.con.raw('question_id = ?', [questionId]))
                             .transacting(trx)
 
-                    } else if (question && typeof value === 'number' || typeof value === 'bigint') {
+                    } else if (question && type === 'number') {
                         update = await this.con('questions')
                             .update({
                                 points: value
@@ -1588,7 +1589,7 @@ class Connection {
                         .delete()
                         .where('admin_id', id)
                         .transacting(trx)
-                    
+
                     msg = true
                 }
             })

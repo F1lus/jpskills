@@ -46,9 +46,9 @@ module.exports = socket => {
         if (!isAdmin) {
             return
         }
-        if (data && data.examCode && data.questionId && data.value != null) {
+        if (data && data.examCode && data.questionId && data.value != null && data.type) {
             socket.emit('updated', await dbconnect.updateQuestion(user, data.examCode,
-                data.questionId, data.value))
+                data.questionId, data.value, data.type))
         }
     }
     socket.on('update-question', modifyQuestion)

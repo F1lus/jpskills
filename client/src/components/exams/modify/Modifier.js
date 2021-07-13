@@ -45,6 +45,7 @@ export default function Modifier(props) {
                     props.socket.emit('update-question', {
                         examCode: param.examName,
                         questionId: index,
+                        type: type,
                         value: value
                     })
                 } else {
@@ -59,7 +60,7 @@ export default function Modifier(props) {
             setDisableButton(false)
             console.log(error.message)
         }
-    }, [index, isAnswer, param.examName, props.socket, value])
+    }, [index, isAnswer, param.examName, props.socket, value, type])
 
     const renderInput = useCallback(() => {
         if (type === 'number' || type === 'text') {

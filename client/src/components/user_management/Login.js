@@ -85,7 +85,7 @@ export default function Login() {
                     setAlert(result.data.error)
                 } else {
                     if (register) {
-                        setAlert('A kártyaszám valószínűleg már foglalt!')
+                        setAlert('A kártyaszám, vagy az email-cím már foglalt!')
                     } else {
                         setAlert('A megadott adatok egyike hibás!')
                     }
