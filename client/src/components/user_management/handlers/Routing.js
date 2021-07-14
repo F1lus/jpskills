@@ -32,7 +32,6 @@ export default function Routing({ component: Component, allowed, ...rest }) {
     }, [])
 
     useEffect(() => {
-
         const bar = OverlayScrollbars(document.querySelectorAll('body'), { className: "os-theme-dark" })
         bar.scroll({ y: '0%' }, 500)
 
@@ -54,20 +53,20 @@ export default function Routing({ component: Component, allowed, ...rest }) {
 
     return (
         <Route {...rest} render={(props) => {
-            if(!status){
-                if(!noLoginPaths.includes(path)){
+            if (!status) {
+                if (!noLoginPaths.includes(path)) {
                     return <Redirect to='/' />
                 }
-            }else{
-                if(permission === 'superuser' && !(path.includes('/management') || path === '/logout')){
+            } else {
+                if (permission === 'superuser' && !(path.includes('/management') || path === '/logout')) {
                     return <Redirect to='/management' />
                 }
 
-                if(noLoginPaths.includes(path)){
+                if (noLoginPaths.includes(path)) {
                     return <Redirect to='/home' />
                 }
 
-                if(path === '/logout'){
+                if (path === '/logout') {
                     return (
                         <div>
                             {logoutHelper()}

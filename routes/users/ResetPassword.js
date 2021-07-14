@@ -1,5 +1,4 @@
 const reset = require('express').Router()
-const JWT = require('jsonwebtoken')
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 

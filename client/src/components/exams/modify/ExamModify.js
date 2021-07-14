@@ -30,9 +30,7 @@ export default function ExamModify() {
     const handleContent = useCallback(questionList => {
         const questionsModel = Qmodel(questionList)
 
-        if (questionsModel.questions.length > 0) {
-            setQuestions(questionsModel.questions)
-        }
+        setQuestions(questionsModel.questions)
         setMaxPoints(questionsModel.points)
         setLoad(store, false)
     }, [store])
@@ -69,12 +67,12 @@ export default function ExamModify() {
 
     useEffect(() => {
         setLoad(store, true)
-    }, [store])
-
-    useEffect(() => {
 
         socket.emit('request-exam-content', examCode.examName)
         socket.emit('request-exam-props', examCode.examName)
+    }, [store, updater, examCode.examName, socket])
+
+    useEffect(() => {
 
         socket.on('exam-content', handleContent)
 
@@ -91,7 +89,7 @@ export default function ExamModify() {
             clearTimeout(timeout.current)
         }
 
-    }, [updater, examCode.examName, handleUpdate, handleContent, handleExamRemoved, handleServerAccept, socket])
+    }, [handleUpdate, handleContent, handleExamRemoved, handleServerAccept, socket])
 
     useEffect(() => {
         if (callTimeout) {
@@ -111,7 +109,7 @@ export default function ExamModify() {
 
     return (
         <div className="container mt-5 text-center mb-3">
-            <div className="alert wow w-25" id="modify" />
+            <div className="alert w-25" id="modify" ></div>
             {removed ? <Redirect from={`/exams/modify/${examCode.examName}`} to='/exams' /> : null}
             <ModifyProps socket={socket} points={maxPoints} exam={examCode} />
             {questions.length === 0 ? null : <ListManager socket={socket} list={questions} />}

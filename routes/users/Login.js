@@ -3,7 +3,7 @@ const login = require('express').Router()
 const dbconnect = require('../../model/DbConnect')
 
 login.post('/login', async (req, res) => {
-    if(req.session.perm || req.session.cardNum){
+    if (req.session.perm || req.session.cardNum) {
         return
     }
 
@@ -19,7 +19,19 @@ login.post('/login', async (req, res) => {
 
             const userData = await dbconnect.findUser(cardNum)
             if (Array.isArray(userData) && userData.length !== 0) {
-                res.json({ access: await dbconnect.registerUser(cardNum, email, password) })
+                const success = await dbconnect.registerUser(cardNum, email, password)
+                if (success) {
+                    req.session.cardNum = cardNum
+                    req.session.user = userData[0]
+                    if (userData[1] === 'Adminisztrátor' || userData[1] === 'admin') {
+                        req.session.perm = 'admin'
+                    } else {
+                        req.session.perm = userData[1]
+                    }
+                    res.json({ access: true })
+                }else{
+                    res.json({ access: false })
+                }
             } else {
                 throw new Error('A kártyaszám nem található!')
             }
@@ -46,7 +58,7 @@ login.post('/login', async (req, res) => {
                     }
 
                 } else {
-                    res.json({ access: false })
+                    throw new Error('A felhasználó nem található!')
                 }
             }
         }
