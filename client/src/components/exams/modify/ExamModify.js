@@ -68,11 +68,12 @@ export default function ExamModify() {
     useEffect(() => {
         setLoad(store, true)
 
-        socket.emit('request-exam-content', examCode.examName)
-        socket.emit('request-exam-props', examCode.examName)
-    }, [store, updater, examCode.examName, socket])
+    }, [store])
 
     useEffect(() => {
+
+        socket.emit('request-exam-content', examCode.examName)
+        socket.emit('request-exam-props', examCode.examName)
 
         socket.on('exam-content', handleContent)
 
@@ -89,7 +90,7 @@ export default function ExamModify() {
             clearTimeout(timeout.current)
         }
 
-    }, [handleUpdate, handleContent, handleExamRemoved, handleServerAccept, socket])
+    }, [updater, examCode.examName, handleUpdate, handleContent, handleExamRemoved, handleServerAccept, socket])
 
     useEffect(() => {
         if (callTimeout) {
