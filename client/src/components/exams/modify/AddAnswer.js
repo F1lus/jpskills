@@ -62,6 +62,9 @@ export default function AddAnswer(props) {
                             </label>
                         </div>
 
+                        {isCorrect ?
+                            <span className="text-success font-weight-bold">Helyes</span> : <span className="text-danger font-weight-bold">Helytelen</span>
+                        }
                         <div className={isCorrect ? "container mx-auto mb-3 active" : "container mx-auto mb-3"} id="toggle" onClick={handleClick}>
                             <i className="indicator"></i>
                         </div>

@@ -216,7 +216,7 @@ export default function CreateTest(props) {
                             </div> : null}        
                     </div>
                     <h4 className='alert alert-danger w-50 mx-auto mt-3'>A célcsoport később nem módosítható!</h4>
-                    <select name="group" className="w-75 rounded" onChange={handleChange}>
+                    <select name="group" className="w-75 rounded" onChange={handleChange} multiple size="5">
                         <option defaultValue={-1}>A vizsga célcsoportja</option>
                         <option value={-10}>- Minden csoport -</option>
                         {groups.length === 0 ? <></> : groups.map((elem, index) => {
@@ -225,6 +225,9 @@ export default function CreateTest(props) {
                             )
                         })}
                     </select>
+                </div>
+                <div className="text-center">
+                    <small>*CTRL + kattintás több csoport kiválasztásához</small>
                 </div>
 
                 <div className="form-group m-auto w-75">
