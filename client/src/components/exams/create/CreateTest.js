@@ -228,7 +228,16 @@ export default function CreateTest(props) {
                             </div> : null}        
                     </div>
                     <h4 className='alert alert-danger w-50 mx-auto mt-3'>A célcsoport később nem módosítható!</h4>
-                    
+                    <div className="row text-center">
+                    {group.length > 0 ? 
+                        groups.map((elem, index) => {
+                        return(
+                            <p className="col" key={index}>{
+                                groups[groups.findIndex(elem.groupName => elem.id === index)]
+                            }</p>
+                        )
+                    }) : <p className="col">Nincs kiválasztott csoport</p>}
+                    </div>
                     <select name="group" className="w-75 rounded" onChange={handleChange} multiple size="5">
                         <option defaultValue={-1}>A vizsga célcsoportja</option>
                         {groups.length === 0 ? <></> : groups.map((elem, index) => {
@@ -237,6 +246,9 @@ export default function CreateTest(props) {
                             )
                         })}
                     </select>
+                </div>
+                <div className="text-center">
+                    <kbd>Több csoport kijelölesehez: ctrl + bal egérgomb / shift + bal egérgomb / bal egérgomb nyomva tartva</kbd>
                 </div>
 
                 <div className="form-group m-auto w-75">
