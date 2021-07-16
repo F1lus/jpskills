@@ -86,6 +86,13 @@ p {
 }
 
 /*profil*/
+.profilCard {
+    position: fixed;
+    z-index: 2;
+    top: 10%;
+    left: 2%;
+}
+
 #nev {
     font-weight: bold;
     font-size: 40px;
@@ -216,12 +223,17 @@ form input:valid + .label-name {
     transition: background-color 0.5s ease;
     cursor: pointer;
 }
+
+.checker:hover{
+    background: rgba(0, 140, 255, 0.400);
+}
+
 input[type="checkbox"]{
     display: none;
 }
 
 .check-bg{
-    background: rgb(0, 140, 255);
+    background: rgba(0, 140, 255, 0.800);
 }
 
 /*radio*/

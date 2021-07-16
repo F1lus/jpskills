@@ -225,7 +225,7 @@ export default function CreateTest(props) {
                                 </div>
                             </div> : null}
                     </div>
-                    <h4 className='alert alert-danger w-50 mx-auto mt-3'>A célcsoport később nem módosítható!</h4>
+                    <h4 className='text-danger w-50 mx-auto mt-3'>A célcsoport később nem módosítható!</h4>
                     <div className="row text-center">
                         {group.length > 0 ?
                             group.map((elem, index) => {

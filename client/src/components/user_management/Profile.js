@@ -7,7 +7,6 @@ import DetailTable from './DataTable'
 import globalStats from './models/GlobalStatistics'
 
 import { SocketContext } from '../GlobalSocket'
-import { Admin, User } from './handlers/PermissionHandler'
 
 export default function Profile() {
 
@@ -36,7 +35,7 @@ export default function Profile() {
         if (stats) {
             switch (entry) {
                 case 'time':
-                    return stats.avgTime.avgMins + " perc " + stats.avgTime.avgSecs + " másodperc"
+                    return stats.avgTime.avgMins + " p " + stats.avgTime.avgSecs + " mp"
                 case 'score':
                     return stats.avgScore
                 case 'completion':
@@ -52,49 +51,57 @@ export default function Profile() {
     const renderGlobalStats = useCallback(() => {
         if (stats != null) {
             return (
-                <div className="alert alert-success text-justify my-2 w-75 mx-auto">
-                    <h2 className='text-center'>Az Ön vizsgáiról általánosságban</h2>
-                    <hr />
-                    <h5>A vizsgáin eltöltött átlag idő: {renderStatsObject('time') || 'Nincs adat'}</h5>
-                    <h5>A vizsgáin elért átlagos pontszám: {renderStatsObject('score')}</h5>
-                    <h5>A vizsgáin a sikerességi arány: {renderStatsObject('completion') || 'Nincs adat'}</h5>
+                <div className='text-justify'>
+                    <div>Átlagos vizsgaidő: {renderStatsObject('time') || 'Nincs adat'}</div>
+                    <div>Átlagos pontszám: {renderStatsObject('score')}</div>
+                    <div>Sikerességi arány: {renderStatsObject('completion') || 'Nincs adat'}</div>
                 </div>
             )
         } else {
-            return <h5 className="alert alert-danger my-2">Az Ön vizsgáiról még nem készíthető statisztika!</h5>
+            return <div>Még nincsenek megjeleníthető adatok!</div>
         }
     }, [renderStatsObject, stats])
 
     return (
-        <div className="container text-center page">
-            <div className="container shadow rounded text-center bg-light mb-3 mt-3">
-                <span id="nev"><p>{nev}</p></span>
+        <div className="container-fluid text-center page">
+            <ProfileCard className='profilCard border border-primary shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
 
-                <h2>Besorolás: {csoport}</h2>
-
-                <hr className="w-75" id="customline" />
-                {renderGlobalStats()}
-                <br />
-            </div>
-
-            <div>
-                <div className="container shadow rounded text-center bg-light mb-3">
-                    <Learn />
+            <div className='float-right w-75'>
+                <div className='mt-5 container shadow rounded text-center bg-light mb-3'>
+                    <h5>Statisztika</h5>
+                    <hr className="w-75" id="customline" />
+                    <br />
                 </div>
-                <Admin permission={csoport}>
-                    <div className="container shadow rounded text-center bg-light mb-3 py-3">
-                        <DetailTable permission={csoport} results={renderStatsObject('skills')} />
-                    </div>
-                </Admin>
 
-                <User permission={csoport}>
-                    <div>
-                        <div className="container shadow rounded text-center bg-light mb-3 py-3">
-                            <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
-                        </div>
+                <div className='mt-5'>
+                    <div className="container shadow rounded text-center bg-light mb-3">
+                        <Learn />
                     </div>
-                </User>
+
+                    <div className="container shadow rounded text-center bg-light mb-3 py-3">
+                        <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
+                    </div>
+
+                </div>
             </div>
         </div>
     )
 }
+
+const ProfileCard = ({ nev, csoport, stats, className }) => (
+    <div className={`card ${className}`} style={{ width: '18rem' }}>
+        <br />
+        <svg className='m-auto' width="100" height="100">
+            <circle cx="50" cy="50" r="50" fill="#ffc107" />
+            <text x="50%" y="50%" alignment-baseline="central" text-anchor="middle" font-family="sans-serif" font-size="50" fill="#fff">{`${nev ? nev.split(' ')[0].charAt(0) : 'J'}${nev ? nev.split(' ')[1].charAt(0) : 'D'}`}</text>
+        </svg>
+
+
+
+        <div className="card-body">
+            <h5 className="card-title">{nev}</h5>
+            <h6 className="card-subtitle mb-2 text-muted">Besorolás: {csoport}</h6>
+            <p className="card-text">{stats}</p>
+        </div>
+    </div>
+)
