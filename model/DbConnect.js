@@ -1308,12 +1308,14 @@ class Connection {
 
     selectExams = async (user, userIsAdmin) => {
         let exams = []
+        let groups = []
         try {
             if (userIsAdmin) {
                 const examList = await this.con('exams')
                     .select(['exam_name', 'exam_itemcode', 'exam_notes', 'exam_status', 'exam_creation_time', 'worker_usergroup_id'])
                     .innerJoin('exam_grouping', 'exams.exam_id', 'exam_grouping.exam_id')
                     .where('exam_creator', [user])
+                    .groupBy(['exams.exam_id'])
 
                 for (const exam of examList) {
                     if (exam.worker_usergroup_id == null) {
@@ -1323,21 +1325,16 @@ class Connection {
                             comment: exam.exam_notes,
                             status: exam.exam_status,
                             created: exam.exam_creation_time,
-                            group: '-'
+                            group: 'Nincs'
                         })
                     } else {
-                        const group = await this.con('workers')
-                            .select('worker_usergroup')
-                            .where('worker_usergroup_id_id', exam.worker_usergroup_id)
-                            .first()
-
                         exams.push({
                             examName: exam.exam_name,
                             itemCode: exam.exam_itemcode,
                             comment: exam.exam_notes,
                             status: exam.exam_status,
                             created: exam.exam_creation_time,
-                            group: group.worker_usergroup
+                            group: 'Egy vagy több'
                         })
                     }
                 }
@@ -1779,7 +1776,7 @@ class Connection {
                     'VALUES (?)', [arr])
                     .transacting(trx)
                 if (insert.length !== 0) {
-                    if (group.length === 0) {
+                    if (group.split(',').length === 0) {
                         const insertGrouping = await this.con('exam_grouping')
                             .insert({
                                 exam_id: insert[0].insertId,
@@ -1790,7 +1787,7 @@ class Connection {
                             message = 200
                         }
                     } else {
-                        for (const grp of group) {
+                        for (const grp of group.split(',')) {
                             await this.con.raw(
                                 'INSERT INTO exam_grouping SET exam_id = ?, worker_usergroup_id = ? ',
                                 [insert[0].insertId, grp])

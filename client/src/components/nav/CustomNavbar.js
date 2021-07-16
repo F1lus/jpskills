@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 export default () => (
     <div id="navbar">
         <section id="hatter" />
-        <ul className="nav nav-fill mb-3">
+        <ul className="nav nav-fill mb-3 border border-primary">
             {Elemek.map((elem, index) => {
                 return (
                     <NavLink

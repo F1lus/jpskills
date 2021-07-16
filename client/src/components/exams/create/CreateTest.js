@@ -50,8 +50,6 @@ export default function CreateTest(props) {
     }, [])
 
     useEffect(() => {
-        console.log(group)
-
         socket
             .on('types-emitter', handleTypes)
             .on('products-emitter', handleProducts)

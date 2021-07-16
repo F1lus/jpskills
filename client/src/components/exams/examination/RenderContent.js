@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Redirect, Prompt } from 'react-router-dom'
 
 import { setLoad } from '../../store/ActionHandler'
+import Input from './Input'
 
 export default function RenderContent(props) {
 
@@ -105,12 +106,7 @@ export default function RenderContent(props) {
                         <li>
                             {question.answers.map((text, index) => {
                                 return (
-                                    <div className="my-2" key={index}>
-                                        <label htmlFor={index} className="checkbox-label">
-                                            <input type="checkbox" className="m-2" name={index} onChange={e => { handleChange(e, question.id, text.id) }} />
-                                            {text.text}
-                                        </label>
-                                    </div>
+                                    <Input className='w-50' key={index} inputText={text.text} onChange={e => { handleChange(e, question.id, text.id) }} />
                                 )
                             })}
                         </li>
