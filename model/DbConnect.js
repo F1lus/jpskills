@@ -1779,7 +1779,7 @@ class Connection {
                     'VALUES (?)', [arr])
                     .transacting(trx)
                 if (insert.length !== 0) {
-                    if (group == -10) {
+                    if (group.length === 0) {
                         const insertGrouping = await this.con('exam_grouping')
                             .insert({
                                 exam_id: insert[0].insertId,
@@ -1790,14 +1790,13 @@ class Connection {
                             message = 200
                         }
                     } else {
-                        const insertGrouping = await this.con.raw(
-                            'INSERT INTO exam_grouping SET exam_id = ?, worker_usergroup_id = ? ',
-                            [insert[0].insertId, group])
-                            .transacting(trx)
-
-                        if (insertGrouping.length !== null) {
-                            message = 200
+                        for (const grp of group) {
+                            await this.con.raw(
+                                'INSERT INTO exam_grouping SET exam_id = ?, worker_usergroup_id = ? ',
+                                [insert[0].insertId, grp])
+                                .transacting(trx)
                         }
+                        message = 200
                     }
                 }
             })
