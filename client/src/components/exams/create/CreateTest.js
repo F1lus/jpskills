@@ -50,6 +50,8 @@ export default function CreateTest(props) {
     }, [])
 
     useEffect(() => {
+        console.log(group)
+
         socket
             .on('types-emitter', handleTypes)
             .on('products-emitter', handleProducts)
@@ -66,15 +68,21 @@ export default function CreateTest(props) {
     const handleChange = useCallback(event => {
         switch (event.target.name) {
             case 'group':
-                if (event.target.value !== 'A vizsga célcsoportja') {
-                    if (!group.includes(event.target.value)) {
-                        let grp = group
-                        //group.splice(group.indexOf(event.target.value), 1)
-                        grp.push(event.target.value)
-                        setGroup(grp)
-                        console.log(group)
+                const grp = []
+                for(const option of event.target.options){
+                    if(option.value !== 'A vizsga célcsoportja'){
+                        if(option.selected){
+                            if(!grp.includes(option.value)){
+                                grp.push(option.value)
+                            }
+                        }else{
+                            if(grp.includes(option.value)){
+                                grp.splice(grp.indexOf(option.value))
+                            }
+                        }
                     }
                 }
+                setGroup(grp)
                 break
             case 'type':
                 if (event.target.value === 'A termék gyártója') {
@@ -106,7 +114,7 @@ export default function CreateTest(props) {
             default:
                 break
         }
-    }, [comment.length, examName.length, socket, group])
+    }, [comment.length, examName.length, socket])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
