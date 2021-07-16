@@ -238,7 +238,7 @@ export default function CreateTest(props) {
                                 )
                             }) : <p className="col">Nincs kiválasztott csoport</p>}
                     </div>
-                    <select name="group" className="w-75 rounded" onChange={handleChange} multiple size="5">
+                    <select name="group" className="w-75 rounded" onChange={handleChange} multiple size="6">
                         <option defaultValue={-1}>A vizsga célcsoportja</option>
                         {groups.length === 0 ? <></> : groups.map((elem, index) => {
                             return (
