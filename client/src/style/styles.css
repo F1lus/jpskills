@@ -212,7 +212,7 @@ form input:valid + .label-name {
 .checker{
     border: 2px solid rgb(0, 140, 255);
     border-radius: 5px;
-    padding: 15px;
+    padding: 5px;
     transition: background-color 0.5s ease;
     cursor: pointer;
 }

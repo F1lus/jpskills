@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 import API from '../BackendAPI'
 import { setLoad } from '../store/ActionHandler'
 import wow from 'wowjs'
+import Input from '../exams/examination/Input'
 
 export default function Login() {
 
@@ -241,10 +242,7 @@ export default function Login() {
                     }
                 </form>
                 <div className="container mt-3">
-                    <label className="checker">
-                        <input type="checkbox" className="cb" name="regisztráció" onChange={e => newUser(e)} className="m-2" />
-                        {register ? 'Vegye ki a pipát, ha már van fiókja!' : 'Pipálja be, ha még nincs fiókja!'}
-                    </label>
+                    <Input inputText={register ? 'Vegye ki a pipát, ha már van fiókja!' : 'Pipálja be, ha még nincs fiókja!'} onChange={newUser} />
                 </div>
 
                 <div className="text-center">
