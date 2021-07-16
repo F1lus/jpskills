@@ -18,7 +18,7 @@ export default function CreateTest(props) {
     const [filteredItems, setFilteredItems] = useState([])
     const [types, setTypes] = useState([])
     const [groups, setGroups] = useState([])
-    const [group, setGroup] = useState(-10)
+    const [group, setGroup] = useState([])
 
     const [uploaded, setUploaded] = useState(false)
     const [disable, setDisable] = useState(false)
@@ -67,9 +67,13 @@ export default function CreateTest(props) {
         switch (event.target.name) {
             case 'group':
                 if (event.target.value !== 'A vizsga célcsoportja') {
-                    setGroup(event.target.value)
-                } else {
-                    setGroup(-10)
+                    if (!group.includes(event.target.value)) {
+                        let grp = group
+                        //group.splice(group.indexOf(event.target.value), 1)
+                        grp.push(event.target.value)
+                        setGroup(grp)
+                        console.log(group)
+                    }
                 }
                 break
             case 'type':
@@ -102,7 +106,7 @@ export default function CreateTest(props) {
             default:
                 break
         }
-    }, [comment.length, examName.length, socket])
+    }, [comment.length, examName.length, socket, group])
 
     const handleSubmit = useCallback(event => {
         event.preventDefault()
@@ -216,18 +220,15 @@ export default function CreateTest(props) {
                             </div> : null}        
                     </div>
                     <h4 className='alert alert-danger w-50 mx-auto mt-3'>A célcsoport később nem módosítható!</h4>
+                    
                     <select name="group" className="w-75 rounded" onChange={handleChange} multiple size="5">
                         <option defaultValue={-1}>A vizsga célcsoportja</option>
-                        <option value={-10}>- Minden csoport -</option>
                         {groups.length === 0 ? <></> : groups.map((elem, index) => {
                             return (
                                 <option key={index} value={elem.id}>{elem.groupName}</option>
                             )
                         })}
                     </select>
-                </div>
-                <div className="text-center">
-                    <small>*CTRL + kattintás több csoport kiválasztásához</small>
                 </div>
 
                 <div className="form-group m-auto w-75">
