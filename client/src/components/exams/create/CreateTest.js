@@ -69,14 +69,14 @@ export default function CreateTest(props) {
         switch (event.target.name) {
             case 'group':
                 const grp = []
-                for(const option of event.target.options){
-                    if(option.value !== 'A vizsga célcsoportja'){
-                        if(option.selected){
-                            if(!grp.includes(option.value)){
+                for (const option of event.target.options) {
+                    if (option.value !== 'A vizsga célcsoportja') {
+                        if (option.selected) {
+                            if (!grp.includes(option.value)) {
                                 grp.push(option.value)
                             }
-                        }else{
-                            if(grp.includes(option.value)){
+                        } else {
+                            if (grp.includes(option.value)) {
                                 grp.splice(grp.indexOf(option.value))
                             }
                         }
@@ -176,14 +176,14 @@ export default function CreateTest(props) {
     }, [comment, examDoc, examName, item, permission, group])
 
     const searchItem = useCallback(event => {
-        if(items.length > 0 && types) {
+        if (items.length > 0 && types) {
             const filteredBy = items.filter(item => {
                 const search = event.target.value.toLowerCase().trim()
                 return item[1].includes(search) || item[0].toLowerCase().includes(search)
             })
             setFilteredItems(filteredBy)
         }
-    },[items, types])
+    }, [items, types])
 
     return (
         <div className="container shadow rounded p-3 bg-light mt-3">
@@ -207,15 +207,15 @@ export default function CreateTest(props) {
                             <select name="item" className="w-100 rounded" onChange={handleChange}>
                                 <option defaultValue={-1}>{items.length === 0 ? 'Először válasszon vevőt!' : 'A vizsga terméke'}</option>
                                 {filteredItems.length === 0 ? <></>
-                                : filteredItems.map((elem, index) => {
-                                    return (
-                                        <option key={index} value={elem[1]}>{elem[1]} || {elem[0]}</option>
-                                    )
-                                })}
+                                    : filteredItems.map((elem, index) => {
+                                        return (
+                                            <option key={index} value={elem[1]}>{elem[1]} || {elem[0]}</option>
+                                        )
+                                    })}
                             </select>
                         </div>
 
-                        {items.length > 0 ?  
+                        {items.length > 0 ?
                             <div className="col">
                                 <div className="form-group m-auto w-75">
                                     <input type="text" name="search" onChange={searchItem} autoComplete="off" />
@@ -225,18 +225,18 @@ export default function CreateTest(props) {
                                         </span>
                                     </label>
                                 </div>
-                            </div> : null}        
+                            </div> : null}
                     </div>
                     <h4 className='alert alert-danger w-50 mx-auto mt-3'>A célcsoport később nem módosítható!</h4>
                     <div className="row text-center">
-                    {group.length > 0 ? 
-                        groups.map((elem, index) => {
-                        return(
-                            <p className="col" key={index}>{
-                                groups[groups.findIndex(elem.groupName => elem.id === index)]
-                            }</p>
-                        )
-                    }) : <p className="col">Nincs kiválasztott csoport</p>}
+                        {group.length > 0 ?
+                            group.map((elem, index) => {
+                                return (
+                                    <p className="col" key={index}>{
+                                        groups[groups.findIndex(grp => grp.id === Number.parseInt(elem))].groupName
+                                    }</p>
+                                )
+                            }) : <p className="col">Nincs kiválasztott csoport</p>}
                     </div>
                     <select name="group" className="w-75 rounded" onChange={handleChange} multiple size="5">
                         <option defaultValue={-1}>A vizsga célcsoportja</option>
@@ -248,7 +248,7 @@ export default function CreateTest(props) {
                     </select>
                 </div>
                 <div className="text-center">
-                    <kbd>Több csoport kijelölesehez: ctrl + bal egérgomb / shift + bal egérgomb / bal egérgomb nyomva tartva</kbd>
+                    Több csoport kijelölesehez: <kbd>ctrl + bal egérgomb</kbd> / <kbd>shift + bal egérgomb</kbd> / <kbd>bal egérgomb nyomva tartva</kbd>
                 </div>
 
                 <div className="form-group m-auto w-75">
