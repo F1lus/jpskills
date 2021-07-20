@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
+import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
 
 import Learn from '../exams/learn/Learn'
@@ -12,6 +13,8 @@ export default function Profile() {
 
     const [nev, csoport] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
 
+    const cardNum = useParams().profile
+
     const socket = useContext(SocketContext)
 
     const [stats, setStats] = useState(null)
@@ -23,7 +26,7 @@ export default function Profile() {
     }, [])
 
     useEffect(() => {
-        socket.emit('requesting-statistics')
+        socket.emit('requesting-statistics', cardNum)
 
         socket.on('sending-statistics', handleStatistics)
 
@@ -64,7 +67,8 @@ export default function Profile() {
 
     return (
         <div className="container-fluid text-center page">
-            <ProfileCard className='profilCard border border-primary shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
+
+            <ProfileCard className='float-left mt-5 ml-5 border border-primary shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
 
             <div className='float-right w-75'>
                 <div className='mt-5 container shadow rounded text-center bg-light mb-3'>
@@ -89,18 +93,18 @@ export default function Profile() {
 }
 
 const ProfileCard = ({ nev, csoport, stats, className }) => (
-    <div className={`card ${className}`} style={{ width: '18rem' }}>
+    <div className={`card ${className}`} style={{ width: '20rem' }}>
         <br />
         <svg className='m-auto' width="100" height="100">
             <circle cx="50" cy="50" r="50" fill="#ffc107" />
             <text x="50%" y="50%" alignment-baseline="central" text-anchor="middle" font-family="sans-serif" font-size="50" fill="#fff">{`${nev ? nev.split(' ')[0].charAt(0) : 'J'}${nev ? nev.split(' ')[1].charAt(0) : 'D'}`}</text>
         </svg>
 
-
-
         <div className="card-body">
             <h5 className="card-title">{nev}</h5>
             <h6 className="card-subtitle mb-2 text-muted">Besorolás: {csoport}</h6>
+            <hr/>
+            <p className="card-text">Az Ön vizsgáiról</p>
             <p className="card-text">{stats}</p>
         </div>
     </div>

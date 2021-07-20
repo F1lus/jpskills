@@ -1308,7 +1308,6 @@ class Connection {
 
     selectExams = async (user, userIsAdmin) => {
         let exams = []
-        let groups = []
         try {
             if (userIsAdmin) {
                 const examList = await this.con('exams')

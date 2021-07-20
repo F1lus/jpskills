@@ -34,36 +34,41 @@ const adminManager = require('./users/AdminManager')
  */
 module.exports = (socket) => {
 
-    //Login
-    getLoginInfo(socket)
+    try {
+        //Login
+        getLoginInfo(socket)
 
-    //Lekérdezések regisztrálása
-    getExamContent(socket)
-    getExams(socket)
-    getProducts(socket)
-    learnExam(socket)
+        //Lekérdezések regisztrálása
+        getExamContent(socket)
+        getExams(socket)
+        getProducts(socket)
+        learnExam(socket)
 
-    //Frissítések regisztrálása
-    remover(socket)
-    updater(socket)
+        //Frissítések regisztrálása
+        remover(socket)
+        updater(socket)
 
-    //Felhasználói művelet(ek)
-    processExam(socket)
-    logout(socket)
+        //Felhasználói művelet(ek)
+        processExam(socket)
+        logout(socket)
 
-    //Vizsgaeredmény eseményének regisztrálása
-    getResults(socket)
+        //Vizsgaeredmény eseményének regisztrálása
+        getResults(socket)
 
-    //Statisztika
-    getSkillStatistics(socket)
+        //Statisztika
+        getSkillStatistics(socket)
 
-    //Superuser műveletek
-    getUsers(socket)
-    skillManager(socket)
-    adminManager(socket)
+        //Superuser műveletek
+        getUsers(socket)
+        skillManager(socket)
+        adminManager(socket)
 
-    //Egyéb események
-    socket.on('exam-modified', () => {
-        socket.emit('server-accept')
-    })
+        //Egyéb események
+        socket.on('exam-modified', () => socket.emit('server-accept'))
+
+        socket.on('req-cardnum', () => socket.emit('res-cardnum', socket.handshake.session.cardNum))
+
+    } catch (error) {
+        console.log(error.message)
+    }
 }

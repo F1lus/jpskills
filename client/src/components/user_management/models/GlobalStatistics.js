@@ -1,4 +1,4 @@
-export default (rawSkillMatrix) => {
+export default rawSkillMatrix => {
     const skills = rawSkillMatrix
     let avgScore = 0
     let avgTime = 0
