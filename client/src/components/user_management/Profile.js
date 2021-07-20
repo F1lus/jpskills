@@ -61,14 +61,27 @@ export default function Profile() {
                 </div>
             )
         } else {
-            return <div>Még nincsenek megjeleníthető adatok!</div>
+            return <>Még nincsenek megjeleníthető adatok!</>
         }
     }, [renderStatsObject, stats])
 
     return (
         <div className="container-fluid text-center page">
 
-            <ProfileCard className='float-left mt-5 ml-5 border border-primary shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
+            <div className='float-left mt-5 mr-3'>
+                <form className="bg-light shadow rounded p-2">
+                    <div className="form-group m-auto w-75">
+                        <input type="text" name="search" autoComplete="off" required/>
+                        <label htmlFor="examName" className="label-name">
+                            <span className="content-name">
+                                Keresés
+                            </span>
+                        </label>
+                    </div>
+                </form>
+
+                <ProfileCard className='mt-5 border border-primary shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
+            </div>
 
             <div className='float-right w-75'>
                 <div className='mt-5 container shadow rounded text-center bg-light mb-3'>
@@ -97,7 +110,7 @@ const ProfileCard = ({ nev, csoport, stats, className }) => (
         <br />
         <svg className='m-auto' width="100" height="100">
             <circle cx="50" cy="50" r="50" fill="#ffc107" />
-            <text x="50%" y="50%" alignment-baseline="central" text-anchor="middle" font-family="sans-serif" font-size="50" fill="#fff">{`${nev ? nev.split(' ')[0].charAt(0) : 'J'}${nev ? nev.split(' ')[1].charAt(0) : 'D'}`}</text>
+            <text x="50%" y="50%" alignmentBaseline="central" textAnchor="middle" fontFamily="sans-serif" fontSize="50" fill="#fff">{`${nev ? nev.split(' ')[0].charAt(0) : 'J'}${nev ? nev.split(' ')[1].charAt(0) : 'D'}`}</text>
         </svg>
 
         <div className="card-body">
