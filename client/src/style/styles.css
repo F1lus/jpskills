@@ -217,15 +217,13 @@ form input:valid + .label-name {
 
 /*checkbox*/
 .checker{
-    border: 2px solid rgb(0, 140, 255);
+    border: 2px solid rgb(33,12,185);
+    color: rgb(33,12,185);
+    font-weight: bold;
     border-radius: 5px;
     padding: 5px;
     transition: background-color 0.5s ease;
     cursor: pointer;
-}
-
-.checker:hover{
-    background: rgba(0, 140, 255, 0.400);
 }
 
 input[type="checkbox"]{
@@ -233,7 +231,9 @@ input[type="checkbox"]{
 }
 
 .check-bg{
-    background: rgba(0, 140, 255, 0.800);
+    background: rgb(33,12,185);
+    color: white;
+    font-weight: bold;
 }
 
 /*radio*/

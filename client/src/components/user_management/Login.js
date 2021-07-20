@@ -242,7 +242,7 @@ export default function Login() {
                     }
                 </form>
                 <div className="container mt-3">
-                    <Input inputText={register ? 'Vegye ki a pipát, ha már van fiókja!' : 'Pipálja be, ha még nincs fiókja!'} onChange={newUser} />
+                    <Input inputText={register ? 'Kattintson ide, ha már van fiókja!' : 'Kattintson ide, ha még nincs fiókja!'} onChange={newUser} />
                 </div>
 
                 <div className="text-center">
