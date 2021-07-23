@@ -11,6 +11,9 @@ import { SocketContext } from '../GlobalSocket'
 
 export default function Profile() {
 
+    const data = ["Jani","Pisti", "Viki", "Geri", "Robi", "Gabi", "Kati", "Ildikó", "Előd", "Márk", "Károly"]
+    const [filtered, setFiltered] = useState([])
+
     const [nev, csoport] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
 
     const cardNum = useParams().profile
@@ -65,20 +68,42 @@ export default function Profile() {
         }
     }, [renderStatsObject, stats])
 
+    const search = useCallback(event => {
+        if (event.target.value.length > 0){
+            const filteredBy = data.filter(item => {
+                const search = event.target.value.toLowerCase().trim()
+                return item.includes(search) || item.toLowerCase().includes(search)
+            })
+            setFiltered(filteredBy)
+        } else {
+            setFiltered([])
+        }
+    }, [data])
+
     return (
         <div className="container-fluid text-center page">
 
             <div className='float-left mt-5 mr-3'>
-                <form className="bg-light shadow rounded p-2">
-                    <div className="form-group m-auto w-75">
-                        <input type="text" name="search" autoComplete="off" required/>
-                        <label htmlFor="examName" className="label-name">
-                            <span className="content-name">
-                                Keresés
-                            </span>
-                        </label>
-                    </div>
-                </form>
+                    <form className="bg-light shadow rounded p-2">
+                        <div className="form-group m-auto w-75">
+                            <input type="text" name="search" autoComplete="off" onChange={search} required/>
+                            <label htmlFor="examName" className="label-name">
+                                <span className="content-name">
+                                    Vizsgázó keresése
+                                </span>
+                            </label>
+                        </div>
+                        {filtered.length > 0 ?
+                            <ul className="list-group w-75 mx-auto">
+                                {filtered.map((elem, index) => {
+                                    return(
+                                        <li className="list-group-item" key={index}>{elem}</li>
+                                    )
+                                })}
+                            </ul>
+                            : null
+                        }
+                    </form>
 
                 <ProfileCard className='mt-5 border border-primary shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
             </div>
