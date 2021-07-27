@@ -8,10 +8,11 @@ import DetailTable from './DataTable'
 import globalStats from './models/GlobalStatistics'
 
 import { SocketContext } from '../GlobalSocket'
+import { NavLink } from 'react-router-dom'
 
 export default function Profile() {
 
-    const data = ["Jani","Pisti", "Viki", "Geri", "Robi", "Gabi", "Kati", "Ildikó", "Előd", "Márk", "Károly"]
+    const [data, setData] = useState([])
     const [filtered, setFiltered] = useState([])
 
     const [nev, csoport] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
@@ -28,14 +29,25 @@ export default function Profile() {
         }
     }, [])
 
-    useEffect(() => {
-        socket.emit('requesting-statistics', cardNum)
-
-        socket.on('sending-statistics', handleStatistics)
-
-        return () => socket.off('sending-statistics', handleStatistics)
-        // eslint-disable-next-line
+    const handleUsers = useCallback(users => {
+        setData(users)
     }, [])
+
+    useEffect(() => {
+        socket
+            .emit('requesting-statistics', cardNum)
+            .emit('get-user-list', cardNum)
+
+        socket
+            .on('sending-statistics', handleStatistics)
+            .on('user-list', handleUsers)
+
+        return () => {
+            socket
+                .off('sending-statistics', handleStatistics)
+                .off('user-list', handleUsers)
+        }
+    }, [cardNum, handleStatistics, handleUsers, socket])
 
     const renderStatsObject = useCallback(entry => {
         if (stats) {
@@ -69,10 +81,10 @@ export default function Profile() {
     }, [renderStatsObject, stats])
 
     const search = useCallback(event => {
-        if (event.target.value.length > 0){
+        if (event.target.value.length > 0) {
             const filteredBy = data.filter(item => {
                 const search = event.target.value.toLowerCase().trim()
-                return item.includes(search) || item.toLowerCase().includes(search)
+                return item.worker_name.includes(search) || item.worker_name.toLowerCase().includes(search) || item.worker_cardcode.toString().includes(search)
             })
             setFiltered(filteredBy)
         } else {
@@ -84,26 +96,23 @@ export default function Profile() {
         <div className="container-fluid text-center page">
 
             <div className='float-left mt-5 mr-3'>
-                    <form className="bg-light shadow rounded p-2">
-                        <div className="form-group m-auto w-75">
-                            <input type="text" name="search" autoComplete="off" onChange={search} required/>
-                            <label htmlFor="examName" className="label-name">
-                                <span className="content-name">
-                                    Vizsgázó keresése
-                                </span>
-                            </label>
-                        </div>
-                        {filtered.length > 0 ?
-                            <ul className="list-group w-75 mx-auto">
-                                {filtered.map((elem, index) => {
-                                    return(
-                                        <li className="list-group-item" key={index}>{elem}</li>
-                                    )
-                                })}
-                            </ul>
-                            : null
-                        }
-                    </form>
+                <form className="bg-light shadow rounded p-2">
+                    <div className="form-group m-auto w-75">
+                        <input type="text" name="search" autoComplete="off" onChange={search} required />
+                        <label htmlFor="examName" className="label-name">
+                            <span className="content-name">
+                                Vizsgázó keresése
+                            </span>
+                        </label>
+                    </div>
+                    {<ul className="list-group w-75 mx-auto">
+                        {filtered.map((elem, index) => {
+                            return (
+                                <NavLink to={`/${elem.worker_cardcode}`}><li className="list-group-item" key={index}>{elem.worker_name}</li></NavLink>
+                            )
+                        })}
+                    </ul>}
+                </form>
 
                 <ProfileCard className='mt-5 border border-primary shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
             </div>
@@ -141,8 +150,8 @@ const ProfileCard = ({ nev, csoport, stats, className }) => (
         <div className="card-body">
             <h5 className="card-title">{nev}</h5>
             <h6 className="card-subtitle mb-2 text-muted">Besorolás: {csoport}</h6>
-            <hr/>
-            <p className="card-text">Az Ön vizsgáiról</p>
+            <hr />
+            <p className="card-text">Az felhasználó vizsgáiról</p>
             <p className="card-text">{stats}</p>
         </div>
     </div>

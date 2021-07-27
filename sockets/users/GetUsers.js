@@ -34,8 +34,19 @@ module.exports = socket => {
         }
     }
 
+    const getAll = async cardnum => {
+        if(!session.perm || !session.cardNum){
+            return
+        }
+
+        if(session.perm === 'admin'){
+            socket.emit('user-list', await DbConnect.selectUsers(cardnum))
+        }
+    }
+
     socket
         .on('get-userinfo', getSpecificUser)
         .on('request-users', getExistingUsers)
         .on('get-admins', getAdmins)
+        .on('get-user-list', getAll)
 }

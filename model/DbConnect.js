@@ -39,6 +39,22 @@ class Connection {
         }
     }
 
+    selectUsers = async cardnum => {
+        const result = []
+        try {
+            const users = await this.con('workers')
+                .select(['worker_name', 'worker_cardcode'])
+                .whereNot('worker_usergroup', 'Adminisztrátor')
+                .andWhereNot('worker_usergroup', 'admin')
+                .andWhereNot('worker_usergroup', 'superuser')
+
+            users.forEach(user => result.push(user))
+        } catch (error) {
+            console.log(error.message)
+        }
+        return result
+    }
+
     deleteAdmin = async (cardcode, replaceAdmin) => {
         try {
 

@@ -10,7 +10,11 @@ module.exports = (socket) => {
         }
 
         if (session.perm === 'admin') {
-            socket.emit('sending-statistics', await dbconnect.globalStatisticsForAdmin(cardNum))
+            if(cardNum === session.cardNum){
+                socket.emit('sending-statistics', await dbconnect.globalStatisticsForAdmin(cardNum))
+            }else{
+                socket.emit('sending-statistics', await dbconnect.globalStatisticsForUser(cardNum, false))
+            }
         } else {
             socket.emit('sending-statistics', await dbconnect.globalStatisticsForUser(cardNum, false))
         }
