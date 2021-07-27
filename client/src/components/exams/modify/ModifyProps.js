@@ -103,7 +103,7 @@ export default function ModifyProps(props) {
     }, [examProps, toggle, status])
 
     return (
-        <div className="container text-center rounded w-75 mb-3 mt-3 p-3 shadow bg-light">
+        <div className="container text-center rounded w-75 mb-3 p-3 shadow bg-light">
             <h3><p>A vizsga jellemzői:</p></h3>
 
             <form onSubmit={handleSubmit}>

@@ -10,6 +10,7 @@ export default function Modifier(props) {
     const [value, setValue] = useState(props.value || false)
     const [isAnswer,] = useState(props.isAnswer || false)
     const [disableButton, setDisableButton] = useState(props.disable || false)
+    const [toggle, setToggle] = useState(!value)
 
     const handleUpdate = useCallback(updated => setDisableButton(false), [])
 
@@ -62,6 +63,20 @@ export default function Modifier(props) {
         }
     }, [index, isAnswer, param.examName, props.socket, value, type])
 
+    const handleClick = useCallback(event => {
+        event.target.classList.toggle("active")
+
+        index && event.target.classList.contains("active") ? setToggle(false) : setToggle(true)
+
+        props.socket.emit('update-answer', {
+            examCode: param.examName,
+            answerId: index,
+            value: toggle
+        })
+
+        console.log(index,toggle)
+    }, [index, toggle, props.socket, param.examName])
+
     const renderInput = useCallback(() => {
         if (type === 'number' || type === 'text') {
             return (
@@ -78,17 +93,12 @@ export default function Modifier(props) {
                 </form>)
         } else if (type === 'bool') {
             return (
-                <form onSubmit={handleSubmit}>
-                    <select name='modify' className="rounded pl-3 w-25" onChange={handleChange}>
-                        <option value={null}>Állapotváltás...</option>
-                        <option value={1}>Helyes</option>
-                        <option value={0}>Helytelen</option>
-                    </select>
-                    <button disabled={disableButton} className="btn btn-warning m-2">Módosítás!</button>
-                </form>
+                <div className={value ? "container mx-auto mb-3 active" : "container mx-auto mb-3"} id="toggle" onClick={handleClick}>
+                    <i className="indicator"></i>
+                </div>
             )
         }
-    }, [disableButton, handleChange, handleSubmit, type, value])
+    }, [disableButton, handleChange, handleSubmit, handleClick, type, value])
 
     return (
         <div>
