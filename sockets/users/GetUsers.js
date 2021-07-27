@@ -19,7 +19,7 @@ module.exports = socket => {
             return
         }
 
-        if(session.perm === 'superuser'){
+        if(session.perm === 'superuser' || session.perm === 'admin'){
             socket.emit('userinfo', await DbConnect.getSpecificUser(cardcode))
         }
     }
@@ -44,9 +44,18 @@ module.exports = socket => {
         }
     }
 
+    const sameUser = cardnum => {
+        if(!session || !session.cardNum){
+            return false
+        }
+
+        socket.emit('sameUser', session.cardNum == cardnum)
+    }
+
     socket
         .on('get-userinfo', getSpecificUser)
         .on('request-users', getExistingUsers)
         .on('get-admins', getAdmins)
         .on('get-user-list', getAll)
+        .on('get-sameUser', sameUser)
 }

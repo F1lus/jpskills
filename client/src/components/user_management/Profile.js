@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { useParams } from 'react-router'
-import { useSelector } from 'react-redux'
 
 import Learn from '../exams/learn/Learn'
 import DetailTable from './DataTable'
@@ -15,7 +14,9 @@ export default function Profile() {
     const [data, setData] = useState([])
     const [filtered, setFiltered] = useState([])
 
-    const [nev, csoport] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
+    const [nev, setNev] = useState('')
+    const [csoport, setCsoport] = useState('')
+    const [isSame, setSame] = useState(false)
 
     const cardNum = useParams().profile
 
@@ -33,21 +34,36 @@ export default function Profile() {
         setData(users)
     }, [])
 
+    const handleInfo = useCallback(user => {
+        setNev(user[0].name)
+        setCsoport(user[0].group)
+    }, [])
+
+    const handleSameUser = useCallback(result => {
+        setSame(result)
+    }, [])
+
     useEffect(() => {
         socket
             .emit('requesting-statistics', cardNum)
             .emit('get-user-list', cardNum)
+            .emit('get-userinfo', cardNum)
+            .emit('get-sameUser', cardNum)
 
         socket
             .on('sending-statistics', handleStatistics)
             .on('user-list', handleUsers)
+            .on('userinfo', handleInfo)
+            .on('sameUser', handleSameUser)
 
         return () => {
             socket
                 .off('sending-statistics', handleStatistics)
                 .off('user-list', handleUsers)
+                .off('userinfo', handleInfo)
+                .off('sameUser', handleSameUser)
         }
-    }, [cardNum, handleStatistics, handleUsers, socket])
+    }, [cardNum, handleStatistics, handleUsers, handleInfo, handleSameUser, socket])
 
     const renderStatsObject = useCallback(entry => {
         if (stats) {
@@ -95,7 +111,7 @@ export default function Profile() {
     return (
         <div className="container-fluid text-center page">
             <div className="row">
-                <div className='col-sm-3 mt-3 mx-auto'>
+                <div className='col-sm-3 mt-3'>
                     <form className="bg-light shadow rounded p-2">
                         <div className="form-group m-auto ">
                             <input type="text" name="search" autoComplete="off" onChange={search} required />
@@ -117,12 +133,12 @@ export default function Profile() {
                     <ProfileCard className='mt-3 shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
                 </div>
 
-                <div className='col-sm-8 mx-auto'>
-                    <div className='mt-3 container shadow rounded text-center bg-light mb-3'>
-                        <h5>Statisztika</h5>
-                        <hr className="w-75" id="customline" />
-                        <br />
-                    </div>
+                <div className='mt-3 col-sm-9'>
+                    {isSame ?
+                        <div className="container shadow rounded text-center bg-light mb-3">
+                            <Learn />
+                        </div>
+                    : null}
 
                     <div className='mt-3'>
                         <div className="container shadow rounded text-center bg-light mb-3">
@@ -151,7 +167,7 @@ const ProfileCard = ({ nev, csoport, stats, className }) => (
             <h5 className="card-title">{nev}</h5>
             <h6 className="card-subtitle mb-2 text-muted">Besorolás: {csoport}</h6>
             <hr />
-            <p className="card-text">Az felhasználó vizsgáiról</p>
+            <p className="card-text">A felhasználó vizsgáiról</p>
             <p className="card-text">{stats}</p>
         </div>
     </div>
