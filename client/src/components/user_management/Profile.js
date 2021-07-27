@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { useParams } from 'react-router'
-import { useSelector } from 'react-redux'
 
 import Learn from '../exams/learn/Learn'
 import DetailTable from './DataTable'
@@ -15,7 +14,9 @@ export default function Profile() {
     const [data, setData] = useState([])
     const [filtered, setFiltered] = useState([])
 
-    const [nev, csoport] = useSelector(state => [state.userReducer.user, state.userReducer.permission])
+    const [nev, setNev] = useState('')
+    const [csoport, setCsoport] = useState('')
+    const [isSame, setSame] = useState(false)
 
     const cardNum = useParams().profile
 
@@ -33,21 +34,36 @@ export default function Profile() {
         setData(users)
     }, [])
 
+    const handleInfo = useCallback(user => {
+        setNev(user[0].name)
+        setCsoport(user[0].group)
+    }, [])
+
+    const handleSameUser = useCallback(result => {
+        setSame(result)
+    }, [])
+
     useEffect(() => {
         socket
             .emit('requesting-statistics', cardNum)
             .emit('get-user-list', cardNum)
+            .emit('get-userinfo', cardNum)
+            .emit('get-sameUser', cardNum)
 
         socket
             .on('sending-statistics', handleStatistics)
             .on('user-list', handleUsers)
+            .on('userinfo', handleInfo)
+            .on('sameUser', handleSameUser)
 
         return () => {
             socket
                 .off('sending-statistics', handleStatistics)
                 .off('user-list', handleUsers)
+                .off('userinfo', handleInfo)
+                .off('sameUser', handleSameUser)
         }
-    }, [cardNum, handleStatistics, handleUsers, socket])
+    }, [cardNum, handleStatistics, handleUsers, handleInfo, handleSameUser, socket])
 
     const renderStatsObject = useCallback(entry => {
         if (stats) {
@@ -125,9 +141,11 @@ export default function Profile() {
                 </div>
 
                 <div className='mt-5'>
-                    <div className="container shadow rounded text-center bg-light mb-3">
-                        <Learn />
-                    </div>
+                    {isSame ?
+                        <div className="container shadow rounded text-center bg-light mb-3">
+                            <Learn />
+                        </div>
+                    : null}
 
                     <div className="container shadow rounded text-center bg-light mb-3 py-3">
                         <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
