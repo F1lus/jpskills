@@ -94,45 +94,45 @@ export default function Profile() {
 
     return (
         <div className="container-fluid text-center page">
+            <div className="row">
+                <div className='col-sm-3 mt-3 mx-auto'>
+                    <form className="bg-light shadow rounded p-2">
+                        <div className="form-group m-auto ">
+                            <input type="text" name="search" autoComplete="off" onChange={search} required />
+                            <label htmlFor="examName" className="label-name">
+                                <span className="content-name">
+                                    Vizsgázó keresése
+                                </span>
+                            </label>
+                        </div>
+                        {<ul className="list-group w-75 mx-auto">
+                            {filtered.map((elem, index) => {
+                                return (
+                                    <NavLink to={`/${elem.worker_cardcode}`} key={index}><li className="list-group-item">{elem.worker_name}</li></NavLink>
+                                )
+                            })}
+                        </ul>}
+                    </form>
 
-            <div className='float-left mt-5 mr-3'>
-                <form className="bg-light shadow rounded p-2">
-                    <div className="form-group m-auto w-75">
-                        <input type="text" name="search" autoComplete="off" onChange={search} required />
-                        <label htmlFor="examName" className="label-name">
-                            <span className="content-name">
-                                Vizsgázó keresése
-                            </span>
-                        </label>
-                    </div>
-                    {<ul className="list-group w-75 mx-auto">
-                        {filtered.map((elem, index) => {
-                            return (
-                                <NavLink to={`/${elem.worker_cardcode}`}><li className="list-group-item" key={index}>{elem.worker_name}</li></NavLink>
-                            )
-                        })}
-                    </ul>}
-                </form>
-
-                <ProfileCard className='mt-5 border border-primary shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
-            </div>
-
-            <div className='float-right w-75'>
-                <div className='mt-5 container shadow rounded text-center bg-light mb-3'>
-                    <h5>Statisztika</h5>
-                    <hr className="w-75" id="customline" />
-                    <br />
+                    <ProfileCard className='mt-3 shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
                 </div>
 
-                <div className='mt-5'>
-                    <div className="container shadow rounded text-center bg-light mb-3">
-                        <Learn />
+                <div className='col-sm-8 mx-auto'>
+                    <div className='mt-3 container shadow rounded text-center bg-light mb-3'>
+                        <h5>Statisztika</h5>
+                        <hr className="w-75" id="customline" />
+                        <br />
                     </div>
 
-                    <div className="container shadow rounded text-center bg-light mb-3 py-3">
-                        <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
-                    </div>
+                    <div className='mt-3'>
+                        <div className="container shadow rounded text-center bg-light mb-3">
+                            <Learn />
+                        </div>
 
+                        <div className="container shadow rounded text-center bg-light mb-3 py-3">
+                            <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,7 +140,7 @@ export default function Profile() {
 }
 
 const ProfileCard = ({ nev, csoport, stats, className }) => (
-    <div className={`card ${className}`} style={{ width: '20rem' }}>
+    <div className={`card ${className}`}>
         <br />
         <svg className='m-auto' width="100" height="100">
             <circle cx="50" cy="50" r="50" fill="#ffc107" />

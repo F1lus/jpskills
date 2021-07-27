@@ -74,7 +74,6 @@ export default function Modifier(props) {
             value: toggle
         })
 
-        console.log(index,toggle)
     }, [index, toggle, props.socket, param.examName])
 
     const renderInput = useCallback(() => {
