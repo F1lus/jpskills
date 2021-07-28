@@ -121,7 +121,7 @@ export default function Profile() {
                                 </span>
                             </label>
                         </div>
-                        {<ul className="list-group w-75 mx-auto">
+                        {<ul className="list-group w-75 mx-auto" id="users">
                             {filtered.map((elem, index) => {
                                 return (
                                     <NavLink to={`/profile/${elem.worker_cardcode}`} key={index}><li className="list-group-item">{elem.worker_name}</li></NavLink>

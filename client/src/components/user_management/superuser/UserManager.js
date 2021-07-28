@@ -17,12 +17,12 @@ export default function UserManager() {
 
     //Backend kezelők
 
-    const archiveUser = useCallback((event, workerId) => {
+    /*const archiveUser = useCallback((event, workerId) => {
         event.preventDefault()
 
         setLoad(store, true)
         socket.emit('archive-user', workerId)
-    }, [socket, store])
+    }, [socket, store])*/
 
     const handleUserInfo = useCallback(userinfo => {
         if(userinfo.length > 0){
@@ -62,9 +62,6 @@ export default function UserManager() {
                 <button className='btn btn-outline-blue float-left'>Vissza</button>
             </NavLink>
 
-            <button className='btn btn-danger float-right' onClick={e => {
-                archiveUser(e, userInfo[0])
-            }}>Felhasználó vizsgáinak archiválása</button>
             <br /><br />
             <h1>{userInfo[1]}</h1>
 

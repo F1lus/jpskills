@@ -102,6 +102,11 @@ p {
     width: 50vw;
 }
 
+#users {
+    max-height: 150px;
+    overflow-y: scroll;
+}
+
 /*vizsgak*/
 select {
     min-height: 40px;
