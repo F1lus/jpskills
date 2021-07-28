@@ -24,7 +24,7 @@ export default () => {
     return (
         <div id="navbar">
             <section id="hatter" />
-            <ul className="nav nav-fill mb-3 border border-primary">
+            <ul className="nav nav-fill mb-3 shadow">
                 {Elemek.map((elem, index) => {
                     return (
                         <NavLink

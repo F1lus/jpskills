@@ -111,7 +111,7 @@ export default function Profile() {
     return (
         <div className="container-fluid text-center page">
             <div className="row">
-                <div className='col-sm-3 mt-3'>
+                <div className='col-lg-3 mt-3'>
                     <form className="bg-light shadow rounded p-2">
                         <div className="form-group m-auto ">
                             <input type="text" name="search" autoComplete="off" onChange={search} required />
@@ -133,21 +133,15 @@ export default function Profile() {
                     <ProfileCard className='mt-3 shadow' nev={nev} csoport={csoport} stats={renderGlobalStats()} />
                 </div>
 
-                <div className='mt-3 col-sm-9'>
+                <div className='mt-3 col-lg-9'>
                     {isSame ?
                         <div className="container shadow rounded text-center bg-light mb-3">
                             <Learn />
                         </div>
                     : null}
 
-                    <div className='mt-3'>
-                        <div className="container shadow rounded text-center bg-light mb-3">
-                            <Learn />
-                        </div>
-
-                        <div className="container shadow rounded text-center bg-light mb-3 py-3">
-                            <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
-                        </div>
+                    <div className="container shadow rounded text-center bg-light mb-3 py-3">
+                        <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
                     </div>
                 </div>
             </div>
