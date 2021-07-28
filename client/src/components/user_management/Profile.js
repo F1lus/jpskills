@@ -162,7 +162,7 @@ const ProfileCard = ({ nev, csoport, stats, className }) => (
             <h6 className="card-subtitle mb-2 text-muted">Besorolás: {csoport}</h6>
             <hr />
             <p className="card-text">A felhasználó vizsgáiról</p>
-            <p className="card-text">{stats}</p>
+            <div className="card-text">{stats}</div>
         </div>
     </div>
 )
