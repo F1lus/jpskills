@@ -14,10 +14,12 @@ export default function DetailTable(props) {
     const [results, setResults] = useState([])
     const [displayList, setDisplayList] = useState([])
 
+    const stats = examStats(workingList)
+
     const columns = [
         {
-            name: props.permission === 'admin' ? 'Vizsgázó neve' : 'Vizsga neve',
-            selector: row => props.permission === 'admin' ? row.worker : row.examName,
+            name: ['admin', 'Adminisztrátor'].includes(props.permission)  ? 'Vizsgázó neve' : 'Vizsga neve',
+            selector: row => ['admin', 'Adminisztrátor'].includes(props.permission) ? row.worker : row.examName,
             sortable: true
         },
 
@@ -110,7 +112,7 @@ export default function DetailTable(props) {
     }, [props.results])
 
     useEffect(() => {
-        const list = filterByExam(props.permission === 'admin')
+        const list = filterByExam(['admin', 'Adminisztrátor'].includes(props.permission))
         if (props.results) {
             setResults(list)
             setDisplayList(list)
@@ -132,7 +134,6 @@ export default function DetailTable(props) {
 
     const examStatistics = useCallback(() => {
         if (examCode && workingList.length > 0) {
-            const stats = examStats(workingList)
             return (
                 <div className='alert alert-primary w-75 mx-auto py-2 text-justify'>
                     <h5>Átlagos teljesítési idő: {stats.avgTime.avgMins + " perc " + stats.avgTime.avgSecs + " másodperc"}</h5>
@@ -143,10 +144,10 @@ export default function DetailTable(props) {
         } else {
             return null
         }
-    }, [examCode, workingList])
+    }, [examCode, workingList, stats])
 
     const searchUser = useCallback(event => {
-        if (props.permission === 'admin') {
+        if (['admin', 'Adminisztrátor'].includes(props.permission)) {
             if (examCode && results.length > 0) {
                 const filterBySearch = results.filter(exam => exam.worker.toLowerCase().includes(event.target.value.toLowerCase().trim()))
                 setDisplayList(filterBySearch)
@@ -200,7 +201,7 @@ export default function DetailTable(props) {
 
     return (
         <div className="container">
-            <h1><p>{props.permission === 'admin' ? 'Vizsgánkénti statisztika' : 'Vizsga eredmények'}</p></h1>
+            <h1><p>{['admin', 'Adminisztrátor'].includes(props.permission) ? 'Vizsgánkénti statisztika' : 'Vizsga eredmények'}</p></h1>
 
             {exams.length > 0 ?
                 <form className="mb-3 w-50">
@@ -215,7 +216,7 @@ export default function DetailTable(props) {
                 </form> : null
             }
 
-            <select onChange={handleChange} className="mb-3 rounded" id="tableselect">
+            <select onChange={handleChange} className="mb-3 rounded" id="tableselect" size='5'>
                 <option value={null}>Vizsga kiválasztása</option>
                 {examSelector.length > 0 ? examSelector.map((exam, index) => {
                     return <option key={index} value={exam.value}>{exam.key + " || " + exam.value}</option>

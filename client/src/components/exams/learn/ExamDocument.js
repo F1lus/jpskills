@@ -19,9 +19,12 @@ export default function ExamDocument(props) {
     const canvasRef = useRef()
     const store = useStore()
 
+    const [cardnum, setCardnum] = useState(null)
     const [examDoc, setExamDoc] = useState(null)
     const [currentPage, setCurrentPage] = useState(1)
     const [maxPages, setMaxPages] = useState(1)
+
+    const handleCardnum = useCallback(cardnum => setCardnum(cardnum), [])
 
     const renderPdf = useCallback(async () => {
         const page = await examDoc.getPage(currentPage)
@@ -65,11 +68,16 @@ export default function ExamDocument(props) {
     useEffect(() => {
         setLoad(store, true)
         socket.emit('examDoc-signal', exam.examCode)
+        socket.emit('req-cardnum')
 
         socket.on('examDoc-emitter', handleExamDoc)
+        socket.on('res-cardnum', handleCardnum)
 
-        return () => socket.off('examDoc-emitter', handleExamDoc)
-    }, [exam.examCode, socket, handleExamDoc, store])
+        return () => {
+            socket.off('examDoc-emitter', handleExamDoc)
+            socket.off('res-cardnum', handleCardnum)
+        }
+    }, [exam.examCode, socket, handleExamDoc, handleCardnum, store])
 
     useEffect(() => {
         if (examDoc) {
@@ -84,7 +92,7 @@ export default function ExamDocument(props) {
                 <br />
                 <h5>{`${currentPage} / ${maxPages}`}</h5>
                 <button className='btn btn-outline-primary' onClick={prevPage}>Hátra</button>
-                <NavLink to='/profile'><button className='btn btn-outline-primary mx-4'>Vissza a profilra</button></NavLink>
+                <NavLink to={`/profile/${cardnum}`}><button className='btn btn-outline-primary mx-4'>Vissza a profilra</button></NavLink>
                 <button className='btn btn-outline-primary' onClick={nextPage}>Előre</button>
             </div>
         </div>

@@ -4,7 +4,7 @@ import { useParams } from 'react-router'
 import Learn from '../exams/learn/Learn'
 import DetailTable from './DataTable'
 
-import globalStats from './models/GlobalStatistics'
+import useGlobalStats from './models/ExamStatistics'
 
 import { SocketContext } from '../GlobalSocket'
 import { NavLink } from 'react-router-dom'
@@ -18,20 +18,21 @@ export default function Profile() {
     const [csoport, setCsoport] = useState('')
     const [isSame, setSame] = useState(false)
 
+    const [incomingStats, setIncomingStats] = useState(null)
+
     const cardNum = useParams().profile
 
     const socket = useContext(SocketContext)
 
-    const [stats, setStats] = useState(null)
+    const stats = useGlobalStats(incomingStats)
 
     const handleStatistics = useCallback(stats => {
-        if (stats.length > 0) {
-            setStats(globalStats(stats))
-        }
+        setIncomingStats(stats)
     }, [])
 
     const handleUsers = useCallback(users => {
         setData(users)
+        setFiltered(users)
     }, [])
 
     const handleInfo = useCallback(user => {
@@ -73,7 +74,7 @@ export default function Profile() {
                 case 'score':
                     return stats.avgScore
                 case 'completion':
-                    return stats.completedRate + "%"
+                    return stats.completionRate + "%"
                 case 'skills':
                     return stats.skills
                 default:
@@ -82,19 +83,13 @@ export default function Profile() {
         }
     }, [stats])
 
-    const renderGlobalStats = useCallback(() => {
-        if (stats != null) {
-            return (
-                <div className='text-justify'>
-                    <div>Átlagos vizsgaidő: {renderStatsObject('time') || 'Nincs adat'}</div>
-                    <div>Átlagos pontszám: {renderStatsObject('score')}</div>
-                    <div>Sikerességi arány: {renderStatsObject('completion') || 'Nincs adat'}</div>
-                </div>
-            )
-        } else {
-            return <>Még nincsenek megjeleníthető adatok!</>
-        }
-    }, [renderStatsObject, stats])
+    const renderGlobalStats = useCallback(() => (
+        <div className='text-justify'>
+            <div>Átlagos vizsgaidő: {renderStatsObject('time') || 'Nincs adat'}</div>
+            <div>Átlagos pontszám: {renderStatsObject('score')}</div>
+            <div>Sikerességi arány: {renderStatsObject('completion') || 'Nincs adat'}</div>
+        </div>
+    ), [renderStatsObject])
 
     const search = useCallback(event => {
         if (event.target.value.length > 0) {
@@ -104,7 +99,7 @@ export default function Profile() {
             })
             setFiltered(filteredBy)
         } else {
-            setFiltered([])
+            setFiltered(data)
         }
     }, [data])
 
@@ -138,7 +133,7 @@ export default function Profile() {
                         <div className="container shadow rounded text-center bg-light mb-3">
                             <Learn />
                         </div>
-                    : null}
+                        : null}
 
                     <div className="container shadow rounded text-center bg-light mb-3 py-3">
                         <DetailTable user={nev} permission={csoport} results={renderStatsObject('skills')} />
