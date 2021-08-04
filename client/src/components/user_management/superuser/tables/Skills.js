@@ -11,6 +11,7 @@ export default function Skills(props) {
 
     const [displayList, setDisplayList] = useState([])
     const [exams, setExams] = useState([])
+    const [selectedRows, setSelectedRows] = useState(null)
 
     const dataColumns = [
         {
@@ -130,6 +131,12 @@ export default function Skills(props) {
         }
     })
 
+    const handleSelect = useCallback((state) => {
+        setSelectedRows(state.selectedRows)
+        console.log(selectedRows)
+        console.log(state)
+    }, [selectedRows])
+
     return (
         <div>
             <h3>Vizsga eredmények</h3>
@@ -153,6 +160,8 @@ export default function Skills(props) {
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}
                 paginationComponentOptions={customText}
                 theme="ownTheme"
+                selectableRows
+                onSelectedRowsChange={handleSelect}
             />
         </div>
     )
