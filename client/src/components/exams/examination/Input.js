@@ -13,7 +13,7 @@ export default function Input({onChange, inputText, className}){
     return (
         <div className='my-2'>
             <label className={`checkbox-label checker ${className}`}>
-                <input type='checkbox' onClick={handleClick} onChange={onChange}/>{inputText}
+                <input type='checkbox' id="check" onClick={handleClick} onChange={onChange}/>{inputText}
             </label>
         </div>
     )

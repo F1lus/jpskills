@@ -220,6 +220,27 @@ form input:valid + .label-name {
     transform: translateX(0%);
 }
 
+/*checkbox*/
+.checker{
+    border: 2px solid rgb(33,12,185);
+    color: rgb(33,12,185);
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 5px;
+    transition: background-color 0.5s ease;
+    cursor: pointer;
+}
+
+#check{
+    display: none;
+}
+
+.check-bg{
+    background: rgb(33,12,185);
+    color: white;
+    font-weight: bold;
+}
+
 /*radio*/
 .radio label input {
     appearance: none;
