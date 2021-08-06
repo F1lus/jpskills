@@ -15,11 +15,6 @@ export default function Skills(props) {
 
     const dataColumns = [
         {
-            name: 'Műveletek',
-            selector: row => row.operations,
-            sortable: false
-        },
-        {
             name: 'Vizsga',
             selector: row => row.examName,
             sortable: true
@@ -70,16 +65,6 @@ export default function Skills(props) {
 
         exams.forEach(element => {
             tempList.push({
-                operations: (
-                    <div>
-                        <button className="btn btn-outline-blue mx-2" onClick={e => {
-                            archiveExam(e, element.examId, element.workerId, element.skillId)
-                        }}>Archiválás</button>
-                        <button className="btn btn-outline-danger mx-2" onClick={e => {
-                            delExam(e, element.examId, element.workerId, element.skillId)
-                        }}>Törlés</button>
-                    </div>
-                ),
                 examName: element.examName,
                 examCode: element.examCode,
                 completed: element.completed ? 'Sikeres' : 'Sikertelen'
@@ -88,7 +73,7 @@ export default function Skills(props) {
 
         setDisplayList(tempList)
         setLoad(store, false)
-    }, [archiveExam, delExam, store])
+    }, [store])
 
     const search = useCallback(event => {
         const value = event.target.value.toLowerCase().trim()
@@ -100,16 +85,6 @@ export default function Skills(props) {
             })
             .forEach(element => {
                 tempList.push({
-                    operations: (
-                        <div>
-                            <button className="btn btn-outline-blue mx-2" onClick={e => {
-                                archiveExam(e, element.examId, element.workerId, element.skillId)
-                            }}>Archiválás</button>
-                            <button className="btn btn-outline-danger mx-2" onClick={e => {
-                                delExam(e, element.examId, element.workerId, element.skillId)
-                            }}>Törlés</button>
-                        </div>
-                    ),
                     examName: element.examName,
                     examCode: element.examCode,
                     completed: element.completed ? 'Sikeres' : 'Sikertelen'
@@ -117,7 +92,7 @@ export default function Skills(props) {
             })
 
         setDisplayList(tempList)
-    }, [exams, archiveExam, delExam])
+    }, [exams])
 
     useEffect(() => {
         socket.on('user-exams', handleExams)

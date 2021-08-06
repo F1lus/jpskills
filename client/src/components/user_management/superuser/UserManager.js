@@ -25,9 +25,7 @@ export default function UserManager() {
     }, [socket, store])*/
 
     const handleUserInfo = useCallback(userinfo => {
-        if(userinfo.length > 0){
-            setUserInfo([userinfo[0].id, userinfo[0].name])
-        }
+        setUserInfo([userinfo[0].id, userinfo[0].name])
     }, [])
 
     const commonHandler = useCallback(() => {
@@ -39,9 +37,10 @@ export default function UserManager() {
     //Adatok feldolgozása
 
     useEffect(() => {
-
         setLoad(store, true)
+
         socket
+            .emit('get-userinfo', user)
             .emit('exams-by-cardcode', user)
             .emit('get-archived', user)
             .on('userinfo', handleUserInfo)

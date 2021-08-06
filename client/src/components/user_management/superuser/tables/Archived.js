@@ -14,11 +14,6 @@ export default function Archived(props) {
 
     const dataColumns = [
         {
-            name: 'Műveletek',
-            selector: row => row.operations,
-            sortable: false
-        },
-        {
             name: 'Vizsga',
             selector: row => row.examName,
             sortable: true
@@ -65,16 +60,6 @@ export default function Archived(props) {
         setArchivedList(archived)
         archived.forEach(element => {
             tempList.push({
-                operations: (
-                    <div>
-                        <button className='btn btn-outline-blue mx-2' onClick={e => {
-                            delArchived(e, element.archiveId)
-                        }}>Visszavonás</button>
-                        <button className='btn btn-outline-danger mx-2' onClick={e => {
-                            delExam(e, element.examId, element.workerId, element.skillId)
-                        }}>Törlés</button>
-                    </div>
-                ),
                 examName: element.examName,
                 archiver: element.archiver,
                 completed: element.completed ? 'Sikeres' : 'Sikertelen'
@@ -82,7 +67,7 @@ export default function Archived(props) {
         })
 
         setDisplayArchived(tempList)
-    }, [delExam, delArchived])
+    }, [])
 
     useEffect(() => {
         socket.on('archived-list', handleArchived)
@@ -100,16 +85,6 @@ export default function Archived(props) {
             })
             .forEach(element => {
                 tempList.push({
-                    operations: (
-                        <div>
-                            <button className='btn btn-outline-blue mx-2' onClick={e => {
-                                delArchived(e, element.archiveId)
-                            }}>Visszavonás</button>
-                            <button className='btn btn-outline-danger mx-2' onClick={e => {
-                                delExam(e, element.examId, element.workerId)
-                            }}>Törlés</button>
-                        </div>
-                    ),
                     examName: element.examName,
                     archiver: element.archiver,
                     completed: element.completed ? 'Sikeres' : 'Sikertelen'
@@ -117,7 +92,7 @@ export default function Archived(props) {
             })
 
         setDisplayArchived(tempList)
-    }, [archivedList, delExam, delArchived])
+    }, [archivedList])
 
     createTheme("ownTheme", {
         background: {

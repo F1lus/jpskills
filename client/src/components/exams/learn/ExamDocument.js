@@ -7,10 +7,10 @@ import { setLoad } from '../../store/ActionHandler'
 
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/es5/build/pdf'
 
-import worker from 'pdfjs-dist/build/pdf.worker.entry'
+import worker from 'pdfjs-dist/es5/build/pdf.worker.entry'
 
 
-export default function ExamDocument(props) {
+export default function ExamDocument() {
 
     GlobalWorkerOptions.workerSrc = worker
 

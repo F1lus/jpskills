@@ -1791,7 +1791,7 @@ class Connection {
                     'VALUES (?)', [arr])
                     .transacting(trx)
                 if (insert.length !== 0) {
-                    if (group.split(',').length === 0) {
+                    if (group.split(',').length || group.split(',').length === 0) {
                         const insertGrouping = await this.con('exam_grouping')
                             .insert({
                                 exam_id: insert[0].insertId,

@@ -19,9 +19,7 @@ module.exports = socket => {
             return
         }
 
-        if(session.perm === 'superuser' || session.perm === 'admin'){
-            socket.emit('userinfo', await DbConnect.getSpecificUser(cardcode))
-        }
+        socket.emit('userinfo', await DbConnect.getSpecificUser(cardcode))
     }
 
     const getAdmins = async user => {
@@ -49,7 +47,7 @@ module.exports = socket => {
             return false
         }
 
-        socket.emit('sameUser', session.cardNum == cardnum)
+        socket.emit('sameUser', session.cardNum === cardnum)
     }
 
     socket
