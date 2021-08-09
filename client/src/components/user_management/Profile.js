@@ -141,7 +141,11 @@ export default function Profile() {
                 </div>
 
                 <div className='mt-3 col-lg-9'>
-                    <Visualizer completion={details} time={renderStatsObject('time') || 'Nincs adat'}/>
+                    <Visualizer 
+                        completion={details} 
+                        time={renderStatsObject('time') || 'Nincs adat'}
+                        successRate={renderStatsObject('completion')}
+                        />
                     {isSame ?
                         <div className="container shadow rounded text-center bg-light mb-3">
                             <Learn />
@@ -187,9 +191,23 @@ const Visualizer = ({completion, successRate, avgPoints, time}) => {
     const timeDisplay = () => (
         <svg className='m-auto border border-primary rounded-circle border-bottom-0 shadow' width="100" height="100">
             <circle cx="50" cy="50" r="50" fill="#ffffff" />
-            <text x="50%" y="50%" alignmentBaseline="central" textAnchor="middle" fontFamily="sans-serif" fontSize="12" fill="#000">{time}</text>
+            <text x="50%" y="50%" alignmentBaseline="central" textAnchor="middle" fontFamily="sans-serif" fontSize="16" fill="#000">{time}</text>
         </svg>
     )
+
+    const avgSuccess = () => {
+        let fillColor = '#009c34'
+        if(successRate){
+            fillColor = Number.parseInt(successRate.replace('%', '')) > 50 ? '#009c34' : '#9c0000'
+        }
+
+        return (
+            <svg className='m-auto border rounded-circle shadow' width="100" height="100">
+                <circle cx="50" cy="50" r="50" fill={fillColor} />
+                <text x="50%" y="50%" alignmentBaseline="central" textAnchor="middle" fontFamily="sans-serif" fontSize="20" fill="#fff">{successRate}</text>
+            </svg>
+        )
+    }
 
 
 
@@ -201,8 +219,15 @@ const Visualizer = ({completion, successRate, avgPoints, time}) => {
             {completionPercent()}
         </div>
         
-        
-        {timeDisplay()}
+        <div className='my-2'>
+            <h5>Átlagos teljesítési idő</h5>
+            {timeDisplay()}
+        </div>
+
+        <div className='my-2'>
+            <h5>Sikerességi arány</h5>
+            {avgSuccess()}
+        </div>
 
     </div>)
 }
