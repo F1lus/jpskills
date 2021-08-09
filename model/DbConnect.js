@@ -32,11 +32,49 @@ class Connection {
                     database: config.database.db,
                     multipleStatements: true
                 },
-                pool: { min: 0, max: 7 }
+                pool: {
+                    min: 0,
+                    max: 7
+                }
             })
         } catch (error) {
             console.log(error.message)
         }
+    }
+
+    adminCompletionRate = async cardnum => {
+        let completion = 0
+
+        try {
+            const exams = await this.con('exams')
+                .select(['exams.exam_id', 'exam_grouping.worker_usergroup_id'])
+                .innerJoin('exam_grouping', 'exams.exam_id', 'exam_grouping.exam_id')
+                .where('exam_creator', cardnum)
+
+            for (const exam of exams) {
+
+                const skilled = this.con('skills')
+                    .distinct('worker_id')
+                    .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                    .where('skills.exam_id', exam.exam_id)
+
+                if (!exam.worker_usergroup_id) {
+                    const workers = this.con('workers').select('worker_id')
+
+                    completion += (await skilled).length / (await workers).length
+                } else {
+                    const workers = this.con('workers')
+                        .select('worker_id')
+                        .where('worker_usergroup_id_id', exam.worker_usergroup_id)
+
+                    completion += (await skilled).length / (await workers).length
+                }
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+
+        return completion
     }
 
     selectUsers = async cardnum => {
@@ -347,6 +385,7 @@ class Connection {
             const exams = await this.con('exams')
                 .select(['exams.exam_id', 'exam_itemcode', 'exam_name', 'points_required', 'points', 'time', 'completed', 'worker_id'])
                 .innerJoin('skills', 'exams.exam_id', 'skills.exam_id')
+                .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
                 .where('exam_creator', cardNum)
 
             for (const exam of exams) {
@@ -617,7 +656,7 @@ class Connection {
      *Új kérdések és válaszok beszúrása
      *
      *---------------------------------------------------------------------------
-    */
+     */
 
 
     /**
@@ -1722,9 +1761,9 @@ class Connection {
             await this.con.transaction(async trx => {
                 const login =
                     await this.con('admin_login')
-                        .where(this.con.raw('cardcode = ?', [cardNum]))
-                        .first()
-                        .transacting(trx)
+                    .where(this.con.raw('cardcode = ?', [cardNum]))
+                    .first()
+                    .transacting(trx)
                 if (login) {
                     access = CryptoJS.AES.decrypt(login.password, 'jp-$kDB').toString(CryptoJS.enc.Utf8) === password
                     if (access) {
@@ -1786,9 +1825,9 @@ class Connection {
                 }
 
                 const insert = await this.con.raw(
-                    'INSERT INTO exams (exam_itemcode, exam_name, ' +
-                    'exam_notes, exam_docs, exam_creator, exam_modifier) ' +
-                    'VALUES (?)', [arr])
+                        'INSERT INTO exams (exam_itemcode, exam_name, ' +
+                        'exam_notes, exam_docs, exam_creator, exam_modifier) ' +
+                        'VALUES (?)', [arr])
                     .transacting(trx)
                 if (insert.length !== 0) {
                     if (group.split(',').length || group.split(',').length === 0) {
@@ -1804,8 +1843,8 @@ class Connection {
                     } else {
                         for (const grp of group.split(',')) {
                             await this.con.raw(
-                                'INSERT INTO exam_grouping SET exam_id = ?, worker_usergroup_id = ? ',
-                                [insert[0].insertId, grp])
+                                    'INSERT INTO exam_grouping SET exam_id = ?, worker_usergroup_id = ? ',
+                                    [insert[0].insertId, grp])
                                 .transacting(trx)
                         }
                         message = 200

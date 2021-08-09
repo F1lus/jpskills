@@ -11,15 +11,20 @@ import { NavLink } from 'react-router-dom'
 
 export default function Profile() {
 
+    //Adatok + szűrések
     const [data, setData] = useState([])
     const [filtered, setFiltered] = useState([])
 
+    //Felhasználói adatok
     const [nev, setNev] = useState('')
     const [csoport, setCsoport] = useState('')
     const [isSame, setSame] = useState(false)
 
+    //Egyéb statek
     const [incomingStats, setIncomingStats] = useState(null)
+    const [details, setDetails] = useState(null)
 
+    //Konstans változók
     const cardNum = useParams().profile
 
     const socket = useContext(SocketContext)
@@ -44,18 +49,24 @@ export default function Profile() {
         setSame(result)
     }, [])
 
+    const handleDetails = useCallback(details => {
+        setDetails(details)
+    }, [])
+
     useEffect(() => {
         socket
             .emit('requesting-statistics', cardNum)
             .emit('get-user-list', cardNum)
             .emit('get-userinfo', cardNum)
             .emit('get-sameUser', cardNum)
+            .emit('get-details', cardNum)
 
         socket
             .on('sending-statistics', handleStatistics)
             .on('user-list', handleUsers)
             .on('userinfo', handleInfo)
             .on('sameUser', handleSameUser)
+            .on('detailStat', handleDetails)
 
         return () => {
             socket
@@ -63,8 +74,9 @@ export default function Profile() {
                 .off('user-list', handleUsers)
                 .off('userinfo', handleInfo)
                 .off('sameUser', handleSameUser)
+                .off('detailStat', handleDetails)
         }
-    }, [cardNum, handleStatistics, handleUsers, handleInfo, handleSameUser, socket])
+    }, [cardNum, handleStatistics, handleUsers, handleInfo, handleSameUser, handleDetails, socket])
 
     const renderStatsObject = useCallback(entry => {
         if (stats) {
@@ -129,6 +141,7 @@ export default function Profile() {
                 </div>
 
                 <div className='mt-3 col-lg-9'>
+                    <Visualizer completion={details} time={renderStatsObject('time') || 'Nincs adat'}/>
                     {isSame ?
                         <div className="container shadow rounded text-center bg-light mb-3">
                             <Learn />
@@ -161,3 +174,35 @@ const ProfileCard = ({ nev, csoport, stats, className }) => (
         </div>
     </div>
 )
+
+const Visualizer = ({completion, successRate, avgPoints, time}) => {
+
+    const completionPercent = () => (
+        <div className="progress w-50 m-auto">
+            <div className="progress-bar bg-success" role="progressbar" style={{width: `${completion}%`}} aria-valuenow={completion} aria-valuemin="0" aria-valuemax="100">{`${completion}`}%</div>
+            <div className="progress-bar bg-danger" role="progressbar" style={{width: `${100 - completion}%`}} aria-valuenow={100 - completion} aria-valuemin="0" aria-valuemax="100">{`${100 - completion}`}%</div>
+        </div>
+    )
+
+    const timeDisplay = () => (
+        <svg className='m-auto border border-primary rounded-circle border-bottom-0 shadow' width="100" height="100">
+            <circle cx="50" cy="50" r="50" fill="#ffffff" />
+            <text x="50%" y="50%" alignmentBaseline="central" textAnchor="middle" fontFamily="sans-serif" fontSize="12" fill="#000">{time}</text>
+        </svg>
+    )
+
+
+
+    return (<div className="container shadow rounded text-center bg-light mb-3 py-3">
+        <h2>Ábrázolt globális statisztika</h2>
+        <hr/>
+        <div className='my-2'>
+            <h5>Az Ön vizsgáit {completion}%-ban teljesítették azok, akik számára elérhetők a vizsgái.</h5>
+            {completionPercent()}
+        </div>
+        
+        
+        {timeDisplay()}
+
+    </div>)
+}

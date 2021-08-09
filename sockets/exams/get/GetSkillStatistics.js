@@ -32,4 +32,13 @@ module.exports = (socket) => {
     }
     socket.on('exams-by-cardcode', userStatsByCardcode)
 
+    const adminDetailedStats = async cardcode => {
+        if(!session || session.perm !== 'admin'){
+            return
+        }
+
+        socket.emit('detailStat', await dbconnect.adminCompletionRate(cardcode))
+    }
+    socket.on('get-details', adminDetailedStats)
+
 }
