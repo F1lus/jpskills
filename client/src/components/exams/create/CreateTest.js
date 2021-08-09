@@ -3,6 +3,8 @@ import { Redirect } from 'react-router-dom'
 
 import API from '../../BackendAPI'
 
+import Input from '../examination/Input'
+
 export default function CreateTest(props) {
 
     const permission = props.permission
@@ -19,6 +21,8 @@ export default function CreateTest(props) {
     const [types, setTypes] = useState([])
     const [groups, setGroups] = useState([])
     const [group, setGroup] = useState([])
+
+    const [allGroups, setAllGroups] = useState(false)
 
     const [uploaded, setUploaded] = useState(false)
     const [disable, setDisable] = useState(false)
@@ -227,23 +231,29 @@ export default function CreateTest(props) {
                     </div>
                     <h4 className='text-danger w-50 mx-auto mt-3'>A célcsoport később nem módosítható!</h4>
                     <div className="row text-center">
-                        {group.length > 0 ?
-                            group.map((elem, index) => {
-                                return (
-                                    <p className="col" key={index}>{
-                                        groups[groups.findIndex(grp => grp.id === Number.parseInt(elem))].groupName
-                                    }</p>
-                                )
-                            }) : <p className="col">Nincs kiválasztott csoport</p>}
+                        {allGroups ? <p className="col">Minden csoport ki lett választva</p> :
+                            group.length > 0 ?
+                                group.map((elem, index) => {
+                                    return (
+                                        <p className="col" key={index}>{
+                                            groups[groups.findIndex(grp => grp.id === Number.parseInt(elem))].groupName
+                                        }</p>
+                                    )
+                                }) : <p className="col">Nincs kiválasztott csoport</p>
+                        }
                     </div>
-                    <select name="group" className="w-75 rounded" onChange={handleChange} multiple size="6">
-                        <option defaultValue={-1}>A vizsga célcsoportja</option>
-                        {groups.length === 0 ? <></> : groups.map((elem, index) => {
-                            return (
-                                <option key={index} value={elem.id}>{elem.groupName}</option>
-                            )
-                        })}
-                    </select>
+                    
+                    <Input inputText={allGroups ? "Mind kiválasztásának törlése" : "Mind kiválasztása"} onChange={() => setAllGroups(!allGroups)}/>
+                    {allGroups ? null :
+                        <select name="group" className="w-75 rounded" onChange={handleChange} multiple size="6">
+                            <option defaultValue={-1}>A vizsga célcsoportja</option>
+                            {groups.length === 0 ? <></> : groups.map((elem, index) => {
+                                return (
+                                    <option key={index} value={elem.id}>{elem.groupName}</option>
+                                )
+                            })}
+                        </select>
+                    }
                 </div>
                 <div className="text-center">
                     Több csoport kijelölesehez: <kbd>ctrl + bal egérgomb</kbd> / <kbd>shift + bal egérgomb</kbd> / <kbd>bal egérgomb nyomva tartva</kbd>
