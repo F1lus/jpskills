@@ -11,6 +11,7 @@ export default function Archived(props) {
 
     const [archivedList, setArchivedList] = useState([])
     const [displayArchived, setDisplayArchived] = useState([])
+    const [selectedRows, setSelectedRows] = useState([])
 
     const dataColumns = [
         {
@@ -100,6 +101,11 @@ export default function Archived(props) {
         }
     })
 
+    const handleSelect = useCallback((state) => {
+        const rows = state.selectedRows
+        setSelectedRows(rows)
+    }, [])
+
     return (
         <div>
             <h3>Archivált vizsgák</h3>
@@ -123,6 +129,8 @@ export default function Archived(props) {
                 noDataComponent={'Nincsenek megjeleníthető adatok.'}
                 paginationComponentOptions={customText}
                 theme="ownTheme"
+                selectableRows
+                onSelectedRowsChange={handleSelect}
             />
         </div>
     )

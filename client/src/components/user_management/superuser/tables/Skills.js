@@ -107,11 +107,9 @@ export default function Skills(props) {
     })
 
     const handleSelect = useCallback((state) => {
-        setSelectedRows(state.selectedRows)
-        
-        console.log(selectedRows)
-        console.log(state)
-    }, [selectedRows])
+        const rows = state.selectedRows
+        setSelectedRows(rows)
+    }, [])
 
     return (
         <div>
