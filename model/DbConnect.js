@@ -1883,7 +1883,7 @@ class Connection {
                         'VALUES (?)', [arr])
                     .transacting(trx)
                 if (insert.length !== 0) {
-                    console.log(group)
+                    
                     if (group.length === 0) {
                         const insertGrouping = await this.con('exam_grouping')
                             .insert({
