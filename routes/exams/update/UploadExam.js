@@ -24,7 +24,9 @@ upload.post('/exams/upload', async (req, res) => {
             req.body.comment, req.files.examDoc.data, req.session.cardNum,
             req.session.cardNum
         )
-        res.send({ result: await dbconnect.insertExam(arrayOfData, req.body.targetGroup) })
+
+        
+        res.send({ result: await dbconnect.insertExam(arrayOfData, req.body.allGroups === 'false'  ? req.body.targetGroup.split(',') : []) })
     }
 })
 

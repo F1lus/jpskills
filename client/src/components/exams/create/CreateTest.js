@@ -129,10 +129,12 @@ export default function CreateTest(props) {
 
         if (examDoc == null) {
             setResult('A fájl feltöltése kötelező!')
+            setDisable(false)
             return
         }
         if (item == null || examName == null) {
             setResult('Legalább egy kötelező mező üresen maradt!')
+            setDisable(false)
             return
         }
 

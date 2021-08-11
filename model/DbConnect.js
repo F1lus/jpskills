@@ -42,6 +42,59 @@ class Connection {
         }
     }
 
+    adminGlobal = async () => {
+
+        const globalObject = {
+            completion: 0,
+            avgTime: 0,
+            successRate: 0
+        }
+
+        try {
+
+            const exams = await this.con('exams')
+                .select(['exams.exam_id', 'exam_grouping.worker_usergroup_id'])
+                .innerJoin('exam_grouping', 'exams.exam_id', 'exam_grouping.exam_id')
+
+            for(const exam of exams){
+
+                const skilled = await this.con('skills')
+                    .distinct('worker_id')
+                    .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                    .where('skills.exam_id', exam.exam_id)
+
+                if (!exam.worker_usergroup_id) {
+                    const workers = this.con('workers').select('worker_id')
+
+                    globalObject.completion += skilled.length / (await workers).length
+                } else {
+                    const workers = this.con('workers')
+                        .select('worker_id')
+                        .where('worker_usergroup_id_id', exam.worker_usergroup_id)
+    
+                    globalObject.completion += skilled.length / (await workers).length
+                }
+            }
+
+            const skilled = await this.con('skills')
+                .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+
+            for(const skill of skilled){
+                globalObject.successRate += skill.completed === 1 ? 1 : 0
+                globalObject.avgTime += skill.time
+            }
+
+            globalObject.successRate = ((globalObject.successRate / skilled.length) * 100).toString().substring(0, 5) + '%'
+            globalObject.avgTime = `${Math.floor((globalObject.avgTime / skilled.length) / 60)} p ${Math.round((globalObject.avgTime / skilled.length) % 60)} mp`
+
+
+        } catch (error) {
+            console.log(error.message)
+        }
+
+        return globalObject
+    }
+
     adminCompletionRate = async cardnum => {
         let completion = 0
 
@@ -1830,7 +1883,8 @@ class Connection {
                         'VALUES (?)', [arr])
                     .transacting(trx)
                 if (insert.length !== 0) {
-                    if (group.split(',').length || group.split(',').length === 0) {
+                    console.log(group)
+                    if (group.length === 0) {
                         const insertGrouping = await this.con('exam_grouping')
                             .insert({
                                 exam_id: insert[0].insertId,
@@ -1841,7 +1895,7 @@ class Connection {
                             message = 200
                         }
                     } else {
-                        for (const grp of group.split(',')) {
+                        for (const grp of group) {
                             await this.con.raw(
                                     'INSERT INTO exam_grouping SET exam_id = ?, worker_usergroup_id = ? ',
                                     [insert[0].insertId, grp])
