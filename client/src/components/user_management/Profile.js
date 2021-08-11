@@ -145,7 +145,8 @@ export default function Profile() {
                         completion={details} 
                         time={renderStatsObject('time') || 'Nincs adat'}
                         successRate={renderStatsObject('completion')}
-                        />
+                        avgPoints={renderStatsObject('score')}
+                    />
                     {isSame ?
                         <div className="container shadow rounded text-center bg-light mb-3">
                             <Learn />
@@ -209,6 +210,13 @@ const Visualizer = ({completion, successRate, avgPoints, time}) => {
         )
     }
 
+    const scoreDisplay = () => (
+        <svg className='m-auto border border-secondary rounded-circle border-bottom-0 shadow' width="100" height="100">
+            <circle cx="50" cy="50" r="50" fill="#ffffff" />
+            <text x="50%" y="50%" alignmentBaseline="central" textAnchor="middle" fontFamily="sans-serif" fontSize="16" fill="#000">{avgPoints}</text>
+        </svg>
+    )
+
 
 
     return (<div className="container shadow rounded text-center bg-light mb-3 py-3">
@@ -227,6 +235,11 @@ const Visualizer = ({completion, successRate, avgPoints, time}) => {
         <div className='my-2'>
             <h5>Sikerességi arány</h5>
             {avgSuccess()}
+        </div>
+
+        <div className='my-2'>
+            <h5>Átlag pontszám</h5>
+            {scoreDisplay()}
         </div>
 
     </div>)

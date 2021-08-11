@@ -137,11 +137,13 @@ export default function CreateTest(props) {
         }
 
         const data = new FormData()
+
         data.append('item', item)
         data.append('examName', examName)
         data.append('comment', comment)
         data.append('examDoc', examDoc)
         data.append('targetGroup', group)
+        data.append('allGroups', allGroups)
 
         setResult(null)
         API.post('/exams/upload', data, { headers: { 'Content-Type': `multipart/form-data; boundary=${data._boundary}` } })
@@ -175,7 +177,7 @@ export default function CreateTest(props) {
                 console.log(err)
                 setDisable(false)
             })
-    }, [comment, examDoc, examName, item, permission, group])
+    }, [comment, examDoc, examName, item, permission, group, allGroups])
 
     const searchItem = useCallback(event => {
         if (items.length > 0 && types) {
@@ -246,7 +248,6 @@ export default function CreateTest(props) {
                     <Input inputText={allGroups ? "Mind kiválasztásának törlése" : "Mind kiválasztása"} onChange={() => setAllGroups(!allGroups)}/>
                     {allGroups ? null :
                         <select name="group" className="w-75 rounded" onChange={handleChange} multiple size="6">
-                            <option defaultValue={-1}>A vizsga célcsoportja</option>
                             {groups.length === 0 ? <></> : groups.map((elem, index) => {
                                 return (
                                     <option key={index} value={elem.id}>{elem.groupName}</option>

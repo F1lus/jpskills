@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { Admin } from './handlers/PermissionHandler'
 
-import examStats from './models/ExamStatistics'
+import useExamStats from './models/ExamStatistics'
 
 export default function DetailTable(props) {
 
@@ -14,7 +14,7 @@ export default function DetailTable(props) {
     const [results, setResults] = useState([])
     const [displayList, setDisplayList] = useState([])
 
-    const stats = examStats(workingList)
+    const stats = useExamStats(workingList)
 
     const columns = [
         {

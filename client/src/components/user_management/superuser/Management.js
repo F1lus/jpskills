@@ -129,7 +129,7 @@ export default function Management() {
     })
 
     return (
-        <div className='container-fluid bg-light w-75 shadow rounded text-center py-3 mb-3 page'>
+        <div className='container-fluid bg-light w-75 shadow rounded text-center py-3  page'>
             {redirect ? <Redirect to='/logout' /> : null}
 
             <button className='btn btn-danger float-right' onClick={logout}>Kilépés</button>

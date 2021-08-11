@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 
 export default function useExamStats(exams) {
 
@@ -11,7 +11,7 @@ export default function useExamStats(exams) {
         completionRate: 0
     })
 
-    const calculate = useCallback(() => {
+    useEffect(() => {
         let avgTime = 0
         let avgScore = 0
         let rate = 0
@@ -34,10 +34,6 @@ export default function useExamStats(exams) {
             })
         }
     }, [exams])
-
-    useEffect(() => {
-        calculate()
-    }, [calculate])
 
     return stat
 
