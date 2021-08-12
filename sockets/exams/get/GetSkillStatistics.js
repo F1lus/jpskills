@@ -39,8 +39,12 @@ module.exports = (socket) => {
 
         if(cardcode === session.cardNum){
             socket.emit('detailStat', {
-                admin: await dbconnect.adminCompletionRate(session.cardNum),
+                completion: await dbconnect.adminCompletionRate(session.cardNum),
                 global: await dbconnect.adminGlobal()
+            })
+        }else{
+            socket.emit('detailStat', {
+                completion: await dbconnect.userVisualizer(cardcode)
             })
         }
     }

@@ -41,6 +41,43 @@ class Connection {
         }
     }
 
+    userVisualizer = async cardnum => {
+        let completion = 0
+
+        try {
+            
+            const worker = await this.con('workers')
+                .select(['worker_id', 'worker_usergroup_id_id'])
+                .where('worker_cardcode', cardnum)
+                .first()
+
+            const exams = await this.con('exams')
+                .distinct('exams.exam_id')
+                .innerJoin('exam_grouping', 'exams.exam_id', 'exam_grouping.exam_id')
+                .where('worker_usergroup_id', worker.worker_usergroup_id_id)
+                .orWhere('worker_usergroup_id', null)
+
+            for(const exam of exams){
+
+                const skills = await this.con('skills')
+                    .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
+                    .where('exam_id', exam.exam_id)
+                    .andWhere('worker_id', worker.worker_id)
+                    .first()
+
+                if(skills){
+                    completion++
+                }
+            }
+
+            completion = Math.round((completion / exams.length) * 100)
+        } catch (error) {
+            console.log(error.message)
+        }
+
+        return completion
+    }
+
     adminGlobal = async () => {
         const globalObject = {
             completion: 0,
