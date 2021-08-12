@@ -37,10 +37,12 @@ module.exports = (socket) => {
             return
         }
 
-        socket.emit('detailStat', {
-            admin: await dbconnect.adminCompletionRate(cardcode),
-            global: await dbconnect.adminGlobal()
-        })
+        if(cardcode === session.cardNum){
+            socket.emit('detailStat', {
+                admin: await dbconnect.adminCompletionRate(session.cardNum),
+                global: await dbconnect.adminGlobal()
+            })
+        }
     }
     socket.on('get-details', adminDetailedStats)
 
