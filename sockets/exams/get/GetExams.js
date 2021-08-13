@@ -52,7 +52,13 @@ module.exports = (socket) => {
             return
         }
 
-        const results = await dbconnect.selectLearnExams(session.perm === 'admin', session.cardNum)
+        let results = []
+
+        if(session.perm === 'superuser'){
+            results = await dbconnect.selectAllDocuments()
+        }else{
+            results = await dbconnect.selectLearnExams(session.perm === 'admin', session.cardNum)
+        }
 
         let examResult = []
         results.forEach(result => {

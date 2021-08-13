@@ -65,6 +65,8 @@ export default function App() {
 
               <Routing exact path='/management' allowed={['superuser']} component={Management} />
 
+              <Routing exact path='/management/learn/:examCode' allowed={['superuser']} component={ExamDocument} />
+
               <Routing exact path='/management/:user' allowed={['superuser']} component={UserManager} />
 
               <Routing exact path='/management/admin/:user' allowed={['superuser']} component={AdminManager} />

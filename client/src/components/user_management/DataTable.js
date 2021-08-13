@@ -156,7 +156,7 @@ export default function DetailTable(props) {
                     details={{ completion }}
                     time={stats.avgTime.avgMins + " p " + stats.avgTime.avgSecs + " mp"}
                     avgPoints={stats.avgScore}
-                    successRate={stats.completionRate}
+                    successRate={stats.completionRate+'%'}
                     isSame={props.isSame}
                     group={props.permission}
                     isGlobal={false}

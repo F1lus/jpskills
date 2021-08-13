@@ -8,7 +8,7 @@ import { SocketContext } from '../../GlobalSocket'
 import OverlayScrollbars from 'overlayscrollbars'
 import 'overlayscrollbars/css/OverlayScrollbars.css'
 
-export default function Learn() {
+export default function Learn({ superuser }) {
 
     const socket = useContext(SocketContext)
 
@@ -41,7 +41,7 @@ export default function Learn() {
                                 <div className="card-body text-center">
                                     <h4 className="card-title"><p>{exam.name}</p></h4>
                                     <p className="card-text">Készült: {exam.date}</p>
-                                    <NavLink to={`/exams/learn/${exam.itemcode}`}>
+                                    <NavLink to={superuser ? `/management/learn/${exam.itemcode}` : `/exams/learn/${exam.itemcode}`}>
                                         <button type="button" className="btn btn-outline-blue card-link">
                                             Megtekintés
                                         </button>

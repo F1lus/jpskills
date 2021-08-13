@@ -162,7 +162,7 @@ export default function Profile() {
     if (isSame) {
       return (
         <div className="container shadow rounded text-center bg-light mb-3">
-          <Learn />
+          <Learn superuser={false}/>
         </div>
       );
     }else{

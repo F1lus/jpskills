@@ -92,7 +92,7 @@ export default function ExamDocument() {
                 <br />
                 <h5>{`${currentPage} / ${maxPages}`}</h5>
                 <button className='btn btn-outline-primary' onClick={prevPage}>Hátra</button>
-                <NavLink to={`/profile/${cardnum}`}><button className='btn btn-outline-primary mx-4'>Vissza a profilra</button></NavLink>
+                <NavLink to={`/profile/${cardnum}`}><button className='btn btn-outline-danger mx-4'>Befejezés</button></NavLink>
                 <button className='btn btn-outline-primary' onClick={nextPage}>Előre</button>
             </div>
         </div>

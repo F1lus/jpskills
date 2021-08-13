@@ -41,6 +41,34 @@ class Connection {
         }
     }
 
+    selectAllDocuments = async () => {
+        let exams = [];
+        try {
+            
+            const examList = await this.con("exams")
+                    .select([
+                        "exam_id",
+                        "exam_name",
+                        "exam_itemcode",
+                        "exam_notes",
+                        "exam_creation_time",
+                    ])
+
+                examList.forEach((result) => {
+                    exams.push({
+                        examName: result.exam_name,
+                        itemCode: result.exam_itemcode,
+                        comment: result.exam_notes,
+                        created: result.exam_creation_time,
+                    });
+                });
+
+        } catch (error) {
+            console.log(error.message);
+        }
+        return exams;
+    }
+
     examCompletion = async (cardnum, examcode) => {
         let completion = 0
 
