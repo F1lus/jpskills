@@ -41,6 +41,56 @@ class Connection {
         }
     }
 
+    examCompletion = async (cardnum, examcode) => {
+        let completion = 0
+
+        try {
+            
+            const exams = await this.con("exams")
+                .select(["exams.exam_id", "exam_grouping.worker_usergroup_id"])
+                .innerJoin("exam_grouping", "exams.exam_id", "exam_grouping.exam_id")
+                .where("exam_creator", cardnum)
+                .andWhere('exam_itemcode', examcode)
+
+            for (const exam of exams) {
+                const skilled = this.con("skills")
+                    .distinct("worker_id")
+                    .leftJoin(
+                        "skill_archive",
+                        "skills.skills_id",
+                        "skill_archive.skills_id"
+                    )
+                    .where("skills.exam_id", exam.exam_id);
+
+                if (!exam.worker_usergroup_id) {
+                    const workers = this.con("workers")
+                        .select("worker_id")
+                        .whereNot("worker_usergroup", "admin")
+                        .andWhereNot("worker_usergroup", "Adminisztrátor")
+                        .andWhereNot("worker_usergroup", "superuser");
+
+                    completion += (await skilled).length / (await workers).length;
+                } else {
+                    const workers = this.con("workers")
+                        .select("worker_id")
+                        .where("worker_usergroup_id_id", exam.worker_usergroup_id)
+                        .andWhereNot("worker_usergroup", "admin")
+                        .andWhereNot("worker_usergroup", "Adminisztrátor")
+                        .andWhereNot("worker_usergroup", "superuser");
+
+                    completion += (await skilled).length / (await workers).length;
+                }
+            }
+
+            completion = Number.parseFloat((completion * 100).toString().substring(0, 5))
+
+        } catch (error) {
+            console.log(error.message)
+        }
+
+        return completion
+    }
+
     userVisualizer = async cardnum => {
         let completion = 0
 

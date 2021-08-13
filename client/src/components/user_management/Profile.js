@@ -5,7 +5,7 @@ import Learn from "../exams/learn/Learn";
 import DetailTable from "./DataTable";
 
 import useGlobalStats from "./models/ExamStatistics";
-import { AdminVisualizer } from "./Visualizer";
+import Visualizer from "./Visualizer";
 
 import { SocketContext } from "../GlobalSocket";
 import { NavLink } from "react-router-dom";
@@ -212,22 +212,25 @@ export default function Profile() {
         </div>
 
         <div className="mt-3 col-lg-9">
-          <AdminVisualizer
+          <Visualizer
             details={details}
             time={renderStatsObject("time") || "Nincs adat"}
             successRate={renderStatsObject("completion")}
             avgPoints={renderStatsObject("score")}
             isSame={isSame}
             group={csoport}
+            isGlobal={true}
           />
 
           {canDisplayLearn()}
 
           <div className="container shadow rounded text-center bg-light mb-3 py-3">
-            <DetailTable
+            <DetailTable //TODO Vizsgánkénti statisztika megvalósítása
               user={nev}
               permission={csoport}
               results={renderStatsObject("skills")}
+              socket={socket}
+              isSame={isSame}
             />
           </div>
         </div>
@@ -258,7 +261,7 @@ const ProfileCard = ({ nev, csoport, stats, className }) => (
       <h5 className="card-title">{nev}</h5>
       <h6 className="card-subtitle mb-2 text-muted">Besorolás: {csoport}</h6>
       <hr />
-      <p className="card-text">A felhasználó vizsgáiról</p>
+      <p className="card-text">Rövid jellemzés</p>
       <div className="card-text">{stats}</div>
     </div>
   </div>

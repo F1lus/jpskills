@@ -4,6 +4,7 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import { Admin } from './handlers/PermissionHandler'
 
 import useExamStats from './models/ExamStatistics'
+import Visualizer from './Visualizer'
 
 export default function DetailTable(props) {
 
@@ -13,6 +14,7 @@ export default function DetailTable(props) {
     const [workingList, setWorkingList] = useState([])
     const [results, setResults] = useState([])
     const [displayList, setDisplayList] = useState([])
+    const [completion, setCompletion] = useState(0)
 
     const stats = useExamStats(workingList)
 
@@ -98,6 +100,10 @@ export default function DetailTable(props) {
         return filteredArray
     }, [examCode, props.results])
 
+    const handleCompletion = useCallback(completion => {
+        setCompletion(completion)
+    }, [])
+
     useEffect(() => {
         if (props.results) {
             const array = []
@@ -110,6 +116,17 @@ export default function DetailTable(props) {
             setExamSelector(array)
         }
     }, [props.results])
+
+    useEffect(() => {
+        if(examCode){
+            props.socket.emit('get-examCompletion', examCode)
+        }
+
+        props.socket.on('examCompletion', handleCompletion)
+
+        return () => props.socket.off('examCompletion', handleCompletion)
+
+    }, [examCode, props.socket, handleCompletion])
 
     useEffect(() => {
         const list = filterByExam(['admin', 'Adminisztrátor'].includes(props.permission))
@@ -135,16 +152,20 @@ export default function DetailTable(props) {
     const examStatistics = useCallback(() => {
         if (examCode && workingList.length > 0) {
             return (
-                <div className='alert alert-primary w-75 mx-auto py-2 text-justify'>
-                    <h5>Átlagos teljesítési idő: {stats.avgTime.avgMins + " perc " + stats.avgTime.avgSecs + " másodperc"}</h5>
-                    <h5>Átlagosan elért pontszám: {stats.avgScore}</h5>
-                    <h5>Sikerességi arány: {stats.completionRate + "%"}</h5>
-                </div>
+                <Visualizer
+                    details={{ completion }}
+                    time={stats.avgTime.avgMins + " p " + stats.avgTime.avgSecs + " mp"}
+                    avgPoints={stats.avgScore}
+                    successRate={stats.completionRate}
+                    isSame={props.isSame}
+                    group={props.permission}
+                    isGlobal={false}
+                />
             )
         } else {
             return null
         }
-    }, [examCode, workingList, stats])
+    }, [examCode, workingList, stats, completion, props.isSame, props.permission])
 
     const searchUser = useCallback(event => {
         if (['admin', 'Adminisztrátor'].includes(props.permission)) {
