@@ -88,7 +88,8 @@ class Connection {
                         "skills.skills_id",
                         "skill_archive.skills_id"
                     )
-                    .where("skills.exam_id", exam.exam_id);
+                    .where('skill_archive.skills_id', null)
+                    .andwhere("skills.exam_id", exam.exam_id);
 
                 if (!exam.worker_usergroup_id) {
                     const workers = this.con("workers")
@@ -139,7 +140,8 @@ class Connection {
 
                 const skills = await this.con('skills')
                     .leftJoin('skill_archive', 'skills.skills_id', 'skill_archive.skills_id')
-                    .where('exam_id', exam.exam_id)
+                    .where('skill_archive.skills_id', null)
+                    .andWhere('exam_id', exam.exam_id)
                     .andWhere('worker_id', worker.worker_id)
                     .first()
 
@@ -176,7 +178,13 @@ class Connection {
                         "skills.skills_id",
                         "skill_archive.skills_id"
                     )
-                    .where("skills.exam_id", exam.exam_id);
+                    .where('skill_archive.skills_id', null)
+                    .andWhere("skills.exam_id", exam.exam_id);
+
+                if(skilled.length === 0){
+                    globalObject.successRate = globalObject.successRate+'%'
+                    return globalObject
+                }
 
                 if (!exam.worker_usergroup_id) {
                     const workers = this.con("workers")
@@ -200,11 +208,13 @@ class Connection {
 
             globalObject.completion = Number.parseFloat(globalObject.completion.toString().substring(0, 5))
 
-            const skilled = await this.con("skills").leftJoin(
-                "skill_archive",
-                "skills.skills_id",
-                "skill_archive.skills_id"
-            );
+            const skilled = await this.con("skills")
+                .leftJoin(
+                    "skill_archive",
+                    "skills.skills_id",
+                    "skill_archive.skills_id"
+                )
+                .where('skill_archive.skills_id', null)
 
             for (const skill of skilled) {
                 globalObject.successRate += skill.completed === 1 ? 1 : 0;
@@ -240,9 +250,10 @@ class Connection {
                     .leftJoin(
                         "skill_archive",
                         "skills.skills_id",
-                        "skill_archive.skills_id"
+                        'skill_archive.skills_id'
                     )
-                    .where("skills.exam_id", exam.exam_id);
+                    .where('skill_archive.skills_id', null)
+                    .andWhere("skills.exam_id", exam.exam_id);
 
                 if (!exam.worker_usergroup_id) {
                     const workers = this.con("workers")
@@ -600,7 +611,8 @@ class Connection {
                     "skills.skills_id",
                     "skill_archive.skills_id"
                 )
-                .where("exam_creator", cardNum);
+                .where('skill_archive.skills_id', null)
+                .andWhere("exam_creator", cardNum);
 
             for (const exam of exams) {
                 const worker = await this.con("workers")
@@ -648,11 +660,12 @@ class Connection {
                             "completed",
                         ])
                         .innerJoin("exams", "skills.exam_id", "exams.exam_id")
-                        .innerJoin(
+                        .leftJoin(
                             "skill_archive",
                             "skills.skills_id",
                             "skill_archive.skills_id"
                         )
+                        .where('skill_archive.skills_id', null)
                         .where("worker_id", [worker.worker_id]);
 
                     skills.forEach((skill) => {

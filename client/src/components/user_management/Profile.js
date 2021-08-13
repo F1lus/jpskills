@@ -225,7 +225,7 @@ export default function Profile() {
           {canDisplayLearn()}
 
           <div className="container shadow rounded text-center bg-light mb-3 py-3">
-            <DetailTable //TODO Vizsgánkénti statisztika megvalósítása
+            <DetailTable
               user={nev}
               permission={csoport}
               results={renderStatsObject("skills")}

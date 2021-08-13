@@ -7,7 +7,7 @@ export default function Visualizer({
   time,
   isSame,
   group,
-  isGlobal
+  isGlobal,
 }) {
   const completionPercent = (completion) => (
     <div className="progress w-50 m-auto">
@@ -160,8 +160,16 @@ export default function Visualizer({
     );
   } else {
     return (
-      <div className={isGlobal ? "container shadow rounded text-center bg-light mb-3 py-3" : 'container text-center bg-light mb-3 py-3'}>
-        <h2>{isGlobal ? 'Összesített statisztika' : 'A vizsga statisztikája'}</h2>
+      <div
+        className={
+          isGlobal
+            ? "container shadow rounded text-center bg-light mb-3 py-3"
+            : "container text-center bg-light mb-3 py-3"
+        }
+      >
+        <h2>
+          {isGlobal ? "Összesített statisztika" : "A vizsga statisztikája"}
+        </h2>
         <hr />
         <div className="my-2">
           <h5>{details.completion}%-os teljesítettség</h5>
