@@ -4,19 +4,19 @@ module.exports = socket => {
 
     const session = socket.handshake.session
 
-    const removeSkill = async (examId, workerId, skillId) => {
-        if(!session.perm || !session.cardNum){
+    const removeSkill = async (skillArray) => {
+        if(!session.perm || !session.cardNum || !Array.isArray(skillArray)){
             return
         }
 
         if(session.perm === 'superuser'){
-            await dbconnect.removeUserSkill(examId, workerId, skillId)
+            await dbconnect.removeUserSkill(skillArray)
             socket.emit('skill-update')
         }
     }
 
     const archiveSkills = async skillArray => {
-        if(!session.perm || !session.cardNum){
+        if(!session.perm || !session.cardNum || !Array.isArray(skillArray)){
             return
         }
 
@@ -37,7 +37,7 @@ module.exports = socket => {
     }
 
     const removeArchivedExam = async archiveId => {
-        if(!session.perm || !session.cardNum){
+        if(!session.perm || !session.cardNum || !Array.isArray(archiveId)){
             return
         }
 

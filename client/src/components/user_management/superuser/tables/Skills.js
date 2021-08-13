@@ -39,26 +39,23 @@ export default function Skills(props) {
         selectAllRowsItemText: 'Összes'
     }
 
-    const delExam = useCallback((event, examId, workerId, skillId) => {
+    const delExam = useCallback((event) => {
         event.preventDefault()
 
         setLoad(store, true)
-        socket.emit('remove-skill', examId, workerId, skillId)
-    }, [socket, store])
+        socket.emit('remove-skill', selectedRows)
+    }, [socket, store, selectedRows])
 
-    const archiveExam = useCallback((event, examId, workerId, skillId) => {
+    const archiveExam = useCallback((event) => {
         event.preventDefault()
 
         setLoad(store, true)
 
-        socket.emit('archive-skills', [{
-            examId,
-            workerId,
-            skillId
-        }])
-    }, [socket, store])
+        socket.emit('archive-skills', selectedRows)
+    }, [socket, store, selectedRows])
 
     const handleExams = useCallback(exams => {
+
         setExams(exams)
 
         const tempList = []
@@ -108,8 +105,22 @@ export default function Skills(props) {
 
     const handleSelect = useCallback((state) => {
         const rows = state.selectedRows
-        setSelectedRows(rows)
-    }, [])
+        const selected = []
+        
+        exams.forEach(exam => {
+            rows.forEach(row => {
+                if(exam.examCode === row.examCode){
+                    selected.push({
+                        examId: exam.examId,
+                        workerId: exam.workerId,
+                        skillId: exam.skillId
+                    })
+                }
+            })
+        })
+
+        setSelectedRows(selected)
+    }, [exams])
 
     return (
         <div>
@@ -125,6 +136,11 @@ export default function Skills(props) {
                     </label>
                 </div>
             </form>
+
+            <div className='my-2'>
+                <button className='btn btn-primary m-5' onClick={archiveExam}>Kiválasztott vizsgák archiválása</button>
+                <button className='btn btn-danger m-5' onClick={delExam}>Kiválasztott vizsgák törlése</button>
+            </div>
 
             <DataTable
                 columns={dataColumns}

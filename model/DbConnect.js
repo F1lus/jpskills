@@ -442,10 +442,14 @@ class Connection {
     removeArchivedExam = async (archiveId) => {
         try {
             await this.con.transaction(async (trx) => {
-                await this.con("skill_archive")
-                    .delete()
-                    .where(this.con.raw("archive_id = ?", archiveId))
-                    .transacting(trx);
+
+                for(const id of archiveId){
+                    await this.con("skill_archive")
+                        .delete()
+                        .where(this.con.raw("archive_id = ?", id))
+                        .transacting(trx);
+                }
+
             });
         } catch (error) {
             console.log(error.message);
@@ -463,7 +467,7 @@ class Connection {
                             "skills.skills_id",
                             "skill_archive.skills_id"
                         )
-                        .where("skill_archive.skills_id", null)
+                        //.where("skill_archive.skills_id", null)
                         .andWhere(this.con.raw("skills.skills_id = ?", skill.skillId))
                         .first()
                         .transacting(trx);
@@ -489,27 +493,19 @@ class Connection {
         }
     };
 
-    removeUserSkill = async (examId, workerId, skillId) => {
+    removeUserSkill = async (skillArray) => {
         try {
             await this.con.transaction(async (trx) => {
-                const questionIds = await this.con("questions")
-                    .select("question_id")
-                    .where(this.con.raw("exam_id = ?", examId))
-                    .transacting(trx);
-
-                for (const id of questionIds) {
-                    await this.con("exam_result")
-                        .delete()
-                        .where("question_id", id.question_id)
-                        .andWhere(this.con.raw("worker_id = ?", workerId))
-                        .transacting(trx);
-                }
-
-                await this.con("skills")
+                
+                for(const skill of skillArray){
+                    await this.con("skills")
                     .delete()
-                    .where(this.con.raw("skills_id = ?", skillId))
+                    .where(this.con.raw("skills_id = ?", skill.skillId))
+                    .andWhere(this.con.raw('worker_id = ?', skill.workerId))
+                    .andWhere(this.con.raw('exam_id = ?', skill.examId))
                     .limit(1)
                     .transacting(trx);
+                }
             });
         } catch (error) {
             console.log(error.message);

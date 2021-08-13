@@ -66,7 +66,7 @@ export default function UserManager() {
 
             <hr className="w-75" />
 
-            <Skills store={store} socket={socket} />
+            <Skills store={store} socket={socket} workerId={userInfo[0]} />
 
             <hr className='w-75 my-3' />
 

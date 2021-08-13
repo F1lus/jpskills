@@ -12,6 +12,7 @@ export default function Archived(props) {
     const [archivedList, setArchivedList] = useState([])
     const [displayArchived, setDisplayArchived] = useState([])
     const [selectedRows, setSelectedRows] = useState([])
+    const [archiveIds, setArchiveIds] = useState([])
 
     const dataColumns = [
         {
@@ -39,21 +40,21 @@ export default function Archived(props) {
         selectAllRowsItemText: 'Összes'
     }
 
-    const delExam = useCallback((event, examId, workerId, skillId) => {
+    const delExam = useCallback((event) => {
         event.preventDefault()
 
         setLoad(store, true)
 
-        socket.emit('remove-skill', examId, workerId, skillId)
-    }, [socket, store])
+        socket.emit('remove-skill', selectedRows)
+    }, [socket, store, selectedRows])
 
-    const delArchived = useCallback((event, archiveId) => {
+    const delArchived = useCallback((event) => {
         event.preventDefault()
 
         setLoad(store, true)
 
-        socket.emit('remove-archived', archiveId)
-    }, [socket, store])
+        socket.emit('remove-archived', archiveIds)
+    }, [socket, store, archiveIds])
 
     const handleArchived = useCallback(archived => {
         const tempList = []
@@ -61,6 +62,7 @@ export default function Archived(props) {
         setArchivedList(archived)
         archived.forEach(element => {
             tempList.push({
+                skillId: element.skillId,
                 examName: element.examName,
                 archiver: element.archiver,
                 completed: element.completed ? 'Sikeres' : 'Sikertelen'
@@ -103,8 +105,26 @@ export default function Archived(props) {
 
     const handleSelect = useCallback((state) => {
         const rows = state.selectedRows
-        setSelectedRows(rows)
-    }, [])
+
+        const selected = []
+        const aIds = []
+
+        archivedList.forEach(archive => {
+            rows.forEach(row => {
+                if(archive.skillId === row.skillId){
+                    aIds.push(archive.archiveId)
+                    selected.push({
+                        examId: archive.examId,
+                        workerId: archive.workerId,
+                        skillId: archive.skillId
+                    })
+                }
+            })
+        })
+
+        setSelectedRows(selected)
+        setArchiveIds(aIds)
+    }, [archivedList])
 
     return (
         <div>
@@ -120,6 +140,11 @@ export default function Archived(props) {
                     </label>
                 </div>
             </form>
+
+            <div className='my-2'>
+                <button className='btn btn-primary m-5' onClick={delArchived}>Kiválasztott archívumok visszavonása</button>
+                <button className='btn btn-danger m-5' onClick={delExam}>Kiválasztott archívumok törlése</button>
+            </div>
 
             <DataTable
                 columns={dataColumns}
