@@ -173,7 +173,7 @@ export default function Profile() {
   return (
     <div className="container-fluid text-center page">
       <div className="row">
-        <div className="col-lg-3 mt-3">
+        <div className="container col-lg-3 mt-3">
           <form className="bg-light shadow rounded p-2">
             <div className="form-group m-auto ">
               <input

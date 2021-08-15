@@ -19,6 +19,20 @@ export default function Home() {
 
     const [vanVizsga, setVanVizsga] = useState(false)
 
+    const [cardnum, setCardnum] = useState(null)
+
+    const handleCardnum = useCallback(cardnum => setCardnum(cardnum), [])
+
+    useEffect(() => {
+        socket.emit('req-cardnum')
+
+        socket.on('res-cardnum', handleCardnum)
+
+        return () => {
+            socket.off('res-cardnum', handleCardnum)
+        }
+    }, [socket, handleCardnum])
+
     const handleExams = useCallback(dbExams => {
         setVanVizsga(dbExams.length > 0)
     }, [])
@@ -78,7 +92,7 @@ export default function Home() {
                     </div>
                     <Admin permission={permission}>
                         <div>
-                            <NavLink to="/profile">
+                            <NavLink to={`/profile/${cardnum}`}>
                                 <button type="button" className="btn btn-warning m-2" >
                                     Nézze meg a statisztikákat
                                 </button>
