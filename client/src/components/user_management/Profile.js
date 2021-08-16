@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
+import { useSelector } from 'react-redux'
 import { useParams } from "react-router";
 
 import Learn from "../exams/learn/Learn";
@@ -6,14 +7,11 @@ import DetailTable from "./DataTable";
 
 import useGlobalStats from "./models/ExamStatistics";
 import Visualizer from "./Visualizer";
+import UserSearch from "./UserSearch";
 
 import { SocketContext } from "../GlobalSocket";
-import { NavLink } from "react-router-dom";
 
 export default function Profile() {
-  //Adatok + szűrések
-  const [data, setData] = useState([]);
-  const [filtered, setFiltered] = useState([]);
 
   //Felhasználói adatok
   const [nev, setNev] = useState("");
@@ -36,15 +34,12 @@ export default function Profile() {
 
   const socket = useContext(SocketContext);
 
+  const globalPerm = useSelector(state => state.userReducer.permission)
+
   const stats = useGlobalStats(incomingStats);
 
   const handleStatistics = useCallback((stats) => {
     setIncomingStats(stats);
-  }, []);
-
-  const handleUsers = useCallback((users) => {
-    setData(users);
-    setFiltered(users);
   }, []);
 
   const handleInfo = useCallback((user) => {
@@ -70,14 +65,12 @@ export default function Profile() {
   useEffect(() => {
     socket
       .emit("requesting-statistics", cardNum)
-      .emit("get-user-list", cardNum)
       .emit("get-userinfo", cardNum)
       .emit("get-sameUser", cardNum)
       .emit("get-details", cardNum);
 
     socket
       .on("sending-statistics", handleStatistics)
-      .on("user-list", handleUsers)
       .on("userinfo", handleInfo)
       .on("sameUser", handleSameUser)
       .on("detailStat", handleDetails);
@@ -85,7 +78,6 @@ export default function Profile() {
     return () => {
       socket
         .off("sending-statistics", handleStatistics)
-        .off("user-list", handleUsers)
         .off("userinfo", handleInfo)
         .off("sameUser", handleSameUser)
         .off("detailStat", handleDetails);
@@ -93,7 +85,6 @@ export default function Profile() {
   }, [
     cardNum,
     handleStatistics,
-    handleUsers,
     handleInfo,
     handleSameUser,
     handleDetails,
@@ -137,25 +128,6 @@ export default function Profile() {
     [renderStatsObject]
   );
 
-  const search = useCallback(
-    (event) => {
-      if (event.target.value.length > 0) {
-        const filteredBy = data.filter((item) => {
-          const search = event.target.value.toLowerCase().trim();
-          return (
-            item.worker_name.includes(search) ||
-            item.worker_name.toLowerCase().includes(search) ||
-            item.worker_cardcode.toString().includes(search)
-          );
-        });
-        setFiltered(filteredBy);
-      } else {
-        setFiltered(data);
-      }
-    },
-    [data]
-  );
-
   //Render
 
   const canDisplayLearn = useCallback(() => {
@@ -170,38 +142,20 @@ export default function Profile() {
     }
   }, [isSame])
 
+  const canDisplaySearch = useCallback(() => {
+    if(globalPerm === 'admin'){
+      return <UserSearch socket={socket} cardNum={cardNum}/>
+    }else{
+      return null
+    }
+  }, [globalPerm, socket, cardNum])
+
   return (
     <div className="container-fluid text-center page">
       <div className="row">
         <div className="container col-lg-3 mt-3">
-          <form className="bg-light shadow rounded p-2">
-            <div className="form-group m-auto ">
-              <input
-                type="text"
-                name="search"
-                autoComplete="off"
-                onChange={search}
-                required
-              />
-              <label htmlFor="examName" className="label-name">
-                <span className="content-name">Vizsgázó keresése</span>
-              </label>
-            </div>
-            {
-              <ul className="list-group w-75 mx-auto" id="users">
-                {filtered.map((elem, index) => {
-                  return (
-                    <NavLink
-                      to={`/profile/${elem.worker_cardcode}`}
-                      key={index}
-                    >
-                      <li className="list-group-item">{elem.worker_name}</li>
-                    </NavLink>
-                  );
-                })}
-              </ul>
-            }
-          </form>
+          
+          {canDisplaySearch()}
 
           <ProfileCard
             className="mt-3 shadow"
