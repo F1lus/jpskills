@@ -266,7 +266,7 @@ export default function CreateTest(props) {
                     <input type="text" name="examName" onChange={handleChange} value={examName || ''} required autoComplete="off" />
                     <label htmlFor="examName" className="label-name">
                         <span className="content-name">
-                            A vizsga megnevezése:
+                            A vizsga rövid megnevezése:
                         </span>
                     </label>
                 </div>

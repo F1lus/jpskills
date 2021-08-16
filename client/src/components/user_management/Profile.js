@@ -38,6 +38,8 @@ export default function Profile() {
 
   const stats = useGlobalStats(incomingStats);
 
+  //---------------------------//
+
   const handleStatistics = useCallback((stats) => {
     setIncomingStats(stats);
   }, []);
@@ -192,6 +194,8 @@ export default function Profile() {
     </div>
   );
 }
+
+//Profil kártya
 
 const ProfileCard = ({ nev, csoport, stats, className }) => (
   <div className={`card ${className}`}>

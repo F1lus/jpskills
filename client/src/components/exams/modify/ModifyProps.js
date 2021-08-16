@@ -120,13 +120,13 @@ export default function ModifyProps(props) {
                     <input type='text' name='examNotes' value={examProps[1] || ''} onChange={handleChange} autoComplete="off" />
                     <label htmlFor="examNotes" className="label-name">
                         <span className="content-name">
-                            A vizsga megjegyzése (ha van)
+                            A vizsga megjegyzése (ha nincs, hagyja üresen)
                         </span>
                     </label>
                 </div>
 
                 <div className="form-group m-auto">
-                    <input type='number' name='examMinPoints' value={examProps[3] || ''} onChange={handleChange} required />
+                    <input type='number' min={0} max={100} name='examMinPoints' value={examProps[3] || ''} onChange={handleChange} required />
                     <label htmlFor="examMinPoints" className="label-name">
                         <span className="content-name">
                             A vizsga elvégzéséhez szükséges százalék
