@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useSelector } from 'react-redux'
 import { useParams } from "react-router";
+import WOW from 'react-wow'
 
 import Learn from "../exams/learn/Learn";
 import DetailTable from "./DataTable";
@@ -136,18 +137,18 @@ export default function Profile() {
     if (isSame) {
       return (
         <div className="container shadow rounded text-center bg-light mb-3">
-          <Learn superuser={false}/>
+          <Learn superuser={false} />
         </div>
       );
-    }else{
+    } else {
       return null
     }
   }, [isSame])
 
   const canDisplaySearch = useCallback(() => {
-    if(globalPerm === 'admin'){
-      return <UserSearch socket={socket} cardNum={cardNum}/>
-    }else{
+    if (globalPerm === 'admin') {
+      return <UserSearch socket={socket} cardNum={cardNum} />
+    } else {
       return null
     }
   }, [globalPerm, socket, cardNum])
@@ -155,17 +156,19 @@ export default function Profile() {
   return (
     <div className="container-fluid text-center page">
       <div className="row">
-        <div className="container col-lg-3 mt-3">
-          
-          {canDisplaySearch()}
+        <WOW animation='slideInLeft'>
+          <div className="container col-lg-3 mt-3">
 
-          <ProfileCard
-            className="mt-3 shadow"
-            nev={nev}
-            csoport={csoport}
-            stats={renderGlobalStats()}
-          />
-        </div>
+            {canDisplaySearch()}
+
+            <ProfileCard
+              className="mt-3 shadow"
+              nev={nev}
+              csoport={csoport}
+              stats={renderGlobalStats()}
+            />
+          </div>
+        </WOW>
 
         <div className="mt-3 col-lg-9">
           <Visualizer
@@ -210,9 +213,8 @@ const ProfileCard = ({ nev, csoport, stats, className }) => (
         fontFamily="sans-serif"
         fontSize="50"
         fill="#fff"
-      >{`${nev ? nev.split(" ")[0].charAt(0) : "J"}${
-        nev ? nev.split(" ")[1].charAt(0) : "D"
-      }`}</text>
+      >{`${nev ? nev.split(" ")[0].charAt(0) : "J"}${nev ? nev.split(" ")[1].charAt(0) : "D"
+        }`}</text>
     </svg>
 
     <div className="card-body">

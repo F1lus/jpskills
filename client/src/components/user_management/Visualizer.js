@@ -1,4 +1,5 @@
 import React from "react";
+import WOW from 'react-wow'
 
 export default function Visualizer({
   details,
@@ -109,6 +110,7 @@ export default function Visualizer({
 
   if (isSame && ["admin", "Adminisztrátor"].includes(group) && isGlobal) {
     return (
+      <WOW animation='slideInRight'>
       <div className="container shadow rounded text-center bg-light mb-3 py-3">
         <h2>Összesített statisztika</h2>
         <hr />
@@ -157,9 +159,11 @@ export default function Visualizer({
           {scoreDisplay(avgPoints)}
         </div>
       </div>
+      </WOW>
     );
   } else {
     return (
+      <WOW animation='slideInRight'>
       <div
         className={
           isGlobal
@@ -193,6 +197,7 @@ export default function Visualizer({
           {avgSuccess(successRate)}
         </div>
       </div>
+      </WOW>
     );
   }
 }

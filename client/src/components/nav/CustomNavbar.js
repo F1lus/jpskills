@@ -1,4 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
+import WOW from 'react-wow'
+
 import { Elemek } from './navItems';
 import { NavLink } from 'react-router-dom';
 import { SocketContext } from '../GlobalSocket';
@@ -23,6 +25,7 @@ export default () => {
 
     return (
         <div id="navbar">
+            <WOW animation='slideInDown' duration='0.5' delay='0'>
             <section id="hatter" />
             <ul className="nav nav-fill mb-3 shadow">
                 {Elemek.map((elem, index) => {
@@ -37,6 +40,7 @@ export default () => {
                     )
                 })}
             </ul>
+            </WOW>
         </div>
     )
 }

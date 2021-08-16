@@ -6,8 +6,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './style/styles.css'
 import 'wowjs/css/libs/animate.css'
 
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
-
 import Login from './components/user_management/Login'
 import ResetRequest from './components/user_management/ResetRequest'
 import PasswordReset from './components/user_management/PasswordReset'
@@ -32,50 +30,54 @@ export default function App() {
 
   const location = useLocation()
 
+  const shouldLoad = () => loading ? <Load /> : null
+
+  const canDisplayNav = () => {
+    if(loggedIn && permission !== 'superuser'){
+      return (
+        <CustomNavbar />
+      )
+    }else{
+      return null
+    }
+  }
+
   return (
-    <React.Fragment>
-        {loading ? <Load /> : null}
-        {loggedIn && permission !== 'superuser' ? <CustomNavbar /> : null}
-        <TransitionGroup>
-          <CSSTransition
-            key={location.key}
-            timeout={500}
-            classNames="fade"
-          >
-            <Switch location={location}>
-              <Routing exact path='/' allowed={['*']} component={Login} />
+    <div>
+      {shouldLoad()}
+      {canDisplayNav()}
+      <Switch location={location}>
+        <Routing exact path='/' allowed={['*']} component={Login} />
 
-              <Routing exact path='/resetRequest' allowed={['*']} component={ResetRequest} />
+        <Routing exact path='/resetRequest' allowed={['*']} component={ResetRequest} />
 
-              <Routing exact path='/resetPassword' allowed={['*']} component={PasswordReset} />
+        <Routing exact path='/resetPassword' allowed={['*']} component={PasswordReset} />
 
-              <Routing exact path='/home' allowed={['*']} component={Home} />
+        <Routing exact path='/home' allowed={['*']} component={Home} />
 
-              <Routing exact path='/exams' allowed={['*']} component={ExamWrapper} />
+        <Routing exact path='/exams' allowed={['*']} component={ExamWrapper} />
 
-              <Routing exact path='/exams/modify/:examName' allowed={['admin']} component={ExamModify} />
+        <Routing exact path='/exams/modify/:examName' allowed={['admin']} component={ExamModify} />
 
-              <Routing exact path='/exams/learn/:examCode' allowed={['*']} component={ExamDocument} />
+        <Routing exact path='/exams/learn/:examCode' allowed={['*']} component={ExamDocument} />
 
-              <Routing exact path='/exams/:examCode' allowed={['*']} component={Examination} />
+        <Routing exact path='/exams/:examCode' allowed={['*']} component={Examination} />
 
-              <Routing exact path='/exams/result/:examCode/' allowed={['*']} component={ExamResults} />
+        <Routing exact path='/exams/result/:examCode/' allowed={['*']} component={ExamResults} />
 
-              <Routing exact path='/profile/:profile' allowed={['*']} component={Profile} />
+        <Routing exact path='/profile/:profile' allowed={['*']} component={Profile} />
 
-              <Routing exact path='/management' allowed={['superuser']} component={Management} />
+        <Routing exact path='/management' allowed={['superuser']} component={Management} />
 
-              <Routing exact path='/management/learn/:examCode' allowed={['superuser']} component={ExamDocument} />
+        <Routing exact path='/management/learn/:examCode' allowed={['superuser']} component={ExamDocument} />
 
-              <Routing exact path='/management/:user' allowed={['superuser']} component={UserManager} />
+        <Routing exact path='/management/:user' allowed={['superuser']} component={UserManager} />
 
-              <Routing exact path='/management/admin/:user' allowed={['superuser']} component={AdminManager} />
+        <Routing exact path='/management/admin/:user' allowed={['superuser']} component={AdminManager} />
 
-              <Routing exact path='/logout' allowed={['*']} component={Load} />
-            </Switch>
-          </CSSTransition>
-        </TransitionGroup>
-    </React.Fragment>
+        <Routing exact path='/logout' allowed={['*']} component={Load} />
+      </Switch>
+    </div>
   )
 
 }
