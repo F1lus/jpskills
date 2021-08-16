@@ -75,39 +75,39 @@ class Connection {
         try {
             
             const exams = await this.con("exams")
-                .select(["exams.exam_id", "exam_grouping.worker_usergroup_id"])
+                .select("exams.exam_id", "exam_grouping.worker_usergroup_id")
                 .innerJoin("exam_grouping", "exams.exam_id", "exam_grouping.exam_id")
                 .where("exam_creator", cardnum)
                 .andWhere('exam_itemcode', examcode)
 
             for (const exam of exams) {
-                const skilled = this.con("skills")
-                    .distinct("worker_id")
+                const skilled = await this.con("skills")
+                    .select("worker_id")
                     .leftJoin(
                         "skill_archive",
                         "skills.skills_id",
                         "skill_archive.skills_id"
                     )
                     .where('skill_archive.skills_id', null)
-                    .andwhere("skills.exam_id", exam.exam_id);
+                    .andWhere("skills.exam_id", exam.exam_id)
 
                 if (!exam.worker_usergroup_id) {
-                    const workers = this.con("workers")
+                    const workers = await this.con("workers")
                         .select("worker_id")
                         .whereNot("worker_usergroup", "admin")
                         .andWhereNot("worker_usergroup", "Adminisztrátor")
                         .andWhereNot("worker_usergroup", "superuser");
 
-                    completion += (await skilled).length / (await workers).length;
+                    completion += skilled.length / workers.length;
                 } else {
-                    const workers = this.con("workers")
+                    const workers = await this.con("workers")
                         .select("worker_id")
                         .where("worker_usergroup_id_id", exam.worker_usergroup_id)
                         .andWhereNot("worker_usergroup", "admin")
                         .andWhereNot("worker_usergroup", "Adminisztrátor")
                         .andWhereNot("worker_usergroup", "superuser");
 
-                    completion += (await skilled).length / (await workers).length;
+                    completion += skilled.length / workers.length;
                 }
             }
 
@@ -126,7 +126,7 @@ class Connection {
         try {
             
             const worker = await this.con('workers')
-                .select(['worker_id', 'worker_usergroup_id_id'])
+                .select('worker_id', 'worker_usergroup_id_id')
                 .where('worker_cardcode', cardnum)
                 .first()
 
@@ -172,7 +172,7 @@ class Connection {
 
             for (const exam of exams) {
                 const skilled = await this.con("skills")
-                    .distinct("worker_id")
+                    .select("worker_id")
                     .leftJoin(
                         "skill_archive",
                         "skills.skills_id",
@@ -182,8 +182,7 @@ class Connection {
                     .andWhere("skills.exam_id", exam.exam_id);
 
                 if(skilled.length === 0){
-                    globalObject.successRate = globalObject.successRate+'%'
-                    return globalObject
+                    continue
                 }
 
                 if (!exam.worker_usergroup_id) {

@@ -33,20 +33,27 @@ module.exports = (socket) => {
     socket.on('exams-by-cardcode', userStatsByCardcode)
 
     const adminDetailedStats = async cardcode => {
-        if(!session || session.perm !== 'admin'){
+        if(!session){
             return
         }
 
-        if(cardcode === session.cardNum){
-            socket.emit('detailStat', {
-                completion: await dbconnect.adminCompletionRate(session.cardNum),
-                global: await dbconnect.adminGlobal()
-            })
+        if(session.perm === 'admin'){
+            if(cardcode === session.cardNum){
+                socket.emit('detailStat', {
+                    completion: await dbconnect.adminCompletionRate(session.cardNum),
+                    global: await dbconnect.adminGlobal()
+                })
+            }else{
+                socket.emit('detailStat', {
+                    completion: await dbconnect.userVisualizer(cardcode)
+                })
+            }
         }else{
             socket.emit('detailStat', {
-                completion: await dbconnect.userVisualizer(cardcode)
+                completion: await dbconnect.userVisualizer(session.cardNum)
             })
         }
+        
     }
     socket.on('get-details', adminDetailedStats)
 

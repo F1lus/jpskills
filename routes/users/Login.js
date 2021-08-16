@@ -58,7 +58,7 @@ login.post('/login', async (req, res) => {
                     }
 
                 } else {
-                    throw new Error('A felhasználó nem található!')
+                    throw new Error('Az adatok egyike hibás!')
                 }
             }
         }
