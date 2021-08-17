@@ -63,7 +63,7 @@ export default function App() {
 
         <Routing exact path='/exams/:examCode' allowed={['*']} component={Examination} />
 
-        <Routing exact path='/exams/result/:examCode/' allowed={['*']} component={ExamResults} />
+        <Routing exact path='/exams/result/:examCode' allowed={['*']} component={ExamResults} />
 
         <Routing exact path='/profile/:profile' allowed={['*']} component={Profile} />
 

@@ -642,7 +642,7 @@ class Connection {
         try {
             const worker = await this.con("workers")
                 .select(["worker_id", "worker_name"])
-                .where("worker_cardcode", [cardNum])
+                .where("worker_cardcode", cardNum)
                 .first();
 
             if (worker) {
@@ -665,7 +665,7 @@ class Connection {
                             "skill_archive.skills_id"
                         )
                         .where('skill_archive.skills_id', null)
-                        .where("worker_id", [worker.worker_id]);
+                        .andWhere("worker_id", [worker.worker_id]);
 
                     skills.forEach((skill) => {
                         stats.push({

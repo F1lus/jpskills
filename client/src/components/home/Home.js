@@ -124,6 +124,7 @@ export default function Home() {
                 </div>
             </div>
 
+
             <div className="container shadow rounded p-3 bg-light mb-3">
                 <h1 className="text-center"><p>Használati útmutató</p></h1>
                 <Admin permission={permission}>

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 export default function useExamStats(exams) {
 
     const [stat, setStat] = useState({
+        skills: [],
         avgTime: {
             avgMins: 0,
             avgSecs: 0
@@ -16,7 +17,21 @@ export default function useExamStats(exams) {
         let avgScore = 0
         let rate = 0
 
-        if (exams && exams.length > 0) {
+        if (exams) {
+
+            if(exams.length === 0){
+                setStat({
+                    skills: [],
+                    avgTime: {
+                        avgMins: 0,
+                        avgSecs: 0
+                    },
+                    avgScore: 0,
+                    completionRate: 0
+                })
+                return
+            }
+
             exams.forEach(exam => {
                 avgTime += exam.time
                 avgScore += exam.score
